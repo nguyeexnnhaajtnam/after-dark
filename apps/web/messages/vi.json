@@ -1,0 +1,829 @@
+{
+  "meta": {
+    "title": "AFTER DARK — Chơi bạo. Vẫn sang.",
+    "description": "Trò chơi bài riêng tư dành cho hai người."
+  },
+  "lang": {
+    "label": "Ngôn ngữ",
+    "vi": "Tiếng Việt",
+    "en": "English",
+    "switchTo": "Chuyển sang {language}"
+  },
+  "common": {
+    "backHome": "Về lối vào",
+    "callItANight": "Kết thúc buổi chơi",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "next": "Tiếp",
+    "you": "Bạn",
+    "yourPartner": "Người ấy",
+    "yourHost": "Chủ phòng",
+    "comingSoon": "Sắp ra mắt",
+    "sparks": "{count} Spark"
+  },
+  "title": {
+    "adultsOnly": "Chỉ 18+",
+    "soundOn": "Âm thanh: bật",
+    "soundOff": "Âm thanh: tắt",
+    "tagline": "Chơi bạo. Vẫn sang.",
+    "start": "Bắt đầu chơi",
+    "explore": "Khám phá các game",
+    "haveCode": "Có mã phòng?",
+    "steps": [
+      {
+        "title": "Chọn một game.",
+        "text": "Năm bộ bài, mỗi ván 15–60 phút."
+      },
+      {
+        "title": "Định độ nóng.",
+        "text": "Chủ phòng chọn mức độ. Lá nào cũng bỏ qua được."
+      },
+      {
+        "title": "Lật bài và chơi.",
+        "text": "Mỗi người một điện thoại. Bí mật của ai nấy giữ."
+      }
+    ],
+    "deckShowing": "Đang xem một lá {game}. Chạm để úp lại và chia lá khác",
+    "deckIdle": "Chạm vào bộ bài để lật thử một lá",
+    "tapAgain": "Chạm lần nữa để chia lá khác",
+    "tapDeck": "Chạm vào bộ bài"
+  },
+  "age": {
+    "title": "Chỉ dành cho người lớn.",
+    "body": "Khi bước vào, bạn xác nhận mình đã đủ 18 tuổi. Bạn có thể rút lại sự đồng ý bất cứ lúc nào, và lá bài nào cũng có thể bỏ qua.",
+    "confirm": "Tôi đủ 18+, cho tôi vào",
+    "footer": "Không dành cho người chưa đủ tuổi. Hãy chơi riêng tư và tôn trọng nhau."
+  },
+  "header": {
+    "explore": "Khám phá các game",
+    "exploreShort": "Game"
+  },
+  "catalog": {
+    "tiers": {
+      "1": "Tán tỉnh",
+      "2": "Nóng",
+      "3": "After Dark"
+    },
+    "players": "2 người chơi",
+    "items": {
+      "read-my-mind": {
+        "tagline": "Đoán thử xem mình muốn gì?",
+        "description": "Giấu một đáp án, đọc vị người ấy, và nhận Spark cho mỗi lần đoán trúng.",
+        "duration": "30–45 phút",
+        "rules": [
+          "Một người giấu đáp án, người kia đoán",
+          "Đoán trúng: +1 Spark. Đoán trật: một thử thách nhỏ, tuỳ chọn",
+          "Lá Tương tác cần cả hai cùng đồng ý, hoàn thành thì mỗi người +1 Spark",
+          "Nhiệm vụ bí mật mang về Lá quyền năng để dùng sau"
+        ],
+        "types": [
+          "Đọc vị",
+          "Tương tác",
+          "Mong muốn chung",
+          "Bẻ lái",
+          "Nhiệm vụ bí mật"
+        ],
+        "sample": {
+          "category": "Đọc vị",
+          "title": "Điều gì khiến tim mình đập nhanh?",
+          "instruction": "Giấu đáp án của bạn. Người ấy chỉ có một lần đoán."
+        }
+      },
+      "dare-me": {
+        "tagline": "Bạn dám liều đến đâu?",
+        "description": "Thử thách, thách ngược, lá bài bất ngờ và phần thưởng, tất cả theo luật của bạn.",
+        "duration": "20–40 phút",
+        "rules": [
+          "Luật thử thách vẫn đang được hoàn thiện"
+        ],
+        "types": [
+          "Thử thách",
+          "Thách ngược",
+          "Lá bài bất ngờ"
+        ],
+        "sample": {
+          "category": "Thách ngược",
+          "title": "Thách ngược lại ngay.",
+          "instruction": "Nhận lời, nâng mức cược, hoặc bỏ qua. Cả hai phải cùng đồng ý."
+        }
+      },
+      "no-secrets": {
+        "tagline": "Có gì bạn chưa kể với mình?",
+        "description": "Một góc tinh nghịch cho những lời thú nhận, sở thích thầm kín và những lần cùng nhau bật mí.",
+        "duration": "40–60 phút",
+        "rules": [
+          "Luật đầy đủ sắp ra mắt"
+        ],
+        "types": [
+          "Thú nhận",
+          "Lựa chọn bí mật",
+          "Cùng bật mí"
+        ],
+        "sample": {
+          "category": "Thú nhận",
+          "title": "Điều mình chưa từng nói.",
+          "instruction": "Giữ kín riêng. Chỉ bật mí khi cả hai cùng muốn."
+        }
+      },
+      "take-control": {
+        "tagline": "Đến lượt bạn. Luật của bạn.",
+        "description": "Thay phiên dẫn dắt, chọn thử thách và trao quyền điều khiển cho nhau.",
+        "duration": "45–60 phút",
+        "rules": [
+          "Luật đầy đủ sắp ra mắt"
+        ],
+        "types": [
+          "Dẫn dắt",
+          "Đổi vai",
+          "Lá quyền năng"
+        ],
+        "sample": {
+          "category": "Lá dẫn dắt",
+          "title": "Bạn định nhịp.",
+          "instruction": "Hai phút, một từ dừng, luật của bạn."
+        }
+      },
+      "lucky-tonight": {
+        "tagline": "Để may rủi quyết định.",
+        "description": "Thử thách ngẫu nhiên, bất ngờ và phần thưởng cho hai người.",
+        "duration": "15–30 phút",
+        "rules": [
+          "Luật đầy đủ sắp ra mắt"
+        ],
+        "types": [
+          "Thử thách ngẫu nhiên",
+          "Bất ngờ",
+          "Phần thưởng"
+        ],
+        "sample": {
+          "category": "Lá bài bất ngờ",
+          "title": "Thử vận may.",
+          "instruction": "May rủi chọn lá bài. Bạn chọn đi xa tới đâu."
+        }
+      }
+    }
+  },
+  "gameSelect": {
+    "back": "Quay lại",
+    "title": "Chọn game của bạn",
+    "counter": "Game {current}/{total}",
+    "carousel": "Các game",
+    "cover": "Ảnh bìa {game}",
+    "selected": "{game}, đang chọn",
+    "select": "Chọn {game}",
+    "previous": "Game trước",
+    "next": "Game sau",
+    "tabs": "Chọn một game",
+    "intensity": "Độ nóng: {tier}",
+    "deal": "Chia bài cho tôi",
+    "dealing": "Sắp tới phần thiết lập →",
+    "hint": "Vuốt, dùng mũi tên hoặc phím ← →",
+    "lockedHint": "Bộ bài này đang được hoàn thiện. Tối nay mở Read My Mind."
+  },
+  "gameDetail": {
+    "allGames": "Tất cả game",
+    "howToPlay": "Cách chơi",
+    "inTheDeck": "Trong bộ bài",
+    "deal": "Chia bài cho tôi",
+    "lockedNote": "Bộ bài này đang được hoàn thiện. Tối nay mở Read My Mind.",
+    "setup": "Thiết lập tối nay",
+    "players": "Người chơi",
+    "madeForTwo": "Dành cho hai người",
+    "pace": "Thời lượng",
+    "intensity": "Độ nóng"
+  },
+  "room": {
+    "create": {
+      "eyebrow": "Khơi gợi không khí",
+      "title": "Dựng sân khấu",
+      "description": "Chọn cái tên người ấy sẽ thấy.",
+      "action": "Mở phòng riêng",
+      "loading": "Đang dựng sân khấu…"
+    },
+    "join": {
+      "eyebrow": "Lời mời đang chờ bạn",
+      "title": "Vào cuộc vui",
+      "description": "Nhập mã phòng và cái tên người ấy vẫn gọi bạn.",
+      "action": "Bước vào",
+      "loading": "Đang vào phòng…"
+    },
+    "rejoin": "Trở về phòng riêng",
+    "rejoinDetail": "Phòng {code} · Tiếp tục đúng chỗ đêm nay tạm dừng.",
+    "orJoinAnother": "hoặc vào phòng khác",
+    "codeLabel": "Mã phòng",
+    "nicknameLabel": "Tên của bạn đêm nay",
+    "nicknamePlaceholder": "Người ấy nên gọi bạn là gì?",
+    "privacyNote": "Không cần tài khoản. Khoá vào lại phòng chỉ lưu trên thiết bị này.",
+    "toJoin": "Có mã phòng? Vào cùng người ấy",
+    "toCreate": "Muốn làm chủ phòng? Tạo phòng mới"
+  },
+  "connection": {
+    "connecting": {
+      "title": "Đang kết nối…",
+      "description": "Đang chuẩn bị phòng riêng của bạn."
+    },
+    "connected": "Kết nối thành công",
+    "reconnecting": {
+      "title": "Đừng bỏ rơi nhau…",
+      "description": "Đang kết nối lại với phòng."
+    },
+    "offlineToast": "Bạn đang mất kết nối. Đang thử lại…",
+    "online": "Đang trực tuyến",
+    "offline": "Ngoại tuyến",
+    "statusConnected": "Đã kết nối",
+    "statusReconnecting": "Đang kết nối lại",
+    "partnerOffline": "Người ấy vừa rời đi."
+  },
+  "errors": {
+    "fallback": {
+      "title": "Có chút trục trặc.",
+      "description": "Đã có lỗi xảy ra. Thử lại nhé."
+    },
+    "invalidCode": {
+      "title": "Nhầm cửa rồi.",
+      "description": "Kiểm tra lại mã gồm 6 ký tự và thử lần nữa."
+    },
+    "full": {
+      "title": "Hai người là đủ.",
+      "description": "Phòng này đã có đủ hai người chơi."
+    },
+    "expired": {
+      "title": "Đêm nay đã khép lại.",
+      "description": "Tạo phòng mới để bắt đầu lại."
+    },
+    "connection": {
+      "title": "Mất sóng mất rồi.",
+      "description": "Kiểm tra kết nối mạng rồi thử lại."
+    },
+    "private": {
+      "title": "Phòng riêng tư.",
+      "description": "Hãy vào lại từ thiết bị đã tạo hoặc tham gia phòng này."
+    },
+    "tooMany": {
+      "title": "Từ từ thôi nào.",
+      "description": "Bạn tạo quá nhiều phòng trong một phút. Đợi chút rồi thử lại."
+    },
+    "nickname": {
+      "title": "Cần một cái tên.",
+      "description": "Chọn tên dài từ 1 đến 24 ký tự."
+    },
+    "codeFormat": {
+      "title": "Nhầm cửa rồi.",
+      "description": "Mã phòng gồm 6 chữ cái hoặc chữ số."
+    },
+    "action": {
+      "generic": "Chưa gửi được. Thử lại nhé.",
+      "stale": "Người ấy nhanh tay hơn. Bạn đang xem lá bài mới nhất.",
+      "conflict": "Cả hai cùng chạm một lúc. Chạm lại lần nữa nhé.",
+      "hostOnlyGame": "Chỉ chủ phòng mới đổi được game.",
+      "hostOnlyHeat": "Chỉ chủ phòng mới chỉnh được độ nóng.",
+      "hostOnlyStart": "Chỉ chủ phòng mới chia lá đầu tiên.",
+      "hostOnlyLobby": "Chỉ chủ phòng mới đưa cả hai về phòng riêng.",
+      "partnerNotIn": "Người ấy chưa sẵn sàng nhập cuộc.",
+      "comingSoon": "Game này sắp ra mắt. Tối nay mở Read My Mind.",
+      "heatLocked": "Độ nóng đã được chốt khi ván chơi bắt đầu.",
+      "notYourTurn": "Chưa tới lượt bạn.",
+      "briefing": "Đọc xong phần hướng dẫn trước đã.",
+      "alreadyAnswered": "Bạn đã trả lời rồi.",
+      "alreadySealed": "Lựa chọn của bạn đã được giữ kín.",
+      "forfeitFirst": "Trả lời thử thách trước, hoặc bỏ qua.",
+      "roundNotDone": "Vòng này chưa xong.",
+      "gameOver": "Ván chơi đã kết thúc.",
+      "missionNone": "Hiện chưa có nhiệm vụ nào để báo hoàn thành.",
+      "missionVerdict": "Không có nhiệm vụ nào đang chờ bạn xác nhận.",
+      "missionPartnerOnly": "Chỉ người ấy mới xác nhận được nhiệm vụ của bạn.",
+      "powerNotOwned": "Lá quyền năng này không có trong tay bạn.",
+      "crossedOut": "Đáp án này đã bị gạch rồi.",
+      "closed": "Khoảnh khắc đó đã qua. Bạn đang xem lá bài mới nhất.",
+      "authenticate": "Đang kết nối lại với phòng…",
+      "deckEmpty": "Mức độ này chưa đủ lá bài. Thử mức khác nhé."
+    }
+  },
+  "heat": {
+    "labels": [
+      "Ngọt ngào",
+      "Tán tỉnh",
+      "Nóng bỏng",
+      "Táo bạo",
+      "Cuồng nhiệt"
+    ],
+    "hints": [
+      "Dễ thương, ấm áp, nắm tay.",
+      "Trêu ghẹo, đỏ mặt, hôn trộm.",
+      "Hôn sâu, gần gũi, căng thẳng thật sự.",
+      "Cởi đồ, bịt mắt, những bàn tay lang thang.",
+      "Tưởng tượng táo bạo, kiểm soát, không kế hoạch."
+    ],
+    "caption": "Độ nóng đêm nay",
+    "setBy": "Do {name} chọn",
+    "ofFive": "{caption} · {level}/5"
+  },
+  "lobby": {
+    "partnerJoined": "Người ấy tới rồi!",
+    "created": "Phòng riêng đã sẵn sàng.",
+    "roomCode": "Mã phòng",
+    "you": "Bạn",
+    "yourPartner": "Người ấy",
+    "lateTitle": "Đang đợi người ấy…",
+    "lateBody": "Gửi lời mời đi. Làm sao cho thật hấp dẫn.",
+    "hostRole": "Đang khơi lửa",
+    "inTheMood": "Đã sẵn sàng",
+    "warmingUp": "Đang khởi động",
+    "imIn": "Sẵn sàng nhập cuộc",
+    "imInLoading": "Đang khởi động…",
+    "notYet": "Cho mình một phút",
+    "notYetLoading": "Hít một hơi…",
+    "start": "Chia lá đầu tiên",
+    "startLoading": "Đang chia bài…",
+    "noteComingSoon": "{game} sắp ra mắt. Chọn Read My Mind để chơi tối nay.",
+    "noteNoPartner": "Chọn độ nóng, chọn game, rồi gửi lời mời.",
+    "notePartnerWarming": "{name} vẫn đang khởi động. Lá đầu tiên sẽ được chia khi người ấy sẵn sàng.",
+    "notePartnerReady": "{name} đã sẵn sàng. Chia bài thôi.",
+    "noteGuest": "{host} chọn độ nóng và chọn game. Bạn chỉ cần báo khi đã sẵn sàng.",
+    "waitGuest": "Bạn đã sẵn sàng. {host} sắp chia bài…",
+    "heatTitle": "Đêm nay muốn nóng đến đâu?",
+    "heatYouSet": "Bạn chọn",
+    "heatHostSets": "{host} chọn",
+    "heatHostNote": "Lá bài không bao giờ vượt quá mức này. Nếu đổi, {name} sẽ quay lại trạng thái khởi động để xem mức mới trước.",
+    "heatHostNoteSolo": "Lá bài không bao giờ vượt quá mức này. Bạn có thể đổi bất cứ lúc nào trước khi chia bài.",
+    "heatGuestNote": "Lá bài không bao giờ vượt quá mức này. Chưa thấy hợp? Nói với {host} trước khi bạn báo sẵn sàng.",
+    "gameTitle": "Game tối nay",
+    "gameYouPick": "Bạn chọn",
+    "gameHostPicks": "Chủ phòng chọn",
+    "gameGroup": "Game",
+    "soon": "Sắp có",
+    "selected": "Đang chọn",
+    "playNow": "Chơi ngay",
+    "leaveEyebrow": "Kết thúc buổi chơi?",
+    "leaveTitle": "Rời phòng",
+    "leaveBodyPartner": "Bạn sẽ quay về danh sách game. {name} vẫn ở lại phòng, và bạn có thể vào lại từ thiết bị này bất cứ lúc nào trước khi phòng hết hạn.",
+    "leaveBodyAlone": "Bạn sẽ quay về danh sách game. Bạn có thể vào lại từ thiết bị này bất cứ lúc nào trước khi phòng hết hạn.",
+    "stay": "Ở lại",
+    "leave": "Rời phòng"
+  },
+  "invite": {
+    "copyLink": "Sao chép link mời",
+    "copyCode": "Sao chép mã",
+    "copied": "Đã sao chép!",
+    "share": "Chia sẻ lời mời",
+    "shareText": "Vào chơi AFTER DARK cùng mình nhé. Mã phòng {code}",
+    "shareUnavailable": "Thiết bị này chưa hỗ trợ chia sẻ. Hãy sao chép link mời.",
+    "copyFailedTitle": "Không sao chép tự động được.",
+    "copyFailedBody": "Chọn nội dung bên dưới để tự sao chép, hoặc đọc mã cho người ấy.",
+    "linkLabel": "Link mời",
+    "codeLabel": "Mã phòng",
+    "linkCopied": "Đã sao chép link mời. Gửi ngay cho người ấy.",
+    "codeCopied": "Đã sao chép mã.",
+    "partnerHere": "Người ấy đã vào. Đêm nay có thể bắt đầu.",
+    "sendInvite": "Gửi lời mời cho người ấy. Làm sao cho thật hấp dẫn."
+  },
+  "cardType": {
+    "MIND_READER": "Đọc vị",
+    "CHEMISTRY": "Tương tác",
+    "MUTUAL_DESIRE": "Mong muốn chung",
+    "PLOT_TWIST": "Bẻ lái",
+    "SECRET_MISSION": "Nhiệm vụ bí mật",
+    "POWER_CARD": "Lá quyền năng",
+    "FORFEIT": "Thử thách"
+  },
+  "hud": {
+    "round": "Vòng {round}",
+    "sparksAria": "Spark: bạn {mine}, {name} {theirs}",
+    "vs": "vs",
+    "rules": "Cách chơi",
+    "missionsDone": "Đã xong mọi nhiệm vụ",
+    "mission": "Mèo nằm vùng",
+    "missionDeclared": "Mèo nằm vùng · chờ người ấy",
+    "missionProgress": "Mèo nằm vùng · {number}/{total}",
+    "power": "Quyền năng",
+    "powerAria": "Lá quyền năng: {count}/{limit}",
+    "powerAriaUsable": "Lá quyền năng: {count}/{limit}, {usable} lá dùng được ngay",
+    "use": "Dùng",
+    "armed": "Đã bật",
+    "verdictChip": "{name} đang chờ bạn xác nhận một nhiệm vụ",
+    "twistPending": "Bẻ lái đang chờ: {twists} · lá Đọc vị tiếp theo",
+    "partnerAway": "{name} vừa rời đi. Ván chơi đã được lưu, người ấy có thể vào lại từ điện thoại.",
+    "eyesOnly": "Chỉ mình bạn được xem",
+    "hide": "Ẩn",
+    "reveal": "Tiết lộ nhiệm vụ",
+    "allDone": "Xong hết nhiệm vụ. Mèo này tinh thật đấy.",
+    "missionHow": "Hãy khiến nó xảy ra thật tự nhiên trong lúc chơi. Khi đã xong, nhờ xác nhận: {name} sẽ thấy nhiệm vụ và quyết định. Được đồng ý thì bạn nhận một Lá quyền năng.",
+    "notYetSaid": "Người ấy bảo “chưa đâu”. Cứ thử tiếp, không bị phạt.",
+    "ask": "Nhờ người ấy xác nhận",
+    "asking": "Đang hỏi…",
+    "asked": "Đã hỏi. Giờ tới lượt {name} quyết định."
+  },
+  "card": {
+    "aria": "Lá {type}",
+    "game": "Read My Mind",
+    "gameHeat": "Read My Mind · {heat}",
+    "answers": "Đáp án",
+    "mr": {
+      "sparksFor": "{self, select, yes {+{count} Spark cho bạn} other {+{count} Spark cho {name}}}",
+      "noSpark": "Lần này không có Spark.",
+      "noSparkHolder": "Lần này không có Spark. Bạn vẫn là một bí ẩn.",
+      "secondChanceUsed": "Vẫn còn một mạng! Cơ hội thứ hai đã gạch đáp án “{choice}” trước khi đoán lại.",
+      "doubleUsedHit": "Spark nhân đôi! Phần thưởng lần này được gấp đôi.",
+      "doubleUsedMiss": "Spark nhân đôi đã mất vì đoán trật. Lần này không có thưởng thêm.",
+      "yourAnswer": "Đáp án của bạn",
+      "theirAnswer": "Đáp án của {name}",
+      "yourGuess": "Bạn đoán",
+      "theirGuess": "{name} đoán",
+      "promptHide": "Giấu đáp án của bạn",
+      "promptRead": "Đọc vị người ấy",
+      "promptHiding": "{name} đang giấu đáp án…",
+      "promptReading": "{name} đang đọc vị bạn…",
+      "youHide": "Bạn giấu",
+      "theyHide": "{name} giấu",
+      "youGuess": "Bạn đoán",
+      "theyGuess": "{name} đoán",
+      "rightGuess": "Đoán trúng +{count}",
+      "roleSecretTitle": "Bạn giữ bí mật",
+      "roleSecretBody": "{name} sẽ thử đọc vị bạn.",
+      "roleSecretWaiting": "Đã giữ kín. {name} đang thử đọc vị bạn.",
+      "roleReaderTitle": "Đến lượt bạn đọc vị",
+      "roleReaderWaiting": "{name} đang giữ kín lựa chọn…",
+      "roleReaderBody": "{name} đã giữ kín lựa chọn. Bạn đoán được chứ?",
+      "stake": "Đoán trúng · +{count} Spark",
+      "lockedIn": "Đã chốt",
+      "notThisOne": "Không phải nó",
+      "selected": "Đang chọn",
+      "noteHide": "Chọn đáp án đúng là bạn nhất. {name} sẽ phải đoán.",
+      "noteGuess": "Chọn đáp án bạn nghĩ {name} đã giấu. Nếu đoán trật, một thử thách tuỳ chọn đang chờ.",
+      "noteLocked": "Đã chốt. Nếu {name} đoán trật, người ấy nợ bạn một thử thách tuỳ chọn.",
+      "noteWaitGuess": "Trong lúc chờ, bạn có thể bật Lá quyền năng nếu có."
+    },
+    "twistBanner": {
+      "plot": "Bẻ lái Đảo vai đang có hiệu lực",
+      "power": "{self, select, yes {Tung vuốt bí mật! Bạn đã dùng Đảo vai} other {Tung vuốt bí mật! {name} đã dùng Đảo vai}}",
+      "body": "Đổi vai rồi. Bình thường <b>{normal}</b> sẽ giấu đáp án. Lần này tới lượt <b>{secret}</b> giấu."
+    },
+    "forfeit": {
+      "headline": "Tới lúc nộp phạt rồi!",
+      "label": "Thử thách khi đoán sai · tuỳ chọn",
+      "acceptedPayer": "Tới lúc ra chiêu! Thực hiện thử thách, làm xong thì chạm Tiếp.",
+      "acceptedCollector": "Tới lúc ra chiêu! {name} đang thực hiện thử thách. Tận hưởng đi.",
+      "passed": "Đã bỏ qua. Không bị phạt, cuộc chơi vẫn tiếp tục.",
+      "waiting": "Bạn đã đồng ý. Giờ tới lượt {name} quyết định.",
+      "offeredPayer": "Bạn đoán trật. Chịu phạt hay bỏ qua là tuỳ bạn. Chỉ thực hiện khi cả hai cùng đồng ý.",
+      "offeredCollector": "{name} đoán trật. Đòi phạt hoặc cho qua. Chỉ thực hiện khi cả hai cùng đồng ý."
+    },
+    "chem": {
+      "doneEach": "Mỗi người +{count} Spark. Cả hai đã xác nhận là đã làm.",
+      "declinedNote": "Một trong hai người đã từ chối, và không ai biết là ai. Không bị phạt, không mất Spark.",
+      "stoppedNote": "Dừng lại lúc nào cũng được. Không ai mất Spark.",
+      "phase": {
+        "CONSENT": {
+          "title": "Chờ tín hiệu từ cả hai",
+          "description": "Chỉ bắt đầu khi cả hai cùng đồng ý."
+        },
+        "READY": {
+          "title": "Đến lúc ra chiêu",
+          "description": "Cả hai đã đồng ý. Thử thách bắt đầu khi cả hai cùng bấm Bắt đầu."
+        },
+        "STARTING": {
+          "title": "Bạn đã sẵn sàng",
+          "description": "Đang chờ người ấy cũng bấm Bắt đầu. Ai cũng có thể dừng bất cứ lúc nào."
+        },
+        "ACTIVE": {
+          "title": "Cuộc chơi đang diễn ra",
+          "description": "Có thể dừng hoặc đổi ý bất cứ lúc nào."
+        },
+        "CONFIRM": {
+          "title": "Khoảnh khắc hoàn thành?",
+          "description": "Mỗi người xác nhận sau khi thực hiện xong."
+        },
+        "WAITING": {
+          "title": "Đang chờ người ấy",
+          "description": "Bạn đã xác nhận. Người ấy vẫn chưa xác nhận hoàn thành."
+        },
+        "COMPLETED": {
+          "title": "Now That’s Chemistry!",
+          "description": "Cả hai đã hoàn thành. Mỗi người nhận +{count} Spark."
+        }
+      },
+      "INVITATION": {
+        "eyebrow": "Một lời mời",
+        "note": "Cả hai phải cùng đồng ý. Câu trả lời của bạn được giữ kín cho tới khi cả hai cùng trả lời."
+      },
+      "WAITING_FOR_CONSENT": {
+        "eyebrow": "Bạn đã đồng ý",
+        "note": "Lời đồng ý của bạn được giữ kín cho tới khi cả hai cùng trả lời, và bạn vẫn có thể đổi ý."
+      },
+      "MUTUALLY_ACCEPTED": {
+        "eyebrow": "Cả hai cùng đồng ý",
+        "note": "Bắt đầu khi nào thấy đúng lúc. Ai cũng có thể dừng bất cứ lúc nào."
+      },
+      "IN_PROGRESS": {
+        "eyebrow": "Làm thôi…",
+        "note": "Làm thật nhé. Khi đã thực sự xong, mỗi người tự xác nhận."
+      },
+      "WAITING_FOR_COMPLETION": {
+        "eyebrow": "Bạn đã xác nhận",
+        "note": "Chỉ được tính khi cả hai cùng xác nhận là đã thực sự làm."
+      },
+      "progress": "Tiến độ thử thách",
+      "steps": [
+        "Cùng đồng ý",
+        "Thực hiện",
+        "Cùng xác nhận"
+      ],
+      "footer": "Hoàn thành thì mỗi người +1 Spark. Từ chối không mất gì.",
+      "timer": {
+        "label": "Thời gian còn lại",
+        "aria": "Còn lại {time}",
+        "expired": "Hết giờ",
+        "expiredNote": "Hết giờ không có nghĩa là thắng hay thua. Đã thực sự làm xong thì cùng xác nhận; chưa xong thì dừng lại, không mất gì.",
+        "runningNote": "Xong sớm cũng được, miễn là đã thực sự làm.",
+        "chip": "Có đồng hồ · {duration}",
+        "seconds": "{count} giây",
+        "minutes": "{count} phút"
+      }
+    },
+    "desire": {
+      "eyebrow": "Riêng tư · chỉ bật mí khi cả hai cùng muốn",
+      "sealed": "Đã giữ kín. Không ai thấy, trừ khi cả hai cùng chọn Có.",
+      "group": "Câu trả lời riêng của bạn",
+      "YES": "Có",
+      "MAYBE": "Có thể",
+      "NO": "Không",
+      "note": "“Có thể” và “Không” đều được giữ kín. Lá này không có Spark, nên không ai bị ép.",
+      "yesNote": "Cả hai cùng muốn. Nói chuyện luôn bây giờ, hoặc để dành cho lát nữa.",
+      "noNote": "Không phải cả hai cùng muốn, nên không câu trả lời nào bị lộ. Không ai biết ai đã chọn gì."
+    },
+    "twist": {
+      "skippedNote": "Đã bỏ qua bẻ lái. Không có gì thay đổi.",
+      "activated": "Bẻ lái đã kích hoạt",
+      "turn": "Đêm nay rẽ hướng",
+      "roleReversal": "Lá Đọc vị tiếp theo: bình thường <b>{next}</b> sẽ giấu đáp án. Với bẻ lái này, <b>{other}</b> giấu và <b>{next}</b> đoán.",
+      "doubleSpark": "Lá Đọc vị tiếp theo: đoán trúng được <b>+2 Spark</b> thay vì +1. Đoán trật thì mất phần thưởng.",
+      "alreadyPending": "Bẻ lái này đã chờ sẵn, nên chỉ tính một lần. Không cộng dồn.",
+      "pendingNote": "Chỉ có hiệu lực khi cả hai cùng chạm Kích hoạt. Ai cũng có thể bỏ qua."
+    }
+  },
+  "twists": {
+    "ROLE_REVERSAL": {
+      "title": "Đảo vai",
+      "effect": "Ở lá Đọc vị tiếp theo, người lẽ ra sẽ đoán phải giấu đáp án.",
+      "applied": "Đã chốt. Lá Đọc vị tiếp theo sẽ đổi vai."
+    },
+    "DOUBLE_SPARK": {
+      "title": "Spark nhân đôi",
+      "effect": "Lần đoán trúng tiếp theo ở lá Đọc vị được gấp đôi Spark. Đoán trật thì mất phần thưởng.",
+      "applied": "Đã chốt. Lá Đọc vị tiếp theo có giá gấp đôi."
+    },
+    "FRESH_START": {
+      "title": "Làm lại từ đầu",
+      "effect": "Xoá mọi bẻ lái đang chờ.",
+      "applied": "Mọi bẻ lái đang chờ đã được xoá."
+    }
+  },
+  "pools": {
+    "correctGuesser": [
+      "Bắt bài được rồi!",
+      "Nắm thóp người ấy rồi.",
+      "Đọc vị chuẩn đấy!",
+      "Có người để ý kỹ ghê."
+    ],
+    "correctHolder": [
+      "Lộ bí mật rồi nhé!",
+      "Bị tóm đuôi rồi nhé.",
+      "Lộ liễu quá. Mà dễ thương.",
+      "Chẳng giấu được gì với người ấy."
+    ],
+    "wrongGuesser": [
+      "Đoán trật rồi nhé!",
+      "Mèo này chưa đủ tinh đâu!",
+      "Vẫn còn nhiều điều để khám phá.",
+      "Không ngờ tới phải không?"
+    ],
+    "wrongHolder": [
+      "Vẫn là một bí ẩn.",
+      "Mèo tinh ranh, vẫn kín bưng.",
+      "Bí ẩn rất hợp với bạn.",
+      "Người ấy không ngờ tới đâu."
+    ],
+    "chemistryDone": [
+      "Đúng là có lửa.",
+      "Nhiệt độ vừa tăng lên.",
+      "Nghe như có tiếng gừ gừ đâu đây."
+    ],
+    "chemistryDeclined": [
+      "Không sao, bỏ qua nhé.",
+      "Để dành cho đêm khác.",
+      "Bạn quyết định. Luôn luôn."
+    ],
+    "chemistryStopped": [
+      "Đã dừng. Không sao, không mất điểm.",
+      "Tạm dừng. Đêm khác làm tiếp."
+    ],
+    "mutualYes": [
+      "Cả hai cùng muốn.",
+      "Đúng là bạc hà mèo của nhau.",
+      "Ồ hô. Cả hai đều muốn đấy."
+    ],
+    "mutualNo": [
+      "Bí mật vẫn an toàn.",
+      "Giữ kín và quên đi.",
+      "Không lộ gì. Không nợ gì."
+    ],
+    "skipped": [
+      "Đã bỏ qua. Không bị phạt.",
+      "Lá tiếp theo nào.",
+      "Không phải lá này. Đi tiếp."
+    ]
+  },
+  "actions": {
+    "next": "Chơi tiếp nào",
+    "nextLoading": "Đang chia lá tiếp theo…",
+    "results": "Xem cả hai khám phá được gì",
+    "resultsLoading": "Đang đếm Spark…",
+    "skip": "Bỏ qua",
+    "skipping": "Đang bỏ qua…",
+    "lockIt": "Chốt lựa chọn",
+    "lockingIt": "Đang chốt…",
+    "noteChoose": "Chọn đáp án của bạn. Nó sẽ được giấu kín.",
+    "noteHidden": "{name} sẽ không thấy cho tới khi đoán.",
+    "waitHiding": "{name} đang giấu đáp án…",
+    "notePower": "Bật Lá quyền năng ngay nếu muốn có lợi thế.",
+    "lockGuess": "Chốt đáp án · +{count}",
+    "lockingGuess": "Đang đọc vị…",
+    "noteSecondChance": "Vẫn còn một mạng! Lần đầu trật rồi, đáp án đó đã bị gạch. Cơ hội thứ hai cho bạn đoán lại.",
+    "noteGuess": "Chọn đáp án bạn nghĩ {name} đã giấu.",
+    "waitReading": "{name} đang đọc vị bạn…",
+    "payUp": "Tôi chịu phạt",
+    "collect": "Đòi phạt",
+    "sendingAnswer": "Đang gửi câu trả lời…",
+    "pass": "Bỏ qua",
+    "letItSlide": "Cho qua",
+    "passing": "Đang bỏ qua…",
+    "waitForfeit": "Bạn đã trả lời. Giờ tới lượt {name} quyết định.",
+    "doneNext": "Xong · chơi tiếp",
+    "doneResults": "Xong · xem kết quả",
+    "notePayer": "Chịu phạt nhé. Làm xong thì đi tiếp.",
+    "noteCollector": "{name} nợ bạn một thử thách. Đòi xong thì đi tiếp.",
+    "stop": "Dừng lại",
+    "stopping": "Đang dừng…",
+    "into": "Tôi đồng ý",
+    "notTonight": "Để lúc khác nhé",
+    "changedMind": "Tôi đổi ý",
+    "withdrawing": "Đang rút lại…",
+    "waitConsent": "Bạn đã đồng ý. Giờ tới lượt {name} quyết định.",
+    "waitStart": "Bạn đã sẵn sàng. Đang chờ {name} bấm Bắt đầu.",
+    "start": "Bắt đầu",
+    "starting": "Đang bắt đầu…",
+    "didIt": "Đã hoàn thành",
+    "confirming": "Đang xác nhận…",
+    "noteDidIt": "Chỉ xác nhận khi đã thực sự làm xong.",
+    "waitCompletion": "Bạn đã xác nhận xong. Giờ chờ {name} xác nhận.",
+    "waitSealed": "Đã giữ kín. Giờ tới lượt {name} chọn.",
+    "seal": "Giữ kín lựa chọn",
+    "sealing": "Đang giữ kín…",
+    "noteSealChosen": "Chỉ bật mí khi cả hai cùng chọn Có.",
+    "noteSeal": "Chọn Có, Có thể hoặc Không. Chỉ bật mí khi cả hai cùng chọn Có.",
+    "skipTwist": "Bỏ qua bẻ lái",
+    "waitTwist": "Bạn đã kích hoạt. Giờ chờ {name} kích hoạt.",
+    "activate": "Kích hoạt bẻ lái",
+    "activating": "Đang kích hoạt…"
+  },
+  "verdict": {
+    "eyebrow": "{name} báo đã xong nhiệm vụ bí mật",
+    "title": "Đã xảy ra chưa?",
+    "body": "Đúng: {name} nhận một Lá quyền năng. Chưa đâu: nhiệm vụ vẫn bí mật và người ấy có thể thử tiếp. Không ai bị phạt.",
+    "notYet": "Chưa đâu",
+    "yes": "Đúng là đã làm",
+    "sending": "Đang gửi…",
+    "confirming": "Đang xác nhận…",
+    "later": "Để sau"
+  },
+  "reward": {
+    "eyebrow": "Mèo nằm vùng lập công!",
+    "titleFull": "Hết chỗ rồi",
+    "title": "Thêm một móng vuốt",
+    "full": "Người ấy đã xác nhận, nhưng bạn đang giữ đủ {limit} Lá quyền năng nên lần này không có lá mới. Dùng bớt một lá để có chỗ.",
+    "played": "Lá quyền năng của bạn đã được dùng.",
+    "keepPlaying": "Chơi tiếp",
+    "viewPowers": "Xem Lá quyền năng"
+  },
+  "powers": {
+    "eyebrow": "Lá quyền năng · {count}/{limit}",
+    "title": "Móng vuốt giấu kín",
+    "emptyTitle": "Chưa có Lá quyền năng nào.",
+    "emptyBody": "Hoàn thành một Nhiệm vụ bí mật và được người ấy xác nhận. Mỗi nhiệm vụ được xác nhận mang về một lá. Bạn giữ được tối đa {limit} lá.",
+    "armed": "Đã bật · có hiệu lực khi bạn đoán",
+    "saveForLater": "Để dành",
+    "playing": "Đang dùng…",
+    "use": "Dùng lá quyền năng",
+    "footer": "Lá quyền năng chỉ tác động tới lượt Đọc vị. Chúng không bao giờ làm lộ đáp án đang giấu và không bao giờ bỏ qua bước đồng ý.",
+    "kinds": {
+      "SECOND_CHANCE": {
+        "alias": "Vẫn còn một mạng!",
+        "title": "Cơ hội thứ hai",
+        "description": "Nếu lần đoán tới bị trật, đáp án sai sẽ bị gạch và bạn được đoán lại. Đoán trúng ngay thì vẫn giữ lá.",
+        "requirement": "Chỉ người đoán · bật trước khi đoán",
+        "useNow": "Bật lá này",
+        "confirm": "Có hiệu lực tới lúc bạn đoán ở vòng này. Chỉ mất lá nếu lần đoán đầu bị trật."
+      },
+      "ROLE_REVERSAL": {
+        "alias": "Giấu vuốt đủ rồi!",
+        "title": "Đảo vai",
+        "description": "Đổi người giấu và người đoán ngay ở lá Đọc vị này. Có hiệu lực lập tức.",
+        "requirement": "Ai cũng dùng được · trước khi đáp án bị chốt",
+        "useNow": "Đổi vai ngay",
+        "confirm": "Có hiệu lực lập tức và mất lá. Các lá đang bật sẽ quay về tay bạn."
+      },
+      "DOUBLE_SPARK": {
+        "alias": "Rắc rối nhân đôi!",
+        "title": "Spark nhân đôi",
+        "description": "Nhân đôi Spark ở lần đoán trúng Đọc vị tiếp theo. Đoán trật thì mất lá mà không được gì.",
+        "requirement": "Chỉ người đoán · bật trước khi đoán",
+        "useNow": "Bật lá này",
+        "confirm": "Có hiệu lực tới lúc bạn đoán ở vòng này. Đoán trật thì mất lá mà không được gì."
+      }
+    },
+    "reasons": {
+      "armed": "Đã bật. Sẽ có hiệu lực khi bạn chốt đáp án ở vòng này.",
+      "phase": "Lá quyền năng dùng trong các lượt Đọc vị.",
+      "notMindReader": "Để dành nhé. Lá quyền năng chỉ dùng được ở lá Đọc vị.",
+      "tooLateSecret": "Muộn rồi. Phải dùng trước khi đáp án bí mật bị chốt.",
+      "alreadySwapped": "Vòng này đã đổi vai rồi.",
+      "tooLateGuess": "Muộn rồi. Đáp án đoán đã được chốt.",
+      "guesserOnly": "Chỉ người đoán mới dùng được. Đợi tới lượt bạn đọc vị.",
+      "secondChanceLive": "Cơ hội thứ hai của bạn đang có hiệu lực.",
+      "oneArmed": "Đã có một lá loại này đang bật."
+    }
+  },
+  "onboarding": {
+    "steps": [
+      {
+        "title": "Giấu. Rồi đọc vị.",
+        "lines": [
+          "Ở lá Đọc vị, một người bí mật chọn đáp án, người kia đoán.",
+          "Đoán trúng: +1 Spark. Đoán trật: không có Spark, kèm một thử thách tuỳ chọn mà cả hai phải cùng đồng ý.",
+          "Hai người đổi vai sau mỗi lá Đọc vị."
+        ]
+      },
+      {
+        "title": "Tương tác cần hai cái gật đầu.",
+        "lines": [
+          "Lá Tương tác là những hành động thật. Mỗi người trả lời riêng.",
+          "Chỉ khi cả hai cùng đồng ý mới bắt đầu. Làm xong, mỗi người chạm “Đã hoàn thành”: mỗi người +1 Spark.",
+          "Ai cũng có thể từ chối hoặc dừng bất cứ lúc nào. Không mất gì cả."
+        ]
+      },
+      {
+        "title": "Mèo nằm vùng.",
+        "lines": [
+          "Mỗi người có một Nhiệm vụ bí mật riêng. Chạm vào ổ khoá phía trên để xem.",
+          "Khiến nó xảy ra thật tự nhiên, rồi báo hoàn thành. Người ấy sẽ thấy nhiệm vụ và xác nhận.",
+          "Nhiệm vụ được xác nhận mang về Lá quyền năng: Spark nhân đôi, Cơ hội thứ hai, Đảo vai. Tìm chúng ở mục “Quyền năng”."
+        ]
+      },
+      {
+        "title": "Bẻ lái & mong muốn.",
+        "lines": [
+          "Bẻ lái thay đổi lá Đọc vị tiếp theo, ví dụ đổi vai hoặc nhân đôi Spark. Cả hai cùng kích hoạt.",
+          "Lá Mong muốn chung là lựa chọn riêng Có/Có thể/Không. Chỉ bật mí khi cả hai cùng chọn Có."
+        ]
+      },
+      {
+        "title": "Bỏ qua thoải mái.",
+        "lines": [
+          "Lá nào cũng có nút Bỏ qua, và bỏ qua không bao giờ mất Spark.",
+          "Lá bài không bao giờ vượt quá độ nóng chủ phòng đã chọn."
+        ]
+      }
+    ],
+    "rulesHeat": "Độ nóng đêm nay: {heat} (do chủ phòng chọn)",
+    "heat": "Độ nóng đêm nay: {heat}",
+    "doneTitle": "Bạn đã sẵn sàng.",
+    "doneBody": "{name} vẫn đang đọc luật. Lá đầu tiên sẽ được chia ngay khi người ấy sẵn sàng.",
+    "label": "Cách chơi",
+    "step": "{current}/{total}",
+    "partnerIn": "{name} đã sẵn sàng, và đang sốt ruột lắm rồi.",
+    "back": "Quay lại",
+    "next": "Tiếp",
+    "deal": "Sẵn sàng, chia bài",
+    "dealing": "Đang chia bài…",
+    "skip": "Bỏ qua phần hướng dẫn",
+    "sheetEyebrow": "Read My Mind",
+    "sheetTitle": "Cách chơi"
+  },
+  "results": {
+    "headlineWin": "Bạn đọc vị giỏi hơn.",
+    "headlineLose": "{name} đọc vị bạn giỏi hơn.",
+    "headlineZero": "Toàn bí ẩn, chẳng ai đọc vị được ai.",
+    "headlineTie": "Hai con mèo, chung một ý.",
+    "eyebrow": "Hết ván · {count} Spark giữa hai người",
+    "you": "Bạn",
+    "sparks": "Spark",
+    "mindsRead": "Đọc vị trúng",
+    "missions": "Nhiệm vụ",
+    "chemistry": "Cùng nhau hoàn thành {count} thử thách Tương tác.",
+    "noChemistry": "Tối nay chưa có thử thách Tương tác nào, vậy cũng chẳng sao.",
+    "hostAction": "Trở về phòng riêng",
+    "returning": "Đang quay về…",
+    "waiting": "Một chút nữa thôi… Chủ phòng sẽ đưa cả hai về phòng riêng.",
+    "exit": "Về màn hình chính"
+  }
+}

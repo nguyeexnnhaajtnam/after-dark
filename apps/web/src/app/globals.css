@@ -1,0 +1,239 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+:root{color-scheme:dark;--obsidian:#151515;--ivory:#F7F3EC;--crimson:#C81932;--pink:#F06292;--plum:#692345;
+ --ground-read-my-mind:#C81932;--ground-dare-me:#3A3A3A;--ground-no-secrets:#692345;--ground-take-control:#5C1A2B;--ground-lucky-tonight:#B0205F;
+ --ease-snap:cubic-bezier(.2,.8,.2,1);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px)}
+/* Fonts (Anton & Be Vietnam Pro, SIL OFL), self-hosted from public/fonts. Each typeface is ONE family whose Latin and
+   Vietnamese subsets are split by unicode-range, exactly as the foundry serves them: loading the subsets as separate families
+   breaks Anton's mark positioning (Ế would read as Ệ). Display text blocks briefly rather than flashing a system face that
+   cannot set Vietnamese; body text swaps. */
+@font-face{font-family:'AD Display';font-style:normal;font-weight:400;font-display:block;src:url('/fonts/anton-400-vietnamese.woff2') format('woff2');unicode-range:U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB}
+@font-face{font-family:'AD Display';font-style:normal;font-weight:400;font-display:block;src:url('/fonts/anton-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/bevietnampro-400-vietnamese.woff2') format('woff2');unicode-range:U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/bevietnampro-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/bevietnampro-500-vietnamese.woff2') format('woff2');unicode-range:U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/bevietnampro-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/bevietnampro-600-vietnamese.woff2') format('woff2');unicode-range:U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/bevietnampro-600-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/bevietnampro-700-vietnamese.woff2') format('woff2');unicode-range:U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB}
+@font-face{font-family:'AD Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/bevietnampro-700-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+:root{--font-display:'AD Display';--font-sans:'AD Sans'}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100svh;background:var(--obsidian);color:var(--ivory);font-family:var(--font-sans),system-ui,sans-serif;overflow-x:hidden}
+button,input{font:inherit}button{touch-action:manipulation;cursor:pointer}button:disabled{cursor:not-allowed}input{font-size:16px}
+.display{font-family:var(--font-display),Impact,sans-serif;text-transform:uppercase;line-height:.95;letter-spacing:.01em}
+/* Vietnamese stacks marks above capitals (Ế, Ở, Ữ). Open the line box so they never collide or get clipped.
+   Brand wordmarks carry lang="en" and keep their tight setting. */
+:lang(vi) .display{line-height:1.16}
+:lang(vi) .game-card-title{line-height:1.18}
+:lang(vi) .display.truncate,:lang(vi) .truncate.display{padding-block:.08em}
+/* Label boxes clip overflow for long text, so they get room for diacritics in every language. */
+.cta-label{padding-block:.22em}
+/* Heat stop names wrap onto two centred lines instead of colliding (Ngọt ngào, Cuồng nhiệt). */
+.heat-stop-label{display:block;max-width:100%;padding-inline:2px;text-align:center;line-height:1.25;overflow-wrap:anywhere}
+:lang(vi) .heat-stop-label{letter-spacing:.06em}
+
+/* Language switcher: segmented in roomy headers, one compact toggle in tight bars. Both keep a 44px touch target. */
+.lang-switch{display:inline-flex;align-items:center;gap:2px;padding:2px;border:2px solid rgba(247,243,236,.28);border-radius:999px}
+.lang-option{position:relative;min-width:36px;height:28px;padding:0 .5rem;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(247,243,236,.75);transition:background-color .2s,color .2s}
+.lang-option:hover{color:var(--ivory)}
+.lang-option[aria-checked=true]{background:var(--ivory);color:var(--obsidian)}
+.lang-option:after,.lang-toggle:after{content:"";position:absolute;inset:-8px -2px}
+.lang-toggle{position:relative;display:inline-flex;flex-shrink:0;align-items:center;gap:.3rem;height:32px;padding:0 .55rem;border:2px solid rgba(247,243,236,.22);border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ivory);transition:border-color .2s}
+.lang-toggle:hover{border-color:var(--pink)}
+.lang-toggle svg{width:14px;height:14px}
+@media (max-width:399px){.lang-toggle{padding:0 .5rem}.lang-toggle svg{display:none}}
+.focus-ring:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+
+/* ── CTA system ──────────────────────────────────────────────────────────────
+   One interaction language, applied by components/ui/*. Hierarchy:
+   primary (crimson, the main attraction) › secondary (plum surface, the invitation) › ghost (the quiet move);
+   danger (call it a night), utility (HUD toggles), marquee (ivory, title screen only),
+   choice (answer surfaces, styled like the cards) and icon buttons. */
+:root{--cta-r-lg:14px;--cta-r-md:12px;--cta-r-sm:10px;--cta-h-lg:56px;--cta-h-md:46px;--cta-h-sm:36px;--crimson-deep:#6B0B19;--plum-surface:#2A1420;--plum-surface-hi:#3B1B2D}
+.cta{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.55rem;min-width:0;white-space:nowrap;text-decoration:none;user-select:none;-webkit-tap-highlight-color:transparent;border:1.5px solid transparent;transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .12s ease,transform .1s var(--ease-snap)}
+.cta:focus-visible,.icon-btn:focus-visible,.choice:focus-visible{outline:2.5px solid var(--pink);outline-offset:3px}
+.cta-label{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cta svg{width:18px;height:18px;flex-shrink:0}
+.cta-lg{min-height:var(--cta-h-lg);padding:0 1.4rem;border-radius:var(--cta-r-lg);font-family:var(--font-display),Impact,sans-serif;font-size:clamp(17px,4.9vw,21px);letter-spacing:.045em;text-transform:uppercase;line-height:1}
+.cta-md{min-height:var(--cta-h-md);padding:0 1.1rem;border-radius:var(--cta-r-md);font-family:var(--font-display),Impact,sans-serif;font-size:17px;letter-spacing:.045em;text-transform:uppercase;line-height:1}
+.cta-sm{min-height:var(--cta-h-sm);padding:0 .8rem;border-radius:var(--cta-r-sm);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1}
+.cta-sm svg{width:16px;height:16px}
+/* Compact controls keep a 44px touch target without looking bulky. */
+.cta-sm:after,.icon-btn-sm:after{content:"";position:absolute;inset:-5px -3px}
+
+.cta-primary{color:var(--ivory);background:linear-gradient(180deg,#D8233F 0%,#C81932 55%,#B11329 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 4px 0 var(--crimson-deep),0 12px 24px -14px rgba(200,25,50,.8)}
+.cta-primary:not(:disabled):hover{background:linear-gradient(180deg,#E52C49 0%,#D21E38 55%,#B9162D 100%)}
+.cta-primary:not(:disabled):active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 0 var(--crimson-deep)}
+.cta-marquee{color:var(--obsidian);background:var(--ivory);border-radius:999px;box-shadow:0 6px 0 #000}
+.cta-marquee:not(:disabled):hover{background:var(--pink)}
+.cta-marquee:not(:disabled):active{transform:translateY(5px);box-shadow:0 1px 0 #000}
+.cta-secondary{color:var(--ivory);background:var(--plum-surface);border-color:rgba(240,98,146,.45);box-shadow:0 3px 0 #0B0B0B}
+.cta-secondary:not(:disabled):hover{background:var(--plum-surface-hi);border-color:var(--pink)}
+.cta-secondary:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #0B0B0B}
+.cta-secondary.on-light{color:var(--obsidian);background:rgba(105,35,69,.07);border-color:rgba(105,35,69,.45);box-shadow:0 3px 0 rgba(21,21,21,.14)}
+.cta-secondary.on-light:not(:disabled):hover{background:rgba(105,35,69,.13);border-color:var(--plum)}
+.cta-ghost{color:rgba(247,243,236,.9);background:transparent;font-family:var(--font-sans),system-ui,sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline 2px transparent;text-underline-offset:6px}
+.cta-ghost:not(:disabled):hover{color:var(--ivory);text-decoration-color:var(--pink);background:rgba(247,243,236,.06)}
+.cta-ghost:not(:disabled):active{background:rgba(247,243,236,.1);transform:translateY(1px)}
+.cta-ghost.on-light{color:rgba(21,21,21,.82)}
+.cta-ghost.on-light:not(:disabled):hover{color:var(--obsidian);text-decoration-color:var(--crimson);background:rgba(21,21,21,.05)}
+.cta-danger{color:#FF8A9C;background:rgba(200,25,50,.12);border-color:rgba(200,25,50,.7);font-family:var(--font-sans),system-ui,sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.cta-danger:not(:disabled):hover{color:var(--ivory);background:rgba(200,25,50,.28)}
+.cta-danger:not(:disabled):active{transform:translateY(1px)}
+.cta-danger.on-light{color:#A3122A;background:rgba(200,25,50,.07);border-color:rgba(200,25,50,.55)}
+.cta-danger.on-light:not(:disabled):hover{color:var(--ivory);background:var(--crimson)}
+.cta-utility{color:var(--ivory);background:#1E1E1E;border-color:rgba(247,243,236,.22);font-family:var(--font-sans),system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:none}
+.cta-utility:not(:disabled):hover{border-color:rgba(247,243,236,.55)}
+.cta-utility:not(:disabled):active{transform:translateY(1px)}
+.cta-utility[aria-expanded="true"],.cta-utility[data-active="true"]{border-color:var(--pink);background:var(--plum-surface)}
+/* Disabled reads as "not yet", not as broken: a dashed, quiet surface at full legibility. */
+.cta:disabled:not([data-loading]){color:rgba(247,243,236,.55);background:#1D1A1B;border:1.5px dashed rgba(247,243,236,.24);box-shadow:none;transform:none;text-decoration:none}
+.cta.on-light:disabled:not([data-loading]){color:rgba(21,21,21,.5);background:rgba(21,21,21,.04);border-color:rgba(21,21,21,.22)}
+.cta-ghost:disabled:not([data-loading]){background:transparent;border-color:transparent;color:rgba(247,243,236,.42)}
+.cta[data-loading]{cursor:progress}
+.cta[data-success]{border-color:var(--ivory)}
+.cta[data-success].on-light{border-color:var(--obsidian)}
+.cta-spinner,.wait-spinner{width:16px;height:16px;flex-shrink:0;border-radius:999px;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Waiting is information, not an action: no surface, no border. */
+.wait-status{display:flex;align-items:center;justify-content:center;gap:.6rem;min-height:var(--cta-h-md);padding:0 .5rem;font-size:13.5px;font-weight:500;color:rgba(247,243,236,.85);text-align:center}
+.wait-status .wait-spinner{color:var(--pink);width:14px;height:14px}
+
+/* Gameplay actions follow short cards instead of creating an empty full-screen spacer.
+   On compact/short screens they remain reachable at the viewport edge while the page scrolls. */
+.gameplay-shell{display:flex;min-height:100dvh;flex-direction:column}
+.gameplay-shell>header:first-child{margin-top:auto}
+.game-action-bar{position:sticky;z-index:20;bottom:0}
+.gameplay-shell>.game-action-bar{margin-bottom:auto}
+@media (min-width:640px){.game-action-bar{width:min(100%,536px);margin-inline:auto;border:1px solid rgba(247,243,236,.1);border-bottom:0;border-radius:14px 14px 0 0}}
+
+.icon-btn{position:relative;display:inline-grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:var(--cta-r-md);border:1.5px solid rgba(247,243,236,.28);background:var(--obsidian);color:var(--ivory);transition:border-color .18s,background .18s,transform .1s var(--ease-snap)}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn-sm{width:36px;height:36px;border-radius:var(--cta-r-sm)}
+.icon-btn-sm svg{width:16px;height:16px}
+.hud-help{width:32px;height:32px}
+.icon-btn.round{border-radius:999px;border-width:2px;border-color:var(--ivory)}
+.icon-btn:not(:disabled):hover{border-color:var(--ivory);background:#262626}
+.icon-btn.round:not(:disabled):hover{background:var(--ivory);color:var(--obsidian)}
+.icon-btn:not(:disabled):active{transform:translateY(1px) scale(.96)}
+.icon-btn[aria-pressed="true"]{border-color:var(--pink)}
+.icon-btn.on-light{background:transparent;color:var(--obsidian);border-color:rgba(21,21,21,.22)}
+.icon-btn.on-light:not(:disabled):hover{border-color:var(--obsidian);background:rgba(21,21,21,.05)}
+.icon-btn:disabled{opacity:1;color:rgba(247,243,236,.4);border-style:dashed}
+
+/* Choices: card-like answer surfaces. Selected (local, not sent) is an outline; locked (accepted by the server) is solid. */
+.choice{display:flex;width:100%;align-items:center;gap:.75rem;min-height:54px;padding:.65rem .85rem;border-radius:11px;border:1.5px solid rgba(21,21,21,.2);background:rgba(255,255,255,.18);color:var(--obsidian);text-align:left;font-size:14.5px;font-weight:600;line-height:1.35;transition:border-color .15s,background .15s,color .15s,transform .12s var(--ease-snap),box-shadow .15s}
+.choice:not(:disabled):hover{border-color:var(--obsidian)}
+.choice:not(:disabled):active{transform:scale(.985)}
+.choice[aria-checked="true"]{border-color:var(--crimson);background:rgba(200,25,50,.07);box-shadow:inset 0 0 0 1px var(--crimson)}
+.choice[data-state="locked"]{border-color:var(--obsidian);background:var(--obsidian);color:var(--ivory);box-shadow:none}
+.choice[data-state="crossed"]{border-style:dashed;border-color:rgba(21,21,21,.18);color:rgba(21,21,21,.42);text-decoration:line-through}
+.choice:disabled:not([data-state]){border-color:rgba(21,21,21,.1);color:rgba(21,21,21,.6)}
+.choice-key{display:grid;place-items:center;width:28px;height:28px;flex-shrink:0;border-radius:7px;background:rgba(21,21,21,.07);font-family:var(--font-display),Impact,sans-serif;font-size:14px;transition:background .15s,color .15s}
+.choice[aria-checked="true"] .choice-key{background:var(--crimson);color:var(--ivory)}
+.choice[data-state="locked"] .choice-key{background:var(--ivory);color:var(--obsidian)}
+.choice-tag{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:.3rem;font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.choice-tile{justify-content:center;min-height:60px;font-family:var(--font-display),Impact,sans-serif;font-size:21px;letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.choice-tile[aria-checked="true"]{background:var(--crimson);color:var(--ivory)}
+
+.meta-pill{display:inline-flex;align-items:center;gap:.45rem;height:32px;border:2px solid var(--ivory);border-radius:999px;padding:0 .85rem;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.heat-fill{transition:clip-path .45s var(--ease-snap),height .45s var(--ease-snap)}
+.heat-thumb{transition:left .45s var(--ease-snap),background-color .45s var(--ease-snap)}
+.heat-flame{transition:width .45s var(--ease-snap),height .45s var(--ease-snap)}
+.pill-outline{display:inline-flex;align-items:center;gap:.4rem;border:2px solid currentColor;border-radius:999px;padding:.3rem .8rem;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.2}
+
+/* Cards: 2:3, ivory frame, deep drop shadow. */
+.card-frame{background:var(--ivory);padding:9px;border-radius:15px;box-shadow:0 22px 40px rgba(0,0,0,.55),0 6px 0 rgba(0,0,0,.35)}
+.card-art{position:relative;overflow:hidden;border-radius:8px;background:var(--plum)}
+/* The artwork ships with its own white border, so it is scaled slightly to sit inside our frame instead. */
+.card-art img{object-fit:cover;transform:scale(1.07)}
+.pinstripes{background-color:var(--obsidian);background-image:repeating-linear-gradient(135deg,transparent 0 9px,var(--crimson) 9px 11px)}
+
+/* In-game card typography sized to the card, not the viewport. */
+.play-card{container-type:inline-size;overflow:hidden}
+.play-card-header{margin:0;padding:.15rem .5rem 0}
+.card-masthead{display:flex;align-items:center;gap:.5rem;padding:.55rem 0 .45rem;color:var(--crimson)}
+.card-masthead-index{font-size:9px;font-weight:700;letter-spacing:.16em}
+.card-masthead-index:after{content:"/";margin-left:.45rem;color:rgba(21,21,21,.3)}
+.card-masthead-category{display:flex;min-width:0;align-items:center;gap:.4rem;font-size:9.5px;font-weight:700;line-height:1.3;text-transform:uppercase;letter-spacing:.17em}
+.card-masthead-category svg{width:12px;height:12px;flex:none;color:currentColor}
+.card-masthead[data-tone="pink"] .card-masthead-category svg{color:#B0205F}.card-masthead[data-tone="plum"] .card-masthead-category svg{color:var(--plum)}.card-masthead[data-tone="ink"] .card-masthead-category svg{color:var(--obsidian)}
+.card-role-context{margin:.15rem 0 0;padding:.15rem .25rem .1rem}
+.card-role-title{font-size:11px;font-weight:700;line-height:1.4;letter-spacing:.16em;text-transform:uppercase;color:var(--crimson)}
+.card-role-body{margin-top:.25rem;font-size:13px;line-height:1.55;color:rgba(21,21,21,.64)}
+.card-editorial-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-top:.85rem;padding:.65rem .1rem .1rem;border-top:1px solid rgba(21,21,21,.12)}
+.card-editorial-footer>p:first-child{margin-top:0;max-width:70%}
+.card-stake{flex:none;font-size:9px;font-weight:700;line-height:1.4;letter-spacing:.1em;text-align:right;text-transform:uppercase;color:var(--crimson)}
+.chem-phase-caption{display:grid;grid-template-columns:18px minmax(0,1fr);gap:.65rem;align-items:start;padding:.3rem .2rem .55rem;animation:chem-phase-in .26s var(--ease-silk) both}
+.chem-phase-icon{width:16px;height:16px;margin-top:.1rem;color:var(--crimson)}
+.chem-phase-title{font-size:11px;font-weight:700;line-height:1.35;letter-spacing:.14em;text-transform:uppercase;color:var(--crimson)}
+.chem-phase-description{margin-top:.2rem;font-size:13px;line-height:1.55;color:rgba(21,21,21,.68)}
+@keyframes chem-phase-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.mission-panel{position:relative;overflow:hidden;border:1px solid rgba(240,98,146,.34);border-radius:4px 16px 16px 16px;background:linear-gradient(145deg,rgba(105,35,69,.82),rgba(42,20,32,.94));box-shadow:inset 3px 0 0 var(--pink),0 12px 30px rgba(0,0,0,.24)}
+.game-card-title{font-family:var(--font-display),Impact,sans-serif;text-transform:uppercase;font-size:clamp(1.45rem,7.5cqi,2.25rem);line-height:1.08;overflow-wrap:break-word;hyphens:auto;text-wrap:balance}
+.game-card-title[data-length="long"]{font-size:clamp(1.3rem,6.6cqi,1.9rem);line-height:1.1}
+.game-card-title[data-length="xlong"]{font-size:clamp(1.16rem,5.8cqi,1.65rem);line-height:1.14}
+@media (max-width:380px){.card-editorial-footer{display:block}.card-editorial-footer>p:first-child{max-width:none}.card-stake{margin-top:.45rem;text-align:left}}
+
+@keyframes hint-pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.hint-pulse{animation:hint-pulse 1.6s ease-in-out infinite}
+@keyframes pop-in{from{transform:scale(.85) translateY(12px);opacity:0}to{transform:none;opacity:1}}
+.pop-in{animation:pop-in .35s var(--ease-snap) both}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px) rotate(-1deg)}75%{transform:translateX(6px) rotate(1deg)}}
+.shake{animation:shake .35s ease-in-out}
+/* ── Branded event motion ─────────────────────────────────────────────────────────────────────────────────────────────
+   One-shot primitives for big moments. Each plays when its element mounts (key an element to replay it), never blocks
+   input (overlays are pointer-events:none), animates only opacity/transform/clip-path/box-shadow, and collapses to the
+   final state under prefers-reduced-motion. Timings: micro 120–220ms · flash 180–300ms · panel 350–550ms · headline 500–900ms. */
+:root{--ease-silk:cubic-bezier(.22,.61,.36,1);--ease-reveal:cubic-bezier(.16,1,.3,1);--fx-ember:rgba(200,25,50,.55);--fx-rose:rgba(240,98,146,.5);--fx-plum:rgba(105,35,69,.45)}
+/* softFlash: a warm wash over the surface it sits in (the parent needs position:relative). */
+.fx-flash{position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:inherit;opacity:0;background:radial-gradient(120% 90% at 50% 0%,var(--fx-tone,var(--fx-ember)),transparent 70%);animation:fx-flash .28s var(--ease-silk) both}
+.fx-flash[data-tone="rose"]{--fx-tone:var(--fx-rose)}.fx-flash[data-tone="plum"]{--fx-tone:var(--fx-plum)}
+@keyframes fx-flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+/* emberSweep: a thin band of light that crosses a panel once. */
+.fx-ember-sweep{position:relative;overflow:hidden;isolation:isolate}
+.fx-ember-sweep::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(100deg,transparent 30%,rgba(240,98,146,.28) 46%,rgba(247,243,236,.35) 50%,rgba(240,98,146,.28) 54%,transparent 70%);transform:translateX(-110%);animation:fx-sweep .8s var(--ease-silk) .12s both}
+@keyframes fx-sweep{to{transform:translateX(110%)}}
+/* cardLift: panels arrive with a fade and a slight rise. */
+.fx-card-lift{animation:fx-lift .45s var(--ease-reveal) var(--fx-delay,0s) both}
+@keyframes fx-lift{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* rewardGlow: an ember halo that blooms once and settles to a faint warmth. */
+.fx-reward-glow{animation:fx-glow .9s var(--ease-silk) var(--fx-delay,.1s) both}
+@keyframes fx-glow{0%{box-shadow:0 0 0 0 rgba(200,25,50,0)}40%{box-shadow:0 0 0 3px rgba(240,98,146,.55),0 10px 34px rgba(200,25,50,.45)}100%{box-shadow:0 0 0 1px rgba(240,98,146,.3),0 8px 24px rgba(200,25,50,.18)}}
+/* headlineReveal: event headlines unveil left to right while their tracking settles. Soft variant for quieter moments. */
+.fx-headline{animation:fx-headline .7s var(--ease-reveal) both}
+/* Negative insets keep the clip clear of stacked Vietnamese marks above and below the line box. */
+@keyframes fx-headline{from{clip-path:inset(-.5em 100% -.5em -.5em);letter-spacing:.06em;opacity:.4}to{clip-path:inset(-.5em -.5em -.5em -.5em);letter-spacing:.01em;opacity:1}}
+.fx-headline-soft{animation:fx-headline-soft .55s var(--ease-silk) both}
+@keyframes fx-headline-soft{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* sparkTick: a short lift for a number or chip that just went up. */
+.fx-spark-tick{display:inline-block;animation:fx-tick .22s var(--ease-snap) both}
+@keyframes fx-tick{0%{transform:scale(1)}50%{transform:scale(1.28);color:var(--pink)}100%{transform:scale(1)}}
+/* The hidden answer when it is read correctly, and a primary CTA that just became the next move. */
+.fx-answer-hit{animation:fx-answer .6s var(--ease-silk) .15s both}
+@keyframes fx-answer{0%{box-shadow:0 0 0 0 rgba(240,98,146,0)}45%{box-shadow:0 0 0 4px rgba(240,98,146,.5)}100%{box-shadow:0 0 0 0 rgba(240,98,146,0)}}
+.fx-cta-attention{animation:fx-cta 1.1s var(--ease-silk) .45s both}
+@keyframes fx-cta{0%,100%{box-shadow:0 0 0 0 rgba(240,98,146,0)}50%{box-shadow:0 0 0 4px rgba(240,98,146,.35),0 0 22px rgba(200,25,50,.45)}}
+
+/* Chemistry countdown: the ring drains smoothly between ticks; at 00:00 the panel takes one soft crimson glow, never an alarm. */
+.chem-timer-ring{transition:stroke-dashoffset .25s linear}
+.chem-timer-expired{animation:fx-glow .9s var(--ease-silk) both}
+
+/* signalWave: the chemistry-signal presence bars. Live bars breathe in sequence every few seconds; searching bars chase. */
+.signal{display:inline-flex;align-items:flex-end;gap:2px;height:13px;flex-shrink:0}
+.signal-bar{width:3px;border-radius:1.5px;background:rgba(247,243,236,.2);transition:background-color .3s var(--ease-silk)}
+.signal-bar:nth-child(1){height:30%}.signal-bar:nth-child(2){height:55%}.signal-bar:nth-child(3){height:78%}.signal-bar:nth-child(4){height:100%}
+.signal[data-state="live"] .signal-bar{background:linear-gradient(to top,var(--crimson),var(--pink));animation:signal-wave 3.6s var(--ease-silk) infinite;animation-delay:calc(var(--i)*.12s)}
+.signal[data-state="idle"] .signal-bar:first-child{background:rgba(247,243,236,.55)}
+.signal[data-state="lost"] .signal-bar{animation:signal-search 1.2s ease-in-out infinite;animation-delay:calc(var(--i)*.15s)}
+@keyframes signal-wave{0%,72%,100%{opacity:1;transform:none}80%{opacity:.55;transform:scaleY(.82)}88%{opacity:1;transform:scaleY(1.06)}}
+.signal[data-state="live"] .signal-bar{transform-origin:bottom}
+@keyframes signal-search{0%,100%{background:rgba(247,243,236,.2)}50%{background:var(--pink)}}
+.no-scrollbar{scrollbar-width:none}.no-scrollbar::-webkit-scrollbar{display:none}
+
+@media (prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+ .hint-pulse{animation:none}
+}

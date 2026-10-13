@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-afterdark}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-afterdark}
+      POSTGRES_DB: ${POSTGRES_DB:-afterdark}
+    ports: ["5433:5432"]
+    volumes: [after_dark_db:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: {context: ., dockerfile: apps/api/Dockerfile}
+    environment:
+      DATABASE_URL: postgresql://afterdark:afterdark@postgres:5432/afterdark?schema=public
+      PORT: 4000
+      WEB_ORIGIN: http://localhost
+      RECONNECT_TOKEN_PEPPER: ${RECONNECT_TOKEN_PEPPER:-change-me}
+    depends_on: {postgres: {condition: service_healthy}}
+  web:
+    build: {context: ., dockerfile: apps/web/Dockerfile, args: {NEXT_PUBLIC_API_URL: /api, NEXT_PUBLIC_SOCKET_URL: /}}
+    depends_on: [api]
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["80:80"]
+    volumes: ["./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"]
+    depends_on: [web, api]
+volumes: {after_dark_db: {}}

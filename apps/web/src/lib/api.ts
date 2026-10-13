@@ -1,0 +1,9 @@
+import type {RoomCredentials,RoomView} from '@after-dark/contracts';
+export const API=process.env.NEXT_PUBLIC_API_URL||'http://localhost:4000/api/v1';
+export type RoomResponse={credentials:RoomCredentials;room:RoomView};
+export async function post<T>(path:string,body:unknown):Promise<T>{const r=await fetch(`${API}${path}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw new Error(Array.isArray(data.message)?data.message.join(', '):data.message||'Something went wrong');return data}
+const LAST_ROOM_KEY='after-dark:last-room';
+export function saveCredentials(c:RoomCredentials){localStorage.setItem(`after-dark:${c.roomId}`,JSON.stringify(c));localStorage.setItem(LAST_ROOM_KEY,JSON.stringify(c))}
+export function loadCredentials(id:string):RoomCredentials|null{try{return JSON.parse(localStorage.getItem(`after-dark:${id}`)||'null')}catch{return null}}
+export function loadLastCredentials():RoomCredentials|null{try{const saved=JSON.parse(localStorage.getItem(LAST_ROOM_KEY)||'null') as RoomCredentials|null;if(saved)return saved;for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key?.startsWith('after-dark:')||key===LAST_ROOM_KEY)continue;const value=JSON.parse(localStorage.getItem(key)||'null') as RoomCredentials|null;if(value)return value}return null}catch{return null}}
+export function findCredentialsByCode(code:string):RoomCredentials|null{const normalized=code.trim().toUpperCase();const last=loadLastCredentials();if(last?.code===normalized)return last;for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(!key?.startsWith('after-dark:')||key===LAST_ROOM_KEY)continue;try{const value=JSON.parse(localStorage.getItem(key)||'null') as RoomCredentials|null;if(value?.code===normalized)return value}catch{continue}}return null}

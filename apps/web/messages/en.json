@@ -1,0 +1,829 @@
+{
+  "meta": {
+    "title": "AFTER DARK — Play Dirty. Stay Classy.",
+    "description": "A private two-player card game for couples."
+  },
+  "lang": {
+    "label": "Language",
+    "vi": "Tiếng Việt",
+    "en": "English",
+    "switchTo": "Switch to {language}"
+  },
+  "common": {
+    "backHome": "Back to the entrance",
+    "callItANight": "Call it a night",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "you": "You",
+    "yourPartner": "Your partner",
+    "yourHost": "Your host",
+    "comingSoon": "Coming soon",
+    "sparks": "{count, plural, one {# Spark} other {# Sparks}}"
+  },
+  "title": {
+    "adultsOnly": "18+ only",
+    "soundOn": "Sound on",
+    "soundOff": "Sound off",
+    "tagline": "Play Dirty. Stay Classy.",
+    "start": "Start playing",
+    "explore": "Explore games",
+    "haveCode": "Have a code?",
+    "steps": [
+      {
+        "title": "Pick a game.",
+        "text": "Five decks, 15 to 60 minutes each."
+      },
+      {
+        "title": "Set the mood.",
+        "text": "Your host sets the heat. Every card can be skipped."
+      },
+      {
+        "title": "Flip and play.",
+        "text": "One phone each. Nobody sees your secrets."
+      }
+    ],
+    "deckShowing": "Showing a {game} card. Tap to flip back and deal another",
+    "deckIdle": "Tap the deck to flip a sample card",
+    "tapAgain": "Tap again to deal another",
+    "tapDeck": "Tap the deck"
+  },
+  "age": {
+    "title": "Grown-ups only.",
+    "body": "By entering you confirm you’re 18 or older. Consent can be withdrawn at any time and every card can be skipped.",
+    "confirm": "I’m 18+, let me in",
+    "footer": "Not for minors. Play privately and respectfully."
+  },
+  "header": {
+    "explore": "Explore games",
+    "exploreShort": "Games"
+  },
+  "catalog": {
+    "tiers": {
+      "1": "Flirty",
+      "2": "Hot",
+      "3": "After Dark"
+    },
+    "players": "2 players",
+    "items": {
+      "read-my-mind": {
+        "tagline": "Can you guess what I want?",
+        "description": "Hide an answer, read your partner, and earn Sparks for every right guess.",
+        "duration": "30–45 min",
+        "rules": [
+          "One of you hides an answer, the other guesses it",
+          "Right guess: +1 Spark. Wrong guess: an optional forfeit",
+          "Chemistry cards need two yeses and earn you both a Spark",
+          "Secret Missions earn Power Cards you can play later"
+        ],
+        "types": [
+          "Mind Reader",
+          "Chemistry",
+          "Mutual Desire",
+          "Plot Twist",
+          "Secret Mission"
+        ],
+        "sample": {
+          "category": "Mind Reader",
+          "title": "What would make my heart race?",
+          "instruction": "Hide your answer. Your partner has one guess."
+        }
+      },
+      "dare-me": {
+        "tagline": "How bold can you be?",
+        "description": "Challenges, double dares, wild cards, and rewards, all on your terms.",
+        "duration": "20–40 min",
+        "rules": [
+          "Challenge rules are still being refined"
+        ],
+        "types": [
+          "Challenge",
+          "Double dare",
+          "Wild card"
+        ],
+        "sample": {
+          "category": "Double Dare",
+          "title": "Dare them right back.",
+          "instruction": "Accept, raise the stakes, or pass. Both say yes."
+        }
+      },
+      "no-secrets": {
+        "tagline": "What haven’t you told me?",
+        "description": "A playful space for confessions, hidden preferences, and mutual reveals.",
+        "duration": "40–60 min",
+        "rules": [
+          "Full rules coming soon"
+        ],
+        "types": [
+          "Confession",
+          "Secret choice",
+          "Mutual reveal"
+        ],
+        "sample": {
+          "category": "Confession",
+          "title": "The thought I never said.",
+          "instruction": "Seal it privately. Reveal only if you both do."
+        }
+      },
+      "take-control": {
+        "tagline": "Your turn. Your rules.",
+        "description": "Alternate the lead, choose the challenge, and trade control.",
+        "duration": "45–60 min",
+        "rules": [
+          "Full rules coming soon"
+        ],
+        "types": [
+          "Leadership",
+          "Role switch",
+          "Power card"
+        ],
+        "sample": {
+          "category": "Leader Card",
+          "title": "You set the pace.",
+          "instruction": "Two minutes, one stop word, your rules."
+        }
+      },
+      "lucky-tonight": {
+        "tagline": "Let chance decide.",
+        "description": "Random challenges, surprise events, and rewards for two.",
+        "duration": "15–30 min",
+        "rules": [
+          "Full rules coming soon"
+        ],
+        "types": [
+          "Random challenge",
+          "Surprise",
+          "Reward"
+        ],
+        "sample": {
+          "category": "Wild Card",
+          "title": "Roll for it.",
+          "instruction": "Chance picks the card. You pick how far."
+        }
+      }
+    }
+  },
+  "gameSelect": {
+    "back": "Back",
+    "title": "Choose your game",
+    "counter": "Game {current} of {total}",
+    "carousel": "Games",
+    "cover": "{game} cover art",
+    "selected": "{game}, selected",
+    "select": "Select {game}",
+    "previous": "Previous game",
+    "next": "Next game",
+    "tabs": "Choose a game",
+    "intensity": "Intensity: {tier}",
+    "deal": "Deal me in",
+    "dealing": "Setup is next →",
+    "hint": "Swipe, use the arrows, or press ← →",
+    "lockedHint": "Still being dealt. Read My Mind is open tonight."
+  },
+  "gameDetail": {
+    "allGames": "All games",
+    "howToPlay": "How to play",
+    "inTheDeck": "In the deck",
+    "deal": "Deal me in",
+    "lockedNote": "This deck is still being dealt. Read My Mind is open tonight.",
+    "setup": "Tonight’s setup",
+    "players": "Players",
+    "madeForTwo": "Made for two",
+    "pace": "Pace",
+    "intensity": "Intensity"
+  },
+  "room": {
+    "create": {
+      "eyebrow": "Set the mood",
+      "title": "Set the Scene",
+      "description": "Choose the name your partner will see.",
+      "action": "Open our hideaway",
+      "loading": "Setting the scene…"
+    },
+    "join": {
+      "eyebrow": "Your invitation awaits",
+      "title": "Join the Fun",
+      "description": "Enter the room code and the name your partner knows you by.",
+      "action": "Step inside",
+      "loading": "Joining the fun…"
+    },
+    "rejoin": "Return to our hideaway",
+    "rejoinDetail": "Room {code} · Continue exactly where the night paused.",
+    "orJoinAnother": "or join another room",
+    "codeLabel": "Invitation code",
+    "nicknameLabel": "Your name for tonight",
+    "nicknamePlaceholder": "What should your partner call you?",
+    "privacyNote": "No account needed. Your private rejoin key stays on this device.",
+    "toJoin": "Have a code? Join your partner",
+    "toCreate": "Hosting instead? Create a room"
+  },
+  "connection": {
+    "connecting": {
+      "title": "Sparking the Connection…",
+      "description": "Getting your private room ready."
+    },
+    "connected": "The Chemistry Is Real.",
+    "reconnecting": {
+      "title": "Don’t Leave Me Hanging…",
+      "description": "Trying to reconnect to your room."
+    },
+    "offlineToast": "You’re offline. Reconnecting…",
+    "online": "Online",
+    "offline": "Offline",
+    "statusConnected": "Connected",
+    "statusReconnecting": "Reconnecting",
+    "partnerOffline": "Your Partner Slipped Away."
+  },
+  "errors": {
+    "fallback": {
+      "title": "The Mood Hit a Snag.",
+      "description": "Something went wrong. Try that again."
+    },
+    "invalidCode": {
+      "title": "Wrong Door, Darling.",
+      "description": "Check the six-character code and try again."
+    },
+    "full": {
+      "title": "Two’s Company.",
+      "description": "This room already has two players."
+    },
+    "expired": {
+      "title": "This Night Has Ended.",
+      "description": "Create a new room to start again."
+    },
+    "connection": {
+      "title": "Looks Like We Lost the Spark.",
+      "description": "Check your connection and try again."
+    },
+    "private": {
+      "title": "This Hideaway Is Private.",
+      "description": "Rejoin from the device that created or joined this room."
+    },
+    "tooMany": {
+      "title": "Easy, Tiger.",
+      "description": "Too many rooms in a minute. Wait a moment and try again."
+    },
+    "nickname": {
+      "title": "Name Needed.",
+      "description": "Pick a name between 1 and 24 characters."
+    },
+    "codeFormat": {
+      "title": "Wrong Door, Darling.",
+      "description": "The code is six letters or numbers."
+    },
+    "action": {
+      "generic": "That didn’t go through. Try again.",
+      "stale": "Your partner moved first. You’re looking at the latest card.",
+      "conflict": "You both tapped at once. Give it another tap.",
+      "hostOnlyGame": "Only the host can change the game.",
+      "hostOnlyHeat": "Only the host sets the heat.",
+      "hostOnlyStart": "Only the host deals the first card.",
+      "hostOnlyLobby": "Only the host can take you back to the hideaway.",
+      "partnerNotIn": "Your partner isn’t in the mood yet.",
+      "comingSoon": "That game is coming soon. Read My Mind is open tonight.",
+      "heatLocked": "The heat is locked once the game starts.",
+      "notYourTurn": "Not your move yet.",
+      "briefing": "Finish the briefing first.",
+      "alreadyAnswered": "You already answered.",
+      "alreadySealed": "Your choice is already sealed.",
+      "forfeitFirst": "Answer the forfeit first, or pass.",
+      "roundNotDone": "This round isn’t finished yet.",
+      "gameOver": "The game is over.",
+      "missionNone": "There’s no mission to claim right now.",
+      "missionVerdict": "No mission is waiting for your answer.",
+      "missionPartnerOnly": "Only your partner can confirm your mission.",
+      "powerNotOwned": "That Power Card isn’t in your hand.",
+      "crossedOut": "That answer is already crossed out.",
+      "closed": "That moment has passed. You’re looking at the latest card.",
+      "authenticate": "Reconnecting to your room…",
+      "deckEmpty": "This heat doesn’t have enough cards yet. Try another level."
+    }
+  },
+  "heat": {
+    "labels": [
+      "Sweet",
+      "Flirty",
+      "Spicy",
+      "Daring",
+      "Wild"
+    ],
+    "hints": [
+      "Cute, cosy, hand-holding.",
+      "Teasing, blushing, stolen kisses.",
+      "Kissing, closeness, real tension.",
+      "Undressing, blindfolds, wandering hands.",
+      "Bold fantasies, control, no plan."
+    ],
+    "caption": "Tonight’s heat",
+    "setBy": "Set by {name}",
+    "ofFive": "{caption} · {level} of 5"
+  },
+  "lobby": {
+    "partnerJoined": "Look Who’s Here.",
+    "created": "Your Hideaway Is Ready.",
+    "roomCode": "Room code",
+    "you": "You",
+    "yourPartner": "Your partner",
+    "lateTitle": "Fashionably late…",
+    "lateBody": "Send the invite. Make it tempting.",
+    "hostRole": "Setting the mood",
+    "inTheMood": "In the mood",
+    "warmingUp": "Still warming up",
+    "imIn": "I’m in the mood",
+    "imInLoading": "Warming up…",
+    "notYet": "Give me a minute",
+    "notYetLoading": "Taking a breath…",
+    "start": "Deal the first card",
+    "startLoading": "Dealing the cards…",
+    "noteComingSoon": "{game} is coming soon. Pick Read My Mind to play tonight.",
+    "noteNoPartner": "Set the heat, pick the game, then send the invite.",
+    "notePartnerWarming": "{name} is still warming up. The first card deals once they’re in the mood.",
+    "notePartnerReady": "{name} is in the mood. Deal them in.",
+    "noteGuest": "{host} sets the heat and picks the game. You just say when you’re in.",
+    "waitGuest": "You’re in the mood. {host} is about to deal…",
+    "heatTitle": "How hot tonight?",
+    "heatYouSet": "You set it",
+    "heatHostSets": "{host} sets it",
+    "heatHostNote": "Cards never go above this level. Change it and {name} is back to warming up, so they see the new heat first.",
+    "heatHostNoteSolo": "Cards never go past this level. You can change it any time before you deal.",
+    "heatGuestNote": "Cards never go above this level. Not feeling it? Tell {host} before you say you’re in the mood.",
+    "gameTitle": "Tonight’s game",
+    "gameYouPick": "You pick",
+    "gameHostPicks": "The host picks",
+    "gameGroup": "Game",
+    "soon": "Soon",
+    "selected": "Selected",
+    "playNow": "Play now",
+    "leaveEyebrow": "Call it a night?",
+    "leaveTitle": "Leave the room",
+    "leaveBodyPartner": "You’ll head back to the games. {name} stays in the room, and you can rejoin from this device any time before the room expires.",
+    "leaveBodyAlone": "You’ll head back to the games. You can rejoin from this device any time before the room expires.",
+    "stay": "Stay",
+    "leave": "Leave the room"
+  },
+  "invite": {
+    "copyLink": "Copy invite link",
+    "copyCode": "Copy code",
+    "copied": "Copied!",
+    "share": "Share invite",
+    "shareText": "Join me in AFTER DARK. Room code {code}",
+    "shareUnavailable": "Sharing isn’t available here. Copy the invite link instead.",
+    "copyFailedTitle": "Couldn’t copy automatically.",
+    "copyFailedBody": "Select it below and copy it yourself, or read the code out loud.",
+    "linkLabel": "Invite link",
+    "codeLabel": "Room code",
+    "linkCopied": "Invite link copied. Send it their way.",
+    "codeCopied": "Code copied.",
+    "partnerHere": "They slipped in. The night can begin.",
+    "sendInvite": "Send your partner the invite. Make it tempting."
+  },
+  "cardType": {
+    "MIND_READER": "Mind Reader",
+    "CHEMISTRY": "Chemistry",
+    "MUTUAL_DESIRE": "Mutual Desire",
+    "PLOT_TWIST": "Plot Twist",
+    "SECRET_MISSION": "Secret Mission",
+    "POWER_CARD": "Power Card",
+    "FORFEIT": "Forfeit"
+  },
+  "hud": {
+    "round": "Round {round}",
+    "sparksAria": "Sparks: you {mine}, {name} {theirs}",
+    "vs": "vs",
+    "rules": "How to play",
+    "missionsDone": "Missions complete",
+    "mission": "Undercover Cat",
+    "missionDeclared": "Undercover Cat · in their hands",
+    "missionProgress": "Undercover Cat · {number}/{total}",
+    "power": "Power",
+    "powerAria": "Power Cards: {count} of {limit}",
+    "powerAriaUsable": "Power Cards: {count} of {limit}, {usable} usable now",
+    "use": "Use",
+    "armed": "Armed",
+    "verdictChip": "{name} needs your verdict on a mission",
+    "twistPending": "Twist pending: {twists} · next Mind Reader card",
+    "partnerAway": "{name} slipped away. The game is saved, so they can rejoin from their phone.",
+    "eyesOnly": "For your eyes only",
+    "hide": "Hide",
+    "reveal": "Reveal my mission",
+    "allDone": "Every mission done. Nice work, trouble.",
+    "missionHow": "Make it happen naturally during the game. When it does, ask for confirmation: {name} sees the mission and decides. A yes earns you a Power Card.",
+    "notYetSaid": "“Not yet,” they said. Keep trying, no penalty.",
+    "ask": "Ask for confirmation",
+    "asking": "Asking…",
+    "asked": "Asked. Now it’s {name}’s call."
+  },
+  "card": {
+    "aria": "{type} card",
+    "game": "Read My Mind",
+    "gameHeat": "Read My Mind · {heat}",
+    "answers": "Answers",
+    "mr": {
+      "sparksFor": "{self, select, yes {+{count} {count, plural, one {Spark} other {Sparks}} for you} other {+{count} {count, plural, one {Spark} other {Sparks}} for {name}}}",
+      "noSpark": "No Spark this time.",
+      "noSparkHolder": "No Spark this time. You stay a mystery.",
+      "secondChanceUsed": "Nine Lives! Second Chance crossed out “{choice}” before the second guess.",
+      "doubleUsedHit": "Double Trouble! Double Spark doubled this reward.",
+      "doubleUsedMiss": "Double Spark used up on a miss. No bonus this time.",
+      "yourAnswer": "Your answer",
+      "theirAnswer": "{name}’s answer",
+      "yourGuess": "Your guess",
+      "theirGuess": "{name}’s guess",
+      "promptHide": "Hide your answer",
+      "promptRead": "Read their mind",
+      "promptHiding": "{name} is hiding an answer…",
+      "promptReading": "{name} is reading your mind…",
+      "youHide": "You hide",
+      "theyHide": "{name} hides",
+      "youGuess": "You guess",
+      "theyGuess": "{name} guesses",
+      "rightGuess": "Right guess +{count}",
+      "roleSecretTitle": "You hold the secret",
+      "roleSecretBody": "{name} will try to read you.",
+      "roleSecretWaiting": "Sealed. {name} is trying to read you.",
+      "roleReaderTitle": "Your turn to read them",
+      "roleReaderWaiting": "{name} is sealing their choice…",
+      "roleReaderBody": "{name} sealed their choice. Can you read them?",
+      "stake": "Right guess · +{count} {count, plural, one {Spark} other {Sparks}}",
+      "lockedIn": "Locked in",
+      "notThisOne": "Not this one",
+      "selected": "Selected",
+      "noteHide": "Pick the answer that’s really you. {name} has to guess it.",
+      "noteGuess": "Pick what you think {name} hid. A miss may invite an optional forfeit.",
+      "noteLocked": "Locked. If {name} misses, they owe you an optional forfeit.",
+      "noteWaitGuess": "While you wait, you can arm a Power Card if you have one."
+    },
+    "twistBanner": {
+      "plot": "Role Reversal twist in effect",
+      "power": "{self, select, yes {Hidden Claws! You played Role Reversal} other {Hidden Claws! {name} played Role Reversal}}",
+      "body": "Roles reversed. Normally <b>{normal}</b> would hide the answer. This time <b>{secret}</b> {self, select, yes {hide} other {hides}} it."
+    },
+    "forfeit": {
+      "headline": "Time to Pay Up",
+      "label": "Forfeit · optional",
+      "acceptedPayer": "Time to Pounce! Do the forfeit, then tap next once it’s done.",
+      "acceptedCollector": "Time to Pounce! {name} is doing the forfeit. Enjoy.",
+      "passed": "Passed. No penalty, the night goes on.",
+      "waiting": "You’re in. Now it’s {name}’s call.",
+      "offeredPayer": "You missed. Pay up or pass, it’s your call. It only happens if you both say yes.",
+      "offeredCollector": "{name} missed. Collect it or let it slide. It only happens if you both say yes."
+    },
+    "chem": {
+      "doneEach": "+{count} Spark each. You both confirmed it happened.",
+      "declinedNote": "One of you passed, and nobody sees who. No penalty, no Sparks lost.",
+      "stoppedNote": "Stopping is always fine. Nobody lost a Spark.",
+      "phase": {
+        "CONSENT": {
+          "title": "Waiting for both signals",
+          "description": "It only begins when you both agree."
+        },
+        "READY": {
+          "title": "Time to make your move",
+          "description": "You both said yes. It begins once you’ve both pressed Start."
+        },
+        "STARTING": {
+          "title": "You’re ready",
+          "description": "Waiting for your partner to press Start too. Either of you can stop at any moment."
+        },
+        "ACTIVE": {
+          "title": "The moment is in motion",
+          "description": "Either of you can stop or change your mind at any time."
+        },
+        "CONFIRM": {
+          "title": "A moment completed?",
+          "description": "Each of you confirms once it’s truly done."
+        },
+        "WAITING": {
+          "title": "Waiting for your partner",
+          "description": "You confirmed. Your partner hasn’t confirmed completion yet."
+        },
+        "COMPLETED": {
+          "title": "Now That’s Chemistry!",
+          "description": "You both completed it. You each receive +{count} {count, plural, one {Spark} other {Sparks}}."
+        }
+      },
+      "INVITATION": {
+        "eyebrow": "An invitation",
+        "note": "Both of you must say yes. Your answer stays private until you both answer."
+      },
+      "WAITING_FOR_CONSENT": {
+        "eyebrow": "You’re in",
+        "note": "Your yes is private until you’ve both answered, and you can still change your mind."
+      },
+      "MUTUALLY_ACCEPTED": {
+        "eyebrow": "You both said yes",
+        "note": "Start whenever the mood is right. Either of you can stop at any moment."
+      },
+      "IN_PROGRESS": {
+        "eyebrow": "Go on then…",
+        "note": "Do it for real. When it’s actually happened, you each confirm."
+      },
+      "WAITING_FOR_COMPLETION": {
+        "eyebrow": "You confirmed",
+        "note": "It counts once you’ve both confirmed it really happened."
+      },
+      "progress": "Challenge progress",
+      "steps": [
+        "Both say yes",
+        "Do it",
+        "Both confirm"
+      ],
+      "footer": "Completing it earns you each +1 Spark. Declining costs nothing.",
+      "timer": {
+        "label": "Time left",
+        "aria": "{time} left",
+        "expired": "Time’s up",
+        "expiredNote": "Time’s up, but that is not a win or a loss. If you really did it, both confirm; if not, stop. Nothing is lost.",
+        "runningNote": "Done early? That’s fine, as long as it really happened.",
+        "chip": "Timed · {duration}",
+        "seconds": "{count, plural, one {# second} other {# seconds}}",
+        "minutes": "{count, plural, one {# minute} other {# minutes}}"
+      }
+    },
+    "desire": {
+      "eyebrow": "Private · only a mutual yes is revealed",
+      "sealed": "Sealed. Nobody sees it unless you both say yes.",
+      "group": "Your private answer",
+      "YES": "Yes",
+      "MAYBE": "Maybe",
+      "NO": "No",
+      "note": "Maybe and No both stay secret. There are no Sparks for this card, so nobody is nudged.",
+      "yesNote": "You both said yes. Talk about it now, or save it for later.",
+      "noNote": "Not a mutual yes, so neither answer is revealed. Nobody knows who said what."
+    },
+    "twist": {
+      "skippedNote": "Twist skipped. Nothing changes.",
+      "activated": "Plot twist activated",
+      "turn": "The night takes a turn",
+      "roleReversal": "Next Mind Reader card: normally <b>{next}</b> {nextSelf, select, yes {hide} other {hides}} the answer. With this twist, <b>{other}</b> {otherSelf, select, yes {hide} other {hides}} it and <b>{next}</b> {nextSelf, select, yes {guess} other {guesses}}.",
+      "doubleSpark": "Next Mind Reader card: a right guess earns <b>+2 Sparks</b> instead of +1. A wrong guess burns the bonus.",
+      "alreadyPending": "That twist was already waiting, so it stays as one. It doesn’t stack.",
+      "pendingNote": "It only switches on once you both tap Activate. Either of you can skip it."
+    }
+  },
+  "twists": {
+    "ROLE_REVERSAL": {
+      "title": "Role Reversal",
+      "effect": "On the next Mind Reader card, the person who would normally guess hides the answer instead.",
+      "applied": "Locked in. The next Mind Reader card swaps roles."
+    },
+    "DOUBLE_SPARK": {
+      "title": "Double Spark",
+      "effect": "The next correct Mind Reader guess earns twice the Sparks. A wrong guess burns the bonus.",
+      "applied": "Locked in. The next Mind Reader card is worth double."
+    },
+    "FRESH_START": {
+      "title": "Fresh Start",
+      "effect": "Clears every pending twist.",
+      "applied": "Every pending twist is cleared."
+    }
+  },
+  "pools": {
+    "correctGuesser": [
+      "Caught You Purring!",
+      "You Know Their Weak Spot.",
+      "Caught You Thinking.",
+      "Somebody’s Paying Attention."
+    ],
+    "correctHolder": [
+      "Cat’s Out of the Bag!",
+      "Caught by the Tail.",
+      "You’re That Obvious. Cute.",
+      "No Secrets From Them."
+    ],
+    "wrongGuesser": [
+      "Not Even Close. Cute Try.",
+      "Nice Try, Kitty.",
+      "There’s More to Discover.",
+      "You Didn’t See That Coming."
+    ],
+    "wrongHolder": [
+      "Still a Mystery.",
+      "Sneaky Cat. Still Unread.",
+      "Mysterious Looks Good on You.",
+      "They Didn’t See That Coming."
+    ],
+    "chemistryDone": [
+      "Now That’s Chemistry.",
+      "The Temperature Just Rose.",
+      "Was That a Purr?"
+    ],
+    "chemistryDeclined": [
+      "No Pressure. The Night Goes On.",
+      "Saved for Another Night.",
+      "Your Call. Always."
+    ],
+    "chemistryStopped": [
+      "Stopped. No Harm, No Score Lost.",
+      "Paused. Pick It Up Another Night."
+    ],
+    "mutualYes": [
+      "The Feeling Is Mutual.",
+      "You’re Each Other’s Catnip.",
+      "Well, Well. You Both Want It."
+    ],
+    "mutualNo": [
+      "Your Secrets Stay Safe.",
+      "Sealed and Forgotten.",
+      "Nothing Revealed. Nothing Owed."
+    ],
+    "skipped": [
+      "Skipped. No Penalty.",
+      "Next Card, Please.",
+      "Not This One. Moving On."
+    ]
+  },
+  "actions": {
+    "next": "Keep the tension going",
+    "nextLoading": "Dealing the next card…",
+    "results": "See what you discovered",
+    "resultsLoading": "Counting the Sparks…",
+    "skip": "Skip",
+    "skipping": "Skipping…",
+    "lockIt": "Lock it in",
+    "lockingIt": "Locking it in…",
+    "noteChoose": "Choose your answer. It stays hidden.",
+    "noteHidden": "{name} won’t see it until they guess.",
+    "waitHiding": "{name} is hiding an answer…",
+    "notePower": "Arm a Power Card now if you want an edge.",
+    "lockGuess": "Lock in my guess · +{count}",
+    "lockingGuess": "Reading their mind…",
+    "noteSecondChance": "Nine Lives! Your first guess missed and is crossed out. Second Chance lets you guess again.",
+    "noteGuess": "Choose what you think {name} hid.",
+    "waitReading": "{name} is reading your mind…",
+    "payUp": "I’ll pay up",
+    "collect": "Collect it",
+    "sendingAnswer": "Sending your answer…",
+    "pass": "Pass",
+    "letItSlide": "Let it slide",
+    "passing": "Passing…",
+    "waitForfeit": "Your answer’s in. Now it’s {name}’s call.",
+    "doneNext": "Done · keep it going",
+    "doneResults": "Done · see results",
+    "notePayer": "Forfeit on. Pay up, then move on.",
+    "noteCollector": "{name} owes you. Collect, then move on.",
+    "stop": "Stop",
+    "stopping": "Stopping…",
+    "into": "I’m into this",
+    "notTonight": "Not tonight",
+    "changedMind": "Changed my mind",
+    "withdrawing": "Withdrawing…",
+    "waitConsent": "You’re in. Now it’s {name}’s call.",
+    "waitStart": "You’re ready. Waiting for {name} to press Start.",
+    "start": "Let’s Start",
+    "starting": "Starting…",
+    "didIt": "We did it",
+    "confirming": "Confirming…",
+    "noteDidIt": "Only confirm once it has actually happened.",
+    "waitCompletion": "You said it happened. Now {name} has to agree.",
+    "waitSealed": "Sealed. Now it’s {name}’s turn to choose.",
+    "seal": "Seal my answer",
+    "sealing": "Sealing…",
+    "noteSealChosen": "Only a mutual Yes is ever revealed.",
+    "noteSeal": "Choose Yes, Maybe or No. Only a mutual Yes is revealed.",
+    "skipTwist": "Skip twist",
+    "waitTwist": "You’re in. {name} still has to activate it.",
+    "activate": "Activate twist",
+    "activating": "Activating…"
+  },
+  "verdict": {
+    "eyebrow": "{name} claims a secret mission",
+    "title": "Did it happen?",
+    "body": "Yes: {name} earns a Power Card. Not yet: the mission stays secret and they can try again. No penalty either way.",
+    "notYet": "Not yet",
+    "yes": "Yes, it happened",
+    "sending": "Sending…",
+    "confirming": "Confirming…",
+    "later": "Decide later"
+  },
+  "reward": {
+    "eyebrow": "Undercover Cat!",
+    "titleFull": "Hands full",
+    "title": "One More Hidden Claw",
+    "full": "Your partner confirmed it, but you already hold {limit} Power Cards, so no new card this time. Play one to make room.",
+    "played": "Your Power Card has already been played.",
+    "keepPlaying": "Keep playing",
+    "viewPowers": "View my Power Cards"
+  },
+  "powers": {
+    "eyebrow": "Power Cards · {count}/{limit}",
+    "title": "Hidden Claws",
+    "emptyTitle": "No Power Cards yet.",
+    "emptyBody": "Complete a Secret Mission and have your partner confirm it. Each confirmed mission earns one card. You can hold {limit}.",
+    "armed": "Armed · triggers on your guess",
+    "saveForLater": "Save for later",
+    "playing": "Playing it…",
+    "use": "Use power card",
+    "footer": "Power Cards only change Mind Reader rounds. They never reveal a hidden answer and never skip a consent step.",
+    "kinds": {
+      "SECOND_CHANCE": {
+        "alias": "Nine Lives!",
+        "title": "Second Chance",
+        "description": "If your next guess misses, the miss is crossed out and you guess again. Kept if you get it right first time.",
+        "requirement": "Guesser only · arm before your guess",
+        "useNow": "Arm it",
+        "confirm": "Armed until you guess this round. It’s only used up if your first guess misses."
+      },
+      "ROLE_REVERSAL": {
+        "alias": "Claws Out!",
+        "title": "Role Reversal",
+        "description": "Swap who hides the answer and who guesses on this Mind Reader card. Takes effect immediately.",
+        "requirement": "Either player · before the secret is locked",
+        "useNow": "Swap roles now",
+        "confirm": "Takes effect immediately and is used up. Any armed cards go back to your hand."
+      },
+      "DOUBLE_SPARK": {
+        "alias": "Double Trouble!",
+        "title": "Double Spark",
+        "description": "Double the Spark reward from your next correct Mind Reader guess. A wrong guess uses it up for nothing.",
+        "requirement": "Guesser only · arm before your guess",
+        "useNow": "Arm it",
+        "confirm": "Armed until you guess this round. A wrong guess uses it up for nothing."
+      }
+    },
+    "reasons": {
+      "armed": "Armed. It triggers when you lock in your guess this round.",
+      "phase": "Power Cards work during Mind Reader rounds.",
+      "notMindReader": "Save it. Power Cards only work on Mind Reader cards.",
+      "tooLateSecret": "Too late for this card. Use it before the secret answer is locked.",
+      "alreadySwapped": "Roles were already swapped this round.",
+      "tooLateGuess": "Too late. The guess is already in.",
+      "guesserOnly": "Only the guesser can use this. Wait for your turn to read.",
+      "secondChanceLive": "Your second chance is already in play.",
+      "oneArmed": "One of these is already armed."
+    }
+  },
+  "onboarding": {
+    "steps": [
+      {
+        "title": "Hide it. Read it.",
+        "lines": [
+          "On Mind Reader cards, one of you secretly picks an answer and the other guesses it.",
+          "Right guess: +1 Spark. Wrong guess: no Spark, plus an optional forfeit you both have to agree to.",
+          "Roles switch every Mind Reader card."
+        ]
+      },
+      {
+        "title": "Chemistry needs two yeses.",
+        "lines": [
+          "Chemistry cards are real-life moves. Each of you answers privately.",
+          "Only if you both say yes does it start. Do it, then each tap “We did it”: +1 Spark each.",
+          "Either of you can say no or stop at any moment. It costs nothing."
+        ]
+      },
+      {
+        "title": "Undercover cat.",
+        "lines": [
+          "You each get a private Secret Mission. Tap the lock at the top to peek.",
+          "Make it happen naturally, then claim it. Your partner sees the mission and confirms.",
+          "Confirmed missions earn Power Cards: Double Spark, Second Chance, Role Reversal. Find them under “Power”."
+        ]
+      },
+      {
+        "title": "Twists & desires.",
+        "lines": [
+          "Plot Twists change the next Mind Reader card, for example swapping roles or doubling Sparks. You both activate them.",
+          "Mutual Desire cards are private Yes/Maybe/No. Only a mutual Yes is ever revealed."
+        ]
+      },
+      {
+        "title": "Skip anything.",
+        "lines": [
+          "Every card has a Skip, and skipping never costs Sparks.",
+          "Cards never go above the heat your host set."
+        ]
+      }
+    ],
+    "rulesHeat": "Tonight’s heat: {heat} (set by your host)",
+    "heat": "Tonight’s heat: {heat}",
+    "doneTitle": "You’re in.",
+    "doneBody": "{name} is still reading the rules. The first card deals the moment they’re in.",
+    "label": "How to play",
+    "step": "{current} / {total}",
+    "partnerIn": "{name} is in, and getting impatient.",
+    "back": "Back",
+    "next": "Next",
+    "deal": "I’m in, deal",
+    "dealing": "Dealing the cards…",
+    "skip": "Skip the briefing",
+    "sheetEyebrow": "Read My Mind",
+    "sheetTitle": "How to play"
+  },
+  "results": {
+    "headlineWin": "You Read Them Best.",
+    "headlineLose": "{name} Read You Better.",
+    "headlineZero": "All Mystery, No Mind Reading.",
+    "headlineTie": "Two Cats, One Mind.",
+    "eyebrow": "Game over · {count, plural, one {# Spark} other {# Sparks}} between you",
+    "you": "You",
+    "sparks": "Sparks",
+    "mindsRead": "Minds read",
+    "missions": "Missions",
+    "chemistry": "{count, plural, one {# Chemistry challenge} other {# Chemistry challenges}} completed together.",
+    "noChemistry": "No Chemistry challenges tonight, and that’s fine too.",
+    "hostAction": "Back to our hideaway",
+    "returning": "Heading back…",
+    "waiting": "One Last Tease… Your host takes you both back to the hideaway.",
+    "exit": "Exit to the title screen"
+  }
+}

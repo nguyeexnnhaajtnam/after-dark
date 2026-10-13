@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum RoomStatus {
+  LOBBY
+  PLAYING
+  EXPIRED
+}
+enum SessionStatus {
+  ACTIVE
+  COMPLETE
+}
+model Room {
+  id String @id @default(cuid())
+  code String @unique @db.VarChar(6)
+  status RoomStatus @default(LOBBY)
+  selectedGame String @default("read-my-mind")
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  players RoomPlayer[]
+  sessions GameSession[]
+  @@index([expiresAt])
+}
+model RoomPlayer {
+  id String @id @default(cuid())
+  roomId String
+  nickname String @db.VarChar(24)
+  tokenHash String @unique
+  isHost Boolean @default(false)
+  connected Boolean @default(false)
+  ready Boolean @default(false)
+  maxHeat Int @default(3)
+  joinedAt DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  room Room @relation(fields:[roomId],references:[id],onDelete:Cascade)
+  @@index([roomId])
+}
+model Game {
+  id String @id
+  title String
+  tagline String
+  description String
+  duration String
+  intensity Int
+  available Boolean @default(false)
+  cards GameCard[]
+  translations GameTranslation[]
+}
+/// Localized game metadata. The base Game row stays the canonical English copy.
+model GameTranslation {
+  gameId String
+  locale String @db.VarChar(10)
+  title String
+  tagline String
+  description String
+  duration String?
+  updatedAt DateTime @updatedAt
+  game Game @relation(fields:[gameId],references:[id],onDelete:Cascade)
+  @@id([gameId,locale])
+}
+model GameCard {
+  id String @id
+  gameId String
+  type String
+  question String
+  choices Json
+  intensity Int
+  artworkPath String
+  challenge String?
+  durationSeconds Int?
+  enabled Boolean @default(true)
+  game Game @relation(fields:[gameId],references:[id],onDelete:Cascade)
+  translations GameCardTranslation[]
+  @@index([gameId,enabled])
+}
+/// Localized card text keyed by the stable card id. Answers are compared by index, so choices only change wording, never order.
+model GameCardTranslation {
+  cardId String
+  locale String @db.VarChar(10)
+  question String
+  choices Json
+  challenge String?
+  updatedAt DateTime @updatedAt
+  card GameCard @relation(fields:[cardId],references:[id],onDelete:Cascade)
+  @@id([cardId,locale])
+  @@index([locale])
+}
+model GameSession {
+  id String @id @default(cuid())
+  roomId String
+  gameId String
+  status SessionStatus @default(ACTIVE)
+  currentRound Int @default(1)
+  stateVersion Int @default(0)
+  state Json
+  startedAt DateTime @default(now())
+  endedAt DateTime?
+  room Room @relation(fields:[roomId],references:[id],onDelete:Cascade)
+  actions SessionAction[]
+  @@index([roomId,status])
+}
+model SessionAction {
+  id String @id @default(cuid())
+  sessionId String
+  actionId String
+  playerId String
+  createdAt DateTime @default(now())
+  session GameSession @relation(fields:[sessionId],references:[id],onDelete:Cascade)
+  @@unique([sessionId,actionId])
+}
