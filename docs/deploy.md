@@ -31,7 +31,7 @@ Làm theo thứ tự dưới đây, vì mỗi bước cần địa chỉ (URL) c
    - chạy seed (chạy lại nhiều lần không tạo dữ liệu trùng).
 5. Kiểm tra: mở `https://<tên-service>.onrender.com/api/v1/health`, phải thấy `{"status":"ok",...}`.
 
-**Gói miễn phí (Free):** service sẽ ngủ sau khoảng 15 phút không có request, và mất khoảng 50 giây để thức dậy. Khi ngủ, mọi phòng đang chơi đều mất kết nối. File `render.yaml` để sẵn `plan: starter`. Muốn thử miễn phí thì đổi thành `plan: free`.
+**Gói miễn phí (Free):** service sẽ ngủ sau khoảng 15 phút không có request, và mất khoảng 50 giây để thức dậy. Khi ngủ, mọi phòng đang chơi đều mất kết nối. File `render.yaml` đang để `plan: free`. Khi chơi thật, đổi thành `plan: starter` (có phí) để service không ngủ.
 
 ## 3. Vercel (Web)
 

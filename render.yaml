@@ -6,7 +6,7 @@ services:
     name: after-dark-api
     runtime: node
     region: singapore          # keep it next to the Neon region (e.g. AWS ap-southeast-1)
-    plan: starter              # free instances sleep after ~15 idle minutes and drop live rooms; see docs/deploy.md
+    plan: free                 # sleeps after ~15 idle minutes (live rooms drop, ~50s wake-up); use starter for real play
     # Install from the repo root so the pnpm workspace (packages/contracts) resolves.
     buildCommand: >-
       corepack enable &&
