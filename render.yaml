@@ -1,0 +1,38 @@
+# Render Blueprint for the AFTER DARK API (NestJS + Socket.IO). The web app deploys separately on Vercel (apps/web);
+# the database is Neon PostgreSQL. Render keeps one long-lived process, which the realtime rooms and the Chemistry
+# countdown wake-ups need.
+services:
+  - type: web
+    name: after-dark-api
+    runtime: node
+    region: singapore          # keep it next to the Neon region (e.g. AWS ap-southeast-1)
+    plan: starter              # free instances sleep after ~15 idle minutes and drop live rooms; see docs/deploy.md
+    # Install from the repo root so the pnpm workspace (packages/contracts) resolves.
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --frozen-lockfile &&
+      pnpm --filter @after-dark/api prisma:generate &&
+      pnpm --filter @after-dark/api build &&
+      pnpm --filter @after-dark/api prisma:migrate &&
+      pnpm --filter @after-dark/api prisma:seed
+    startCommand: cd apps/api && node dist/src/main.js
+    healthCheckPath: /api/v1/health
+    # Rebuild only when the API, the shared contracts or the lockfile change.
+    buildFilter:
+      paths:
+        - apps/api/**
+        - packages/**
+        - pnpm-lock.yaml
+        - package.json
+        - render.yaml
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_URL
+        sync: false            # Neon *direct* connection string (no -pooler), with ?sslmode=require
+      - key: WEB_ORIGIN
+        sync: false            # e.g. https://after-dark.vercel.app (comma-separate several origins)
+      - key: RECONNECT_TOKEN_PEPPER
+        generateValue: true
+      - key: ROOM_TTL_HOURS
+        value: 12
