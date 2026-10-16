@@ -293,10 +293,17 @@
       "missionVerdict": "No mission is waiting for your answer.",
       "missionPartnerOnly": "Only your partner can confirm your mission.",
       "powerNotOwned": "That Power Card isn’t in your hand.",
-      "crossedOut": "That answer is already crossed out.",
       "closed": "That moment has passed. You’re looking at the latest card.",
       "authenticate": "Reconnecting to your room…",
-      "deckEmpty": "This heat doesn’t have enough cards yet. Try another level."
+      "deckEmpty": "This heat doesn’t have enough cards yet. Try another level.",
+      "noQuestions": "No fresh question is left at tonight’s heat. Your card stays in your hand.",
+      "noBonus": "No fresh Bonus Moment fits tonight’s heat. Your card stays in your hand.",
+      "waitPick": "Your partner is choosing the question. One moment.",
+      "questionEmpty": "Write your Yes/No question first.",
+      "outdated": "This game started under older rules. Start a new one.",
+      "drawPick": "Pick one of the face-down cards.",
+      "drawNone": "There’s nothing to draw right now.",
+      "drawForfeitFirst": "Draw the forfeit first, or pass."
     }
   },
   "heat": {
@@ -389,7 +396,7 @@
   "hud": {
     "round": "Round {round}",
     "sparksAria": "Sparks: you {mine}, {name} {theirs}",
-    "vs": "vs",
+    "vs": "&",
     "rules": "How to play",
     "missionsDone": "Missions complete",
     "mission": "Undercover Cat",
@@ -411,7 +418,9 @@
     "notYetSaid": "“Not yet,” they said. Keep trying, no penalty.",
     "ask": "Ask for confirmation",
     "asking": "Asking…",
-    "asked": "Asked. Now it’s {name}’s call."
+    "asked": "Asked. Now it’s {name}’s call.",
+    "missionDraw": "Draw a Secret Mission",
+    "powerDraw": "Draw your Power Card"
   },
   "card": {
     "aria": "{type} card",
@@ -422,9 +431,6 @@
       "sparksFor": "{self, select, yes {+{count} {count, plural, one {Spark} other {Sparks}} for you} other {+{count} {count, plural, one {Spark} other {Sparks}} for {name}}}",
       "noSpark": "No Spark this time.",
       "noSparkHolder": "No Spark this time. You stay a mystery.",
-      "secondChanceUsed": "Nine Lives! Second Chance crossed out “{choice}” before the second guess.",
-      "doubleUsedHit": "Double Trouble! Double Spark doubled this reward.",
-      "doubleUsedMiss": "Double Spark used up on a miss. No bonus this time.",
       "yourAnswer": "Your answer",
       "theirAnswer": "{name}’s answer",
       "yourGuess": "Your guess",
@@ -451,12 +457,26 @@
       "noteHide": "Pick the answer that’s really you. {name} has to guess it.",
       "noteGuess": "Pick what you think {name} hid. A miss may invite an optional forfeit.",
       "noteLocked": "Locked. If {name} misses, they owe you an optional forfeit.",
-      "noteWaitGuess": "While you wait, you can arm a Power Card if you have one."
+      "noteWaitGuess": "While you wait, a Picky Kitty can still choose this card’s question.",
+      "counterAnswer": "Your answer",
+      "counterPrediction": "Your guess for {name}",
+      "counterNote": "Answer for yourself, then guess what {name} picked. Neither of you sees anything until you’ve both sealed.",
+      "counterSealed": "Sealed. {name} can’t see either pick.",
+      "predictionRow": "{guesserSelf, select, yes {You} other {{guesser}}} guessed {holderSelf, select, yes {your} other {{holder}’s}} answer",
+      "readRight": "Read right",
+      "missed": "Missed",
+      "partLabel": "Part {part} of 2",
+      "partA": "Part A: {self, select, yes {you} other {{name}}} {correct, select, yes {read it right} other {missed}}.",
+      "assisted": "Guessed after a Yes/No answer, so it’s counted apart from unaided reads."
     },
     "twistBanner": {
-      "plot": "Role Reversal twist in effect",
-      "power": "{self, select, yes {Hidden Claws! You played Role Reversal} other {Hidden Claws! {name} played Role Reversal}}",
-      "body": "Roles reversed. Normally <b>{normal}</b> would hide the answer. This time <b>{secret}</b> {self, select, yes {hide} other {hides}} it."
+      "plot": "Plot twist in effect · {twist}",
+      "body": "Roles reversed. Normally <b>{normal}</b> would hide the answer. This time <b>{secret}</b> {self, select, yes {hide} other {hides}} it.",
+      "partA": "Part A of 2: the usual roles. Part B brings a different question with roles reversed.",
+      "partB": "Part B of 2: roles reversed. Now <b>{secret}</b> {self, select, yes {hide} other {hides}} the answer.",
+      "counter": "You both hide an answer and predict the other’s. Nothing shows until you’ve both sealed.",
+      "question": "Once the answer is locked, each of you may ask one Yes/No question before the guess.",
+      "skipped": "{twist} couldn’t run: there was no second fresh question at tonight’s heat. This card plays normally, at no cost."
     },
     "forfeit": {
       "headline": "Time to Pay Up",
@@ -556,26 +576,81 @@
       "activated": "Plot twist activated",
       "turn": "The night takes a turn",
       "roleReversal": "Next Mind Reader card: normally <b>{next}</b> {nextSelf, select, yes {hide} other {hides}} the answer. With this twist, <b>{other}</b> {otherSelf, select, yes {hide} other {hides}} it and <b>{next}</b> {nextSelf, select, yes {guess} other {guesses}}.",
-      "doubleSpark": "Next Mind Reader card: a right guess earns <b>+2 Sparks</b> instead of +1. A wrong guess burns the bonus.",
-      "alreadyPending": "That twist was already waiting, so it stays as one. It doesn’t stack.",
-      "pendingNote": "It only switches on once you both tap Activate. Either of you can skip it."
+      "alreadyPending": "Another twist is already waiting for the next Mind Reader card, so this one doesn’t apply. Twists never stack.",
+      "pendingNote": "It only switches on once you both tap Activate. Either of you can skip it. Twists never award Spark."
+    },
+    "question": {
+      "title": "One more question",
+      "label": "Your Yes/No question",
+      "placeholder": "Ask {name} something…",
+      "heat": "Keep it within tonight’s heat: {heat}. {name} can always pass.",
+      "incoming": "{name} asks you:",
+      "yes": "Yes",
+      "no": "No",
+      "pass": "Pass",
+      "asked": "{self, select, yes {You asked} other {{name} asked}}: “{text}”",
+      "open": "{self, select, yes {Your question is still open.} other {{name} is thinking of a question…}}",
+      "passed": "{self, select, yes {You passed on asking.} other {{name} passed on asking.}}",
+      "waiting": "Waiting for an answer…",
+      "answered": "Answer: {answer, select, YES {Yes} other {No}}",
+      "declined": "{self, select, yes {{name} passed on it.} other {You passed on it.}}"
+    },
+    "picky": {
+      "title": "Picky Kitty",
+      "body": "Choose this card’s question. You’ll both answer the one you pick.",
+      "waiting": "{name} played Picky Kitty and is choosing this card’s question."
+    },
+    "followUp": {
+      "title": "Let Me In!",
+      "askedResponder": "{name} wants to know why you {role, select, ANSWER {picked} other {guessed}} “{choice}”. Tell them in person or in a line here, or pass.",
+      "askedAsker": "You asked {name} why they {role, select, ANSWER {picked} other {guessed}} “{choice}”. Waiting for them…",
+      "answered": "{self, select, yes {Your answer} other {{name}’s answer}}: “{reply}”",
+      "answeredAloud": "{self, select, yes {You’ll tell them in person.} other {{name} will tell you in person.}}",
+      "declined": "{self, select, yes {You passed. No harm done.} other {{name} passed. No harm done.}}",
+      "placeholder": "Why that one? (optional)",
+      "tell": "Tell them",
+      "telling": "Sending…",
+      "pass": "Pass",
+      "note": "The result stays exactly as it is."
+    },
+    "bonus": {
+      "title": "A Little Present",
+      "offered": "{self, select, yes {You brought {name} a Bonus Moment.} other {{name} brought you a Bonus Moment.}}",
+      "consent": "It only happens if you both say yes. Saying no costs nothing, and it never scores.",
+      "accept": "I’m into this",
+      "decline": "Not tonight",
+      "done": "We did it",
+      "stop": "Stop",
+      "sending": "Sending…",
+      "waiting": "You’re in. Now it’s {name}’s call.",
+      "accepted": "You’re both in. Take your time; it’s done once you both confirm.",
+      "COMPLETED": "Bonus Moment done. Back to the game.",
+      "DECLINED": "Not this time. No harm done.",
+      "STOPPED": "Stopped. Back to the game.",
+      "waitingDone": "You said it happened. Now {name} has to agree.",
+      "partnerDone": "{name} says it happened. Confirm only if it really did."
     }
   },
   "twists": {
     "ROLE_REVERSAL": {
       "title": "Role Reversal",
-      "effect": "On the next Mind Reader card, the person who would normally guess hides the answer instead.",
-      "applied": "Locked in. The next Mind Reader card swaps roles."
+      "effect": "On the next Mind Reader card, the person who would normally guess hides the answer instead. The usual turns resume after it.",
+      "applied": "Locked in. The next Mind Reader card swaps roles, just once."
     },
-    "DOUBLE_SPARK": {
-      "title": "Double Spark",
-      "effect": "The next correct Mind Reader guess earns twice the Sparks. A wrong guess burns the bonus.",
-      "applied": "Locked in. The next Mind Reader card is worth double."
+    "DOUBLE_CHALLENGE": {
+      "title": "Double Challenge",
+      "effect": "The next Mind Reader card plays in two parts: part A with the usual roles, part B with roles reversed and a second, different question.",
+      "applied": "Locked in. The next Mind Reader card comes in two parts."
     },
-    "FRESH_START": {
-      "title": "Fresh Start",
-      "effect": "Clears every pending twist.",
-      "applied": "Every pending twist is cleared."
+    "COUNTER_MIND": {
+      "title": "Counter Mind",
+      "effect": "On the next Mind Reader card you both answer for yourselves and predict each other, in secret. Both reveal together.",
+      "applied": "Locked in. On the next Mind Reader card, you read each other."
+    },
+    "ONE_MORE_QUESTION": {
+      "title": "One More Question",
+      "effect": "On the next Mind Reader card, once the answer is locked, each of you may ask the other one Yes/No question before the guess. Either of you can pass.",
+      "applied": "Locked in. The next Mind Reader card opens with a question each."
     }
   },
   "pools": {
@@ -645,10 +720,9 @@
     "noteChoose": "Choose your answer. It stays hidden.",
     "noteHidden": "{name} won’t see it until they guess.",
     "waitHiding": "{name} is hiding an answer…",
-    "notePower": "Arm a Power Card now if you want an edge.",
+    "notePower": "A Picky Kitty can still choose this card’s question.",
     "lockGuess": "Lock in my guess · +{count}",
     "lockingGuess": "Reading their mind…",
-    "noteSecondChance": "Nine Lives! Your first guess missed and is crossed out. Second Chance lets you guess again.",
     "noteGuess": "Choose what you think {name} hid.",
     "waitReading": "{name} is reading your mind…",
     "payUp": "I’ll pay up",
@@ -684,7 +758,27 @@
     "skipTwist": "Skip twist",
     "waitTwist": "You’re in. {name} still has to activate it.",
     "activate": "Activate twist",
-    "activating": "Activating…"
+    "activating": "Activating…",
+    "sealBoth": "Seal my answer and guess",
+    "sealingBoth": "Sealing…",
+    "noteCounter": "Pick your answer and your guess for {name}.",
+    "waitCounter": "Sealed. Waiting for {name} to seal theirs…",
+    "ask": "Ask it",
+    "asking": "Asking…",
+    "noQuestion": "No question",
+    "noQuestionLoading": "Passing…",
+    "noteAnswerBelow": "{name} asked you something. Answer on the card.",
+    "waitQuestions": "Waiting for {name}…",
+    "partB": "Part B · swap roles",
+    "partBLoading": "Swapping roles…",
+    "pickThis": "Use this one",
+    "picking": "Picking…",
+    "cancelPick": "Keep the original",
+    "cancellingPick": "Putting it back…",
+    "notePick": "Choose one. You’ll both answer it.",
+    "waitPick": "{name} is choosing this card’s question…",
+    "noteDrawForfeit": "Tap a face-down card to draw your forfeit.",
+    "waitDrawForfeit": "{name} is drawing a forfeit. You can still let it slide."
   },
   "verdict": {
     "eyebrow": "{name} claims a secret mission",
@@ -710,47 +804,50 @@
     "title": "Hidden Claws",
     "emptyTitle": "No Power Cards yet.",
     "emptyBody": "Complete a Secret Mission and have your partner confirm it. Each confirmed mission earns one card. You can hold {limit}.",
-    "armed": "Armed · triggers on your guess",
+    "armed": "Choosing a question…",
     "saveForLater": "Save for later",
     "playing": "Playing it…",
     "use": "Use power card",
-    "footer": "Power Cards only change Mind Reader rounds. They never reveal a hidden answer and never skip a consent step.",
+    "footer": "Power Cards never reveal a hidden answer, never change a result or Spark, and never skip a consent step.",
     "kinds": {
-      "SECOND_CHANCE": {
-        "alias": "Nine Lives!",
-        "title": "Second Chance",
-        "description": "If your next guess misses, the miss is crossed out and you guess again. Kept if you get it right first time.",
-        "requirement": "Guesser only · arm before your guess",
-        "useNow": "Arm it",
-        "confirm": "Armed until you guess this round. It’s only used up if your first guess misses."
+      "PICKY_KITTY": {
+        "alias": "Picky Kitty",
+        "title": "Choose the Question",
+        "description": "Get up to three fresh Mind Reader questions at tonight’s heat and pick the one you both answer on this card.",
+        "requirement": "Either player · before anyone answers",
+        "useNow": "Show me the options",
+        "confirm": "You’ll see up to three questions. The card is spent once you pick one; until then you can put it back."
       },
-      "ROLE_REVERSAL": {
-        "alias": "Claws Out!",
-        "title": "Role Reversal",
-        "description": "Swap who hides the answer and who guesses on this Mind Reader card. Takes effect immediately.",
-        "requirement": "Either player · before the secret is locked",
-        "useNow": "Swap roles now",
-        "confirm": "Takes effect immediately and is used up. Any armed cards go back to your hand."
+      "LET_ME_IN": {
+        "alias": "Let Me In!",
+        "title": "Ask Why",
+        "description": "After a reveal, ask your partner why they chose their answer. They can tell you or pass, and the result stays as it is.",
+        "requirement": "Either player · after a reveal",
+        "useNow": "Ask why",
+        "confirm": "Your partner can tell you or pass. The card is spent either way."
       },
-      "DOUBLE_SPARK": {
-        "alias": "Double Trouble!",
-        "title": "Double Spark",
-        "description": "Double the Spark reward from your next correct Mind Reader guess. A wrong guess uses it up for nothing.",
-        "requirement": "Guesser only · arm before your guess",
-        "useNow": "Arm it",
-        "confirm": "Armed until you guess this round. A wrong guess uses it up for nothing."
+      "A_LITTLE_PRESENT": {
+        "alias": "A Little Present",
+        "title": "Bonus Moment",
+        "description": "Offer your partner one extra challenge at tonight’s heat. It only happens if you both say yes, and it never scores.",
+        "requirement": "Either player · after a finished Mind Reader card",
+        "useNow": "Give it",
+        "confirm": "You’ll both see the challenge and decide. The card is spent either way; a no costs nothing."
       }
     },
     "reasons": {
-      "armed": "Armed. It triggers when you lock in your guess this round.",
+      "armed": "Choosing a question now.",
       "phase": "Power Cards work during Mind Reader rounds.",
       "notMindReader": "Save it. Power Cards only work on Mind Reader cards.",
-      "tooLateSecret": "Too late for this card. Use it before the secret answer is locked.",
-      "alreadySwapped": "Roles were already swapped this round.",
-      "tooLateGuess": "Too late. The guess is already in.",
-      "guesserOnly": "Only the guesser can use this. Wait for your turn to read.",
-      "secondChanceLive": "Your second chance is already in play.",
-      "oneArmed": "One of these is already armed."
+      "tooLatePick": "Use it before anyone answers this Mind Reader card.",
+      "alreadyPicked": "A question was already picked for this card.",
+      "picking": "A question is already being picked.",
+      "afterReveal": "Use it once the answers are revealed.",
+      "afterComplete": "Give it once this Mind Reader card is complete.",
+      "forfeitFirst": "Settle the forfeit first.",
+      "followUpOpen": "A follow-up question is already open.",
+      "alreadyAsked": "You already asked about this reveal.",
+      "presentGiven": "A Bonus Moment was already given on this card."
     }
   },
   "onboarding": {
@@ -776,13 +873,13 @@
         "lines": [
           "You each get a private Secret Mission. Tap the lock at the top to peek.",
           "Make it happen naturally, then claim it. Your partner sees the mission and confirms.",
-          "Confirmed missions earn Power Cards: Double Spark, Second Chance, Role Reversal. Find them under “Power”."
+          "Confirmed missions earn Power Cards: Picky Kitty, Let Me In!, A Little Present. Find them under “Power”."
         ]
       },
       {
         "title": "Twists & desires.",
         "lines": [
-          "Plot Twists change the next Mind Reader card, for example swapping roles or doubling Sparks. You both activate them.",
+          "Plot Twists change the next Mind Reader card: swapped roles, a two-part challenge, reading each other, or one extra question each. You both activate them, and they never award Spark.",
           "Mutual Desire cards are private Yes/Maybe/No. Only a mutual Yes is ever revealed."
         ]
       },
@@ -810,8 +907,6 @@
     "sheetTitle": "How to play"
   },
   "results": {
-    "headlineWin": "You Read Them Best.",
-    "headlineLose": "{name} Read You Better.",
     "headlineZero": "All Mystery, No Mind Reading.",
     "headlineTie": "Two Cats, One Mind.",
     "eyebrow": "Game over · {count, plural, one {# Spark} other {# Sparks}} between you",
@@ -824,6 +919,48 @@
     "hostAction": "Back to our hideaway",
     "returning": "Heading back…",
     "waiting": "One Last Tease… Your host takes you both back to the hideaway.",
-    "exit": "Exit to the title screen"
+    "exit": "Exit to the title screen",
+    "together": "What you read together",
+    "reads": {
+      "scheduled": "Scheduled reads",
+      "extra": "Double Challenge, part B",
+      "reciprocal": "Counter Mind reads",
+      "hinted": "Reads after a hint"
+    },
+    "ratio": "{right} of {total}",
+    "sparkNote": "Spark is the game’s reward for playing. It isn’t a compatibility score."
+  },
+  "outdated": {
+    "title": "This game is from an older version.",
+    "body": "The rules of some cards have changed since it was dealt. Rather than change your cards mid-game, it stays closed. Start a fresh game together.",
+    "hostAction": "Back to our hideaway",
+    "leaving": "Heading back…",
+    "waiting": "Your host will take you both back to start a fresh game."
+  },
+  "draw": {
+    "pick": "Pick a card",
+    "shuffling": "Shuffling…",
+    "turning": "Turning it over…",
+    "pickAria": "Pick one of {count} face-down cards",
+    "cardAria": "Face-down card {number} of {count}",
+    "mission": {
+      "eyebrow": "Undercover Cat",
+      "title": "Draw your Secret Mission",
+      "body": "Your own deck, shuffled. Tap a card: only you will see what it says.",
+      "revealed": "Your mission · eyes only",
+      "keep": "Keep it secret",
+      "later": "Later"
+    },
+    "power": {
+      "eyebrow": "Undercover Cat pulled it off!",
+      "title": "Draw a Power Card",
+      "body": "{name} confirmed your mission. Tap one of the face-down Power Cards you don’t hold yet.",
+      "keep": "Into my hand",
+      "view": "View my Power Cards"
+    },
+    "forfeit": {
+      "payer": "You missed. Draw a forfeit, or pass. It only happens if you both say yes.",
+      "watching": "{name} is drawing a forfeit…"
+    }
   }
 }

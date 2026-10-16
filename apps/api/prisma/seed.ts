@@ -110,11 +110,12 @@ const forfeits:Record<Heat,string[]>={
  4:['Take off one accessory or item of clothing, your choice.','Your partner gives you one playful order for the next round. You can veto it once.','Confess your most distracting thought about your partner tonight.','Hands behind your back: give your partner a thirty-second kiss without using them.'],
  5:['Wear a blindfold, or keep your eyes closed, for the next round.','Whisper the boldest thing you want to try with them. No explanations.','Offer two items of clothing; your partner picks which one comes off.','Hands off: your partner teases you for thirty seconds, and you can’t touch back.'],
 };
+// Four distinct effects; a session deals two of them. Ids are stable, so persisted sessions still resolve their twist cards.
 const twists:Array<[string,string,string]>=[
  ['twist-01','Claws Out!','ROLE_REVERSAL'],
- ['twist-02','Double Trouble!','DOUBLE_SPARK'],
- ['twist-04','The Mouse Bites Back!','ROLE_REVERSAL'],
- ['twist-05','Curiosity Pays!','DOUBLE_SPARK'],
+ ['twist-02','Double Trouble!','DOUBLE_CHALLENGE'],
+ ['twist-04','The Mouse Bites Back!','COUNTER_MIND'],
+ ['twist-05','Curiosity Pays!','ONE_MORE_QUESTION'],
 ];
 const art={mind:['/images/ask-it-anyway.png','/images/no-hands.png'],chemistry:['/images/no-hands.png','/images/read-my-mind-cover.png'],desire:'/images/read-my-mind-cover.png',twist:'/images/roll-for-it.png',mission:'/images/ask-it-anyway.png'};
 

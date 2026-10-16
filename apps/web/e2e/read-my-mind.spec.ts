@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test';
-import {copy,escape,localeContext,oneOf,type Copy,type Locale} from './i18n';
+import {copy,drawFromSheet,escape,localeContext,oneOf,type Copy,type Locale} from './i18n';
 
 const noHorizontalOverflow=async(page:Page)=>expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
 const category=async(page:Page)=>(await page.locator('article[data-card-type]').getAttribute('data-card-type'))!;
@@ -59,6 +59,9 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
  await expect(host.getByText(H.f(H.m.onboarding.doneBody,{name:'Midnight'}))).toBeVisible();
  await guest.getByRole('button',{name:G.m.onboarding.skip}).click();await guest.getByRole('button',{name:G.m.onboarding.deal}).click();
  await expect(host.locator('article[data-card-type]')).toBeVisible();
+ // Each player draws their own mission face down; neither phone ever shows the other's.
+ const hostMission=await drawFromSheet(host,H,'mission');const guestMission=await drawFromSheet(guest,G,'mission');await shot(host,'mission-drawn');
+ await expect(guest.getByText(hostMission.split('\n').at(-1)!)).toHaveCount(0);await expect(host.getByText(guestMission.split('\n').at(-1)!)).toHaveCount(0);
 
  // Secret Mission: claim → partner sees it → confirm → reward reveal → Power Card in the HUD.
  const missionChip=(p:Page)=>p.getByRole('button',{name:new RegExp(`^${escape(c(p).m.hud.mission)}`)});
@@ -66,50 +69,91 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
  await host.getByRole('button',{name:H.m.hud.ask}).click();
  const verdict=guest.getByRole('dialog');await expect(verdict.getByText(G.m.verdict.title)).toBeVisible();await shot(guest,'mission-verdict');
  await verdict.getByRole('button',{name:G.m.verdict.yes}).click();
- const reward=host.getByRole('dialog');await expect(reward.getByText(H.m.reward.title)).toBeVisible();await shot(host,'reward');
- await reward.getByRole('button',{name:H.m.reward.keepPlaying}).click();await expect(host.getByRole('button',{name:new RegExp(`^${escape(H.f(H.m.hud.powerAria,{count:1,limit:2}))}`)})).toBeVisible();
+ // The confirmed mission earns a Power Card draw, then the next mission is drawn the same way.
+ await drawFromSheet(host,H,'power');await shot(host,'reward');
+ await expect(host.getByRole('button',{name:new RegExp(`^${escape(H.f(H.m.hud.powerAria,{count:1,limit:2}))}`)})).toBeVisible();
+ await drawFromSheet(host,H,'mission');
  await missionChip(host).click();
 
- const seen=new Set<string>();let chemistryRounds=0,timerChecked=false,usedPower=false,forfeitSeen=false,switched=false;
+ const seen=new Set<string>();let chemistryRounds=0,timerChecked=false,usedPower=false,forfeitSeen=false,forfeitDrawn=false,switched=false,askedQuestion=false;
  for(let round=1;round<=12;round++){
   for(const p of [host,guest])await expect(p.getByText(c(p).f(c(p).m.hud.round,{round}),{exact:false}).first()).toBeVisible();
   const kind=await category(host);seen.add(kind);expect(await category(guest)).toBe(kind);
   if(kind==='MIND_READER'){
    // Same card, same answers, in two languages.
    expect(await host.locator('[role=radiogroup] [role=radio]').count()).toBe(await guest.locator('[role=radiogroup] [role=radio]').count());
-   const hostGuesses=!await lockIt(host,H).isVisible();
-   if(!usedPower&&hostGuesses&&await host.getByRole('button',{name:new RegExp(escape(H.suffix(H.m.hud.powerAriaUsable)))}).isVisible()){
+   // Miss until a forfeit has shown up (round 1 is always a plain Mind Reader card), then alternate by round.
+   const right=forfeitSeen&&round%2===1;
+   const btn=(p:Page,label:string)=>p.getByRole('button',{name:label,exact:true});
+   const marks='article li[data-secret], article li[data-prediction]';
+   /** Clicks an action and waits for the server's answer to replace it. */
+   const tap=async(p:Page,label:string)=>{await btn(p,label).click();await expect(btn(p,label)).toBeHidden();await p.waitForTimeout(150)};
+   // The host plays the Power Card their mission earned at its first legal moment: Picky Kitty before the lock, the others after a reveal.
+   const playPower=async()=>{
+    if(!switched||usedPower||!await host.getByRole('button',{name:new RegExp(escape(H.suffix(H.m.hud.powerAriaUsable)))}).isVisible())return false;
     await host.getByRole('button',{name:new RegExp(`^${escape(H.prefix(H.m.hud.powerAria))}`)}).click();const tray=host.getByRole('dialog');
     await tray.getByRole('button',{name:H.m.powers.use}).first().click();await shot(host,'power-confirm');
     await tray.getByRole('button',{name:oneOf(...Object.values(H.m.powers.kinds).map(k=>k.useNow))}).click();usedPower=true;
-    await expect(host.getByRole('dialog')).toHaveCount(0);
+    await expect(host.getByRole('dialog')).toHaveCount(0);await host.waitForTimeout(150);return true};
+   // Every step is a server phase both phones share: act on whatever each phone offers until the card is revealed and settled.
+   for(let step=0;step<80;step++){
+    let acted=false;
+    for(const p of [host,guest]){const g=c(p),m=g.m;
+     // Picky Kitty: the owner takes the first of the three questions.
+     if(await btn(p,m.actions.pickThis).isVisible()){await shot(p,'picky-kitty');await p.getByRole('radio').first().click();await tap(p,m.actions.pickThis);acted=true;break}
+     // Counter Mind: both answer A and predict A, sealed separately.
+     if(await btn(p,m.actions.sealBoth).isVisible()){const groups=p.locator('[role=radiogroup]');await groups.nth(0).getByRole('radio').first().click();await groups.nth(1).getByRole('radio').first().click();await shot(p,'counter-mind');await tap(p,m.actions.sealBoth);acted=true;break}
+     // One More Question: the host asks, the guest answers on the card and passes on asking.
+     if(await btn(p,m.card.question.yes).isVisible()){await shot(p,'question-incoming');await tap(p,m.card.question.yes);acted=true;break}
+     if(await btn(p,m.actions.noQuestion).isVisible()){
+      if(p===host&&!askedQuestion){askedQuestion=true;await p.getByPlaceholder(g.f(m.card.question.placeholder,{name:'Midnight'})).fill('Is it the first one?');await tap(p,m.actions.ask)}
+      else await tap(p,m.actions.noQuestion);
+      acted=true;break}
+     // Let Me In! and A Little Present: the partner passes, which costs nothing.
+     if(await btn(p,m.card.followUp.tell).isVisible()){await shot(p,'let-me-in');await tap(p,m.card.followUp.pass);acted=true;break}
+     if(await btn(p,m.card.bonus.accept).isVisible()){await shot(p,'little-present');await tap(p,m.card.bonus.decline);acted=true;break}
+    }
+    if(acted)continue;
+    const holder=await lockIt(host,H).isVisible()?host:await lockIt(guest,G).isVisible()?guest:null;
+    if(holder){
+     if(await playPower())continue;
+     const chooser=holder,gss=holder===host?guest:host;
+     await chooser.getByRole('radio').first().click();
+     if(!switched){
+      // Switching language mid-round keeps the pick, the round and the connection, and only changes this phone.
+      switched=true;const other=c(chooser).locale==='vi'?'en':'vi',back=copy(other);
+      const before=(await chooser.locator('.game-card-title').textContent())!,partnerBefore=(await gss.locator('.game-card-title').textContent())!;
+      await chooser.getByRole('button',{name:c(chooser).f(c(chooser).m.lang.switchTo,{language:c(chooser).m.lang[other]})}).first().click();
+      await expect(chooser.locator('.game-card-title')).not.toHaveText(before);await expect(chooser.locator('html')).toHaveAttribute('lang',other==='vi'?'vi-VN':'en-US');
+      await expect(chooser.getByRole('radio').first()).toHaveAttribute('aria-checked','true');await expect(lockIt(chooser,back)).toBeEnabled();
+      await expect(chooser.getByText(back.f(back.m.hud.round,{round}),{exact:false}).first()).toBeVisible();
+      await expect(chooser.getByRole('status',{name:back.m.connection.statusConnected})).toBeVisible();
+      await expect(gss.locator('.game-card-title')).toHaveText(partnerBefore);await shot(chooser,'switched-language');
+      await chooser.getByRole('button',{name:back.f(back.m.lang.switchTo,{language:back.m.lang[c(chooser).locale]})}).first().click();
+      await expect(chooser.locator('.game-card-title')).toHaveText(before);await expect(chooser.getByRole('radio').first()).toHaveAttribute('aria-checked','true');
+     }
+     await lockIt(chooser,c(chooser)).click();await expect(lockIt(chooser,c(chooser))).toBeHidden();continue;
+    }
+    const guesser=await lockGuess(host,H).isVisible()?host:await lockGuess(guest,G).isVisible()?guest:null;
+    if(guesser){await guesser.getByRole('radio').nth(right?0:1).click();if(round===1)await shot(guesser,'mind-reader-guess');await lockGuess(guesser,c(guesser)).click();await expect(lockGuess(guesser,c(guesser))).toBeHidden();continue}
+    // Reveal, once both phones show it.
+    if(!(await host.locator(marks).count())||!(await guest.locator(marks).count())){await host.waitForTimeout(200);continue}
+    // The first forfeit is drawn face down by the player who missed; both phones see the drawn card turn over.
+    if(!forfeitDrawn){const payer=await host.getByText(H.m.actions.noteDrawForfeit).isVisible()?host:await guest.getByText(G.m.actions.noteDrawForfeit).isVisible()?guest:null;
+     if(payer){const other=payer===host?guest:host;await payer.locator('article .draw-card').first().click();
+      await expect(payer.locator('article .draw-reveal-front')).toBeVisible();await expect(other.locator('article .draw-reveal-front')).toBeVisible();
+      expect((await payer.locator('article .draw-reveal-front').innerText()).trim()).not.toBe('');forfeitDrawn=true;await shot(payer,'forfeit-drawn');continue}}
+    const collector=await btn(host,H.m.actions.letItSlide).isVisible()?host:await btn(guest,G.m.actions.letItSlide).isVisible()?guest:null;
+    if(collector){forfeitSeen=true;await shot(collector,'forfeit');await tap(collector,c(collector).m.actions.letItSlide);continue}
+    // Double Challenge: part A's reveal leads into part B on the same card.
+    if(await btn(host,H.m.actions.partB).isVisible()){await shot(host,'double-challenge-a');await btn(host,H.m.actions.partB).click();await expect(host.locator(marks)).toHaveCount(0);await expect(guest.locator(marks)).toHaveCount(0);continue}
+    if(await playPower())continue;
+    // Settled: both phones mark the same answers, whatever the language.
+    if(await host.locator('article li[data-secret]').count()){await expect(guest.locator('article li[data-secret]')).toHaveCount(1);expect(await revealIndex(host,'secret')).toBe(await revealIndex(guest,'secret'));expect(await revealIndex(host,'guess')).toBe(await revealIndex(guest,'guess'))}
+    else{await expect(host.locator('article li[data-prediction]')).toHaveCount(2);await expect(guest.locator('article li[data-prediction]')).toHaveCount(2)}
+    break;
    }
-   const roleNow=await lockIt(host,H).isVisible();const chooser=roleNow?host:guest,gss=roleNow?guest:host;
-   await chooser.getByRole('radio').first().click();
-   if(!switched){
-    // Switching language mid-round keeps the pick, the round and the connection, and only changes this phone.
-    switched=true;const other=c(chooser).locale==='vi'?'en':'vi',back=copy(other);
-    const before=(await chooser.locator('.game-card-title').textContent())!,partnerBefore=(await gss.locator('.game-card-title').textContent())!;
-    await chooser.getByRole('button',{name:c(chooser).f(c(chooser).m.lang.switchTo,{language:c(chooser).m.lang[other]})}).first().click();
-    await expect(chooser.locator('.game-card-title')).not.toHaveText(before);await expect(chooser.locator('html')).toHaveAttribute('lang',other==='vi'?'vi-VN':'en-US');
-    await expect(chooser.getByRole('radio').first()).toHaveAttribute('aria-checked','true');await expect(lockIt(chooser,back)).toBeEnabled();
-    await expect(chooser.getByText(back.f(back.m.hud.round,{round}),{exact:false}).first()).toBeVisible();
-    await expect(chooser.getByRole('status',{name:back.m.connection.statusConnected})).toBeVisible();
-    await expect(gss.locator('.game-card-title')).toHaveText(partnerBefore);await shot(chooser,'switched-language');
-    await chooser.getByRole('button',{name:back.f(back.m.lang.switchTo,{language:back.m.lang[c(chooser).locale]})}).first().click();
-    await expect(chooser.locator('.game-card-title')).toHaveText(before);await expect(chooser.getByRole('radio').first()).toHaveAttribute('aria-checked','true');
-   }
-   await lockIt(chooser,c(chooser)).click();
-   await expect(lockGuess(gss,c(gss))).toBeVisible();
-   const right=round%2===1;await gss.getByRole('radio').nth(right?0:1).click();if(round===1)await shot(gss,'mind-reader-guess');await lockGuess(gss,c(gss)).click();
-   // A Second Chance can keep the guesser on the card after a miss; take the next open answer.
-   const g=c(gss),revealed=gss.getByRole('button',{name:oneOf(g.m.actions.next,g.m.actions.results,g.m.actions.payUp)}),secondChance=gss.getByText(g.m.actions.noteSecondChance);
-   await expect(revealed.or(secondChance)).toBeVisible();
-   if(await secondChance.isVisible()){await shot(gss,'second-chance');await gss.locator('[role=radio]:not([disabled]):not([aria-checked=true])').first().click();await lockGuess(gss,g).click();await expect(revealed).toBeVisible()}
-   // Both phones mark the same answers, whatever the language.
-   await expect(chooser.locator('article li[data-secret]')).toHaveCount(1);
-   expect(await revealIndex(chooser,'secret')).toBe(await revealIndex(gss,'secret'));expect(await revealIndex(chooser,'guess')).toBe(await revealIndex(gss,'guess'));
-   if(await gss.getByRole('button',{name:g.m.actions.pass,exact:true}).isVisible()){forfeitSeen=true;await shot(gss,'forfeit');await gss.getByRole('button',{name:g.m.actions.pass,exact:true}).click()}
+   await expect(nextButton(host,H)).toBeVisible();
   }else if(kind==='CHEMISTRY'){
    chemistryRounds++;
    // The first Chemistry card, and the first timed one, are played through; any others are declined.
@@ -148,7 +192,7 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
   await nextButton(host,H).click();
  }
  expect([...seen]).toEqual(expect.arrayContaining(['MIND_READER','CHEMISTRY','MUTUAL_DESIRE','PLOT_TWIST']));
- expect(forfeitSeen).toBe(true);
+ expect(forfeitSeen).toBe(true);expect(forfeitDrawn).toBe(true);
  await expect(host.getByText(H.prefix(H.m.results.eyebrow),{exact:false})).toBeVisible();await shot(host,'results');await shot(guest,'results-guest');
  await host.getByRole('button',{name:H.m.results.hostAction}).click();await expect(guest.getByRole('button',{name:G.m.lobby.imIn})).toBeVisible();
  await hc.close();await gc.close();

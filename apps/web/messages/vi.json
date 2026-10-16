@@ -293,10 +293,17 @@
       "missionVerdict": "Không có nhiệm vụ nào đang chờ bạn xác nhận.",
       "missionPartnerOnly": "Chỉ người ấy mới xác nhận được nhiệm vụ của bạn.",
       "powerNotOwned": "Lá quyền năng này không có trong tay bạn.",
-      "crossedOut": "Đáp án này đã bị gạch rồi.",
       "closed": "Khoảnh khắc đó đã qua. Bạn đang xem lá bài mới nhất.",
       "authenticate": "Đang kết nối lại với phòng…",
-      "deckEmpty": "Mức độ này chưa đủ lá bài. Thử mức khác nhé."
+      "deckEmpty": "Mức độ này chưa đủ lá bài. Thử mức khác nhé.",
+      "noQuestions": "Độ nóng tối nay không còn câu hỏi mới. Lá vẫn ở trong tay bạn.",
+      "noBonus": "Chưa có Khoảnh khắc thưởng mới nào hợp độ nóng tối nay. Lá vẫn ở trong tay bạn.",
+      "waitPick": "Người ấy đang chọn câu hỏi. Chờ chút nhé.",
+      "questionEmpty": "Viết câu hỏi Có/Không trước đã.",
+      "outdated": "Ván này bắt đầu theo luật cũ. Hãy bắt đầu ván mới.",
+      "drawPick": "Hãy chọn một trong các lá úp.",
+      "drawNone": "Lúc này không có gì để rút.",
+      "drawForfeitFirst": "Rút thử thách trước, hoặc bỏ qua."
     }
   },
   "heat": {
@@ -389,7 +396,7 @@
   "hud": {
     "round": "Vòng {round}",
     "sparksAria": "Spark: bạn {mine}, {name} {theirs}",
-    "vs": "vs",
+    "vs": "&",
     "rules": "Cách chơi",
     "missionsDone": "Đã xong mọi nhiệm vụ",
     "mission": "Mèo nằm vùng",
@@ -411,7 +418,9 @@
     "notYetSaid": "Người ấy bảo “chưa đâu”. Cứ thử tiếp, không bị phạt.",
     "ask": "Nhờ người ấy xác nhận",
     "asking": "Đang hỏi…",
-    "asked": "Đã hỏi. Giờ tới lượt {name} quyết định."
+    "asked": "Đã hỏi. Giờ tới lượt {name} quyết định.",
+    "missionDraw": "Rút nhiệm vụ bí mật",
+    "powerDraw": "Rút Lá quyền năng"
   },
   "card": {
     "aria": "Lá {type}",
@@ -422,9 +431,6 @@
       "sparksFor": "{self, select, yes {+{count} Spark cho bạn} other {+{count} Spark cho {name}}}",
       "noSpark": "Lần này không có Spark.",
       "noSparkHolder": "Lần này không có Spark. Bạn vẫn là một bí ẩn.",
-      "secondChanceUsed": "Vẫn còn một mạng! Cơ hội thứ hai đã gạch đáp án “{choice}” trước khi đoán lại.",
-      "doubleUsedHit": "Spark nhân đôi! Phần thưởng lần này được gấp đôi.",
-      "doubleUsedMiss": "Spark nhân đôi đã mất vì đoán trật. Lần này không có thưởng thêm.",
       "yourAnswer": "Đáp án của bạn",
       "theirAnswer": "Đáp án của {name}",
       "yourGuess": "Bạn đoán",
@@ -451,12 +457,26 @@
       "noteHide": "Chọn đáp án đúng là bạn nhất. {name} sẽ phải đoán.",
       "noteGuess": "Chọn đáp án bạn nghĩ {name} đã giấu. Nếu đoán trật, một thử thách tuỳ chọn đang chờ.",
       "noteLocked": "Đã chốt. Nếu {name} đoán trật, người ấy nợ bạn một thử thách tuỳ chọn.",
-      "noteWaitGuess": "Trong lúc chờ, bạn có thể bật Lá quyền năng nếu có."
+      "noteWaitGuess": "Trong lúc chờ, Mèo kén mồi vẫn kịp chọn câu hỏi cho lá này.",
+      "counterAnswer": "Đáp án của bạn",
+      "counterPrediction": "Bạn đoán {name} chọn",
+      "counterNote": "Chọn đáp án của bạn, rồi đoán xem {name} chọn gì. Chưa ai thấy gì cho tới khi cả hai cùng chốt.",
+      "counterSealed": "Đã chốt. {name} không thấy được lựa chọn nào của bạn.",
+      "predictionRow": "{guesserSelf, select, yes {Bạn} other {{guesser}}} đoán đáp án của {holderSelf, select, yes {bạn} other {{holder}}}",
+      "readRight": "Đọc trúng",
+      "missed": "Trật",
+      "partLabel": "Phần {part}/2",
+      "partA": "Phần A: {self, select, yes {bạn} other {{name}}} {correct, select, yes {đoán trúng} other {đoán trật}}.",
+      "assisted": "Đoán sau khi nghe câu trả lời Có/Không, nên được tính riêng với lần đọc vị không gợi ý."
     },
     "twistBanner": {
-      "plot": "Bẻ lái Đảo vai đang có hiệu lực",
-      "power": "{self, select, yes {Tung vuốt bí mật! Bạn đã dùng Đảo vai} other {Tung vuốt bí mật! {name} đã dùng Đảo vai}}",
-      "body": "Đổi vai rồi. Bình thường <b>{normal}</b> sẽ giấu đáp án. Lần này tới lượt <b>{secret}</b> giấu."
+      "plot": "Bẻ lái đang có hiệu lực · {twist}",
+      "body": "Đổi vai rồi. Bình thường <b>{normal}</b> sẽ giấu đáp án. Lần này tới lượt <b>{secret}</b> giấu.",
+      "partA": "Phần A/2: giữ vai như thường. Phần B mang một câu hỏi khác, với vai đảo ngược.",
+      "partB": "Phần B/2: đảo vai. Giờ tới lượt <b>{secret}</b> giấu đáp án.",
+      "counter": "Cả hai cùng giấu đáp án của mình và đoán đáp án của người kia. Chưa ai thấy gì cho tới khi cả hai cùng chốt.",
+      "question": "Sau khi đáp án được chốt, mỗi người được hỏi một câu Có/Không trước khi đoán.",
+      "skipped": "{twist} không thể diễn ra: độ nóng tối nay không còn câu hỏi mới cho phần thứ hai. Lá này chơi như thường, không mất gì."
     },
     "forfeit": {
       "headline": "Tới lúc nộp phạt rồi!",
@@ -556,26 +576,81 @@
       "activated": "Bẻ lái đã kích hoạt",
       "turn": "Đêm nay rẽ hướng",
       "roleReversal": "Lá Đọc vị tiếp theo: bình thường <b>{next}</b> sẽ giấu đáp án. Với bẻ lái này, <b>{other}</b> giấu và <b>{next}</b> đoán.",
-      "doubleSpark": "Lá Đọc vị tiếp theo: đoán trúng được <b>+2 Spark</b> thay vì +1. Đoán trật thì mất phần thưởng.",
-      "alreadyPending": "Bẻ lái này đã chờ sẵn, nên chỉ tính một lần. Không cộng dồn.",
-      "pendingNote": "Chỉ có hiệu lực khi cả hai cùng chạm Kích hoạt. Ai cũng có thể bỏ qua."
+      "alreadyPending": "Đã có một bẻ lái khác chờ lá Đọc vị tiếp theo, nên bẻ lái này không áp dụng. Bẻ lái không cộng dồn.",
+      "pendingNote": "Chỉ có hiệu lực khi cả hai cùng chạm Kích hoạt. Ai cũng có thể bỏ qua. Bẻ lái không bao giờ cộng Spark."
+    },
+    "question": {
+      "title": "Thêm một câu hỏi",
+      "label": "Câu hỏi Có/Không của bạn",
+      "placeholder": "Hỏi {name} điều gì đó…",
+      "heat": "Giữ trong độ nóng tối nay: {heat}. {name} luôn có thể bỏ qua.",
+      "incoming": "{name} hỏi bạn:",
+      "yes": "Có",
+      "no": "Không",
+      "pass": "Bỏ qua",
+      "asked": "{self, select, yes {Bạn hỏi} other {{name} hỏi}}: “{text}”",
+      "open": "{self, select, yes {Bạn chưa hỏi.} other {{name} đang nghĩ câu hỏi…}}",
+      "passed": "{self, select, yes {Bạn không hỏi.} other {{name} không hỏi.}}",
+      "waiting": "Đang chờ câu trả lời…",
+      "answered": "Trả lời: {answer, select, YES {Có} other {Không}}",
+      "declined": "{self, select, yes {{name} đã bỏ qua câu này.} other {Bạn đã bỏ qua câu này.}}"
+    },
+    "picky": {
+      "title": "Mèo kén mồi",
+      "body": "Chọn câu hỏi cho lá này. Cả hai sẽ cùng trả lời câu bạn chọn.",
+      "waiting": "{name} vừa dùng Mèo kén mồi và đang chọn câu hỏi cho lá này."
+    },
+    "followUp": {
+      "title": "Cào cửa đòi vào!",
+      "askedResponder": "{name} muốn biết vì sao bạn {role, select, ANSWER {chọn} other {đoán}} “{choice}”. Kể trực tiếp hoặc viết một dòng ở đây, hoặc bỏ qua.",
+      "askedAsker": "Bạn đã hỏi {name} vì sao {role, select, ANSWER {chọn} other {đoán}} “{choice}”. Đang chờ người ấy…",
+      "answered": "{self, select, yes {Bạn trả lời} other {{name} trả lời}}: “{reply}”",
+      "answeredAloud": "{self, select, yes {Bạn sẽ kể trực tiếp.} other {{name} sẽ kể trực tiếp với bạn.}}",
+      "declined": "{self, select, yes {Bạn đã bỏ qua. Không sao cả.} other {{name} đã bỏ qua. Không sao cả.}}",
+      "placeholder": "Vì sao lại là nó? (không bắt buộc)",
+      "tell": "Trả lời",
+      "telling": "Đang gửi…",
+      "pass": "Bỏ qua",
+      "note": "Kết quả vẫn giữ nguyên."
+    },
+    "bonus": {
+      "title": "Mèo tha quà về",
+      "offered": "{self, select, yes {Bạn tha về cho {name} một Khoảnh khắc thưởng.} other {{name} tha về cho bạn một Khoảnh khắc thưởng.}}",
+      "consent": "Chỉ diễn ra khi cả hai cùng đồng ý. Từ chối không mất gì, và không bao giờ tính điểm.",
+      "accept": "Tôi đồng ý",
+      "decline": "Để lúc khác nhé",
+      "done": "Đã hoàn thành",
+      "stop": "Dừng lại",
+      "sending": "Đang gửi…",
+      "waiting": "Bạn đã đồng ý. Giờ tới lượt {name} quyết định.",
+      "accepted": "Cả hai đã đồng ý. Cứ thong thả; xong khi cả hai cùng xác nhận.",
+      "COMPLETED": "Đã xong Khoảnh khắc thưởng. Quay lại ván chơi.",
+      "DECLINED": "Lần này thì thôi. Không sao cả.",
+      "STOPPED": "Đã dừng. Quay lại ván chơi.",
+      "waitingDone": "Bạn đã xác nhận xong. Giờ chờ {name} xác nhận.",
+      "partnerDone": "{name} đã xác nhận xong. Chỉ xác nhận khi đã thực sự làm."
     }
   },
   "twists": {
     "ROLE_REVERSAL": {
       "title": "Đảo vai",
-      "effect": "Ở lá Đọc vị tiếp theo, người lẽ ra sẽ đoán phải giấu đáp án.",
-      "applied": "Đã chốt. Lá Đọc vị tiếp theo sẽ đổi vai."
+      "effect": "Ở lá Đọc vị tiếp theo, người lẽ ra sẽ đoán phải giấu đáp án. Sau lá đó, lượt chơi trở lại như cũ.",
+      "applied": "Đã chốt. Lá Đọc vị tiếp theo sẽ đổi vai, chỉ một lần."
     },
-    "DOUBLE_SPARK": {
-      "title": "Spark nhân đôi",
-      "effect": "Lần đoán trúng tiếp theo ở lá Đọc vị được gấp đôi Spark. Đoán trật thì mất phần thưởng.",
-      "applied": "Đã chốt. Lá Đọc vị tiếp theo có giá gấp đôi."
+    "DOUBLE_CHALLENGE": {
+      "title": "Thử thách đôi",
+      "effect": "Lá Đọc vị tiếp theo chơi hai phần: phần A giữ vai như thường, phần B đảo vai với một câu hỏi thứ hai, khác câu đầu.",
+      "applied": "Đã chốt. Lá Đọc vị tiếp theo có hai phần."
     },
-    "FRESH_START": {
-      "title": "Làm lại từ đầu",
-      "effect": "Xoá mọi bẻ lái đang chờ.",
-      "applied": "Mọi bẻ lái đang chờ đã được xoá."
+    "COUNTER_MIND": {
+      "title": "Đọc vị ngược",
+      "effect": "Ở lá Đọc vị tiếp theo, cả hai cùng bí mật chọn đáp án của mình và đoán đáp án của người kia. Lật bài cùng lúc.",
+      "applied": "Đã chốt. Ở lá Đọc vị tiếp theo, hai người đọc vị lẫn nhau."
+    },
+    "ONE_MORE_QUESTION": {
+      "title": "Thêm một câu hỏi",
+      "effect": "Ở lá Đọc vị tiếp theo, sau khi đáp án được chốt, mỗi người được hỏi người kia một câu Có/Không trước khi đoán. Ai cũng có thể bỏ qua.",
+      "applied": "Đã chốt. Lá Đọc vị tiếp theo mở đầu bằng mỗi người một câu hỏi."
     }
   },
   "pools": {
@@ -645,10 +720,9 @@
     "noteChoose": "Chọn đáp án của bạn. Nó sẽ được giấu kín.",
     "noteHidden": "{name} sẽ không thấy cho tới khi đoán.",
     "waitHiding": "{name} đang giấu đáp án…",
-    "notePower": "Bật Lá quyền năng ngay nếu muốn có lợi thế.",
+    "notePower": "Mèo kén mồi vẫn kịp chọn câu hỏi cho lá này.",
     "lockGuess": "Chốt đáp án · +{count}",
     "lockingGuess": "Đang đọc vị…",
-    "noteSecondChance": "Vẫn còn một mạng! Lần đầu trật rồi, đáp án đó đã bị gạch. Cơ hội thứ hai cho bạn đoán lại.",
     "noteGuess": "Chọn đáp án bạn nghĩ {name} đã giấu.",
     "waitReading": "{name} đang đọc vị bạn…",
     "payUp": "Tôi chịu phạt",
@@ -684,7 +758,27 @@
     "skipTwist": "Bỏ qua bẻ lái",
     "waitTwist": "Bạn đã kích hoạt. Giờ chờ {name} kích hoạt.",
     "activate": "Kích hoạt bẻ lái",
-    "activating": "Đang kích hoạt…"
+    "activating": "Đang kích hoạt…",
+    "sealBoth": "Chốt đáp án và lời đoán",
+    "sealingBoth": "Đang chốt…",
+    "noteCounter": "Chọn đáp án của bạn và lời đoán cho {name}.",
+    "waitCounter": "Đã chốt. Đang chờ {name} chốt…",
+    "ask": "Hỏi",
+    "asking": "Đang hỏi…",
+    "noQuestion": "Không hỏi",
+    "noQuestionLoading": "Đang bỏ qua…",
+    "noteAnswerBelow": "{name} vừa hỏi bạn. Trả lời ngay trên lá bài.",
+    "waitQuestions": "Đang chờ {name}…",
+    "partB": "Phần B · đảo vai",
+    "partBLoading": "Đang đảo vai…",
+    "pickThis": "Chọn câu này",
+    "picking": "Đang chọn…",
+    "cancelPick": "Giữ câu hỏi cũ",
+    "cancellingPick": "Đang cất lá…",
+    "notePick": "Chọn một câu. Cả hai sẽ cùng trả lời.",
+    "waitPick": "{name} đang chọn câu hỏi cho lá này…",
+    "noteDrawForfeit": "Chạm một lá úp để rút thử thách.",
+    "waitDrawForfeit": "{name} đang rút thử thách. Bạn vẫn có thể cho qua."
   },
   "verdict": {
     "eyebrow": "{name} báo đã xong nhiệm vụ bí mật",
@@ -710,47 +804,50 @@
     "title": "Móng vuốt giấu kín",
     "emptyTitle": "Chưa có Lá quyền năng nào.",
     "emptyBody": "Hoàn thành một Nhiệm vụ bí mật và được người ấy xác nhận. Mỗi nhiệm vụ được xác nhận mang về một lá. Bạn giữ được tối đa {limit} lá.",
-    "armed": "Đã bật · có hiệu lực khi bạn đoán",
+    "armed": "Đang chọn câu hỏi…",
     "saveForLater": "Để dành",
     "playing": "Đang dùng…",
     "use": "Dùng lá quyền năng",
-    "footer": "Lá quyền năng chỉ tác động tới lượt Đọc vị. Chúng không bao giờ làm lộ đáp án đang giấu và không bao giờ bỏ qua bước đồng ý.",
+    "footer": "Lá quyền năng không bao giờ làm lộ đáp án đang giấu, không đổi kết quả hay Spark, và không bao giờ bỏ qua bước đồng ý.",
     "kinds": {
-      "SECOND_CHANCE": {
-        "alias": "Vẫn còn một mạng!",
-        "title": "Cơ hội thứ hai",
-        "description": "Nếu lần đoán tới bị trật, đáp án sai sẽ bị gạch và bạn được đoán lại. Đoán trúng ngay thì vẫn giữ lá.",
-        "requirement": "Chỉ người đoán · bật trước khi đoán",
-        "useNow": "Bật lá này",
-        "confirm": "Có hiệu lực tới lúc bạn đoán ở vòng này. Chỉ mất lá nếu lần đoán đầu bị trật."
+      "PICKY_KITTY": {
+        "alias": "Mèo kén mồi",
+        "title": "Chọn câu hỏi",
+        "description": "Nhận tối đa ba câu hỏi Đọc vị mới trong độ nóng tối nay và chọn câu cả hai cùng trả lời ở lá này.",
+        "requirement": "Ai cũng dùng được · trước khi có người trả lời",
+        "useNow": "Cho xem các câu",
+        "confirm": "Bạn sẽ thấy tối đa ba câu hỏi. Lá chỉ mất khi bạn chọn một câu; trước đó vẫn cất lại được."
       },
-      "ROLE_REVERSAL": {
-        "alias": "Giấu vuốt đủ rồi!",
-        "title": "Đảo vai",
-        "description": "Đổi người giấu và người đoán ngay ở lá Đọc vị này. Có hiệu lực lập tức.",
-        "requirement": "Ai cũng dùng được · trước khi đáp án bị chốt",
-        "useNow": "Đổi vai ngay",
-        "confirm": "Có hiệu lực lập tức và mất lá. Các lá đang bật sẽ quay về tay bạn."
+      "LET_ME_IN": {
+        "alias": "Cào cửa đòi vào!",
+        "title": "Hỏi vì sao",
+        "description": "Sau khi lật bài, hỏi người ấy vì sao lại chọn đáp án đó. Người ấy có thể kể hoặc bỏ qua, kết quả giữ nguyên.",
+        "requirement": "Ai cũng dùng được · sau khi lật bài",
+        "useNow": "Hỏi vì sao",
+        "confirm": "Người ấy có thể kể hoặc bỏ qua. Dù thế nào lá cũng được dùng."
       },
-      "DOUBLE_SPARK": {
-        "alias": "Rắc rối nhân đôi!",
-        "title": "Spark nhân đôi",
-        "description": "Nhân đôi Spark ở lần đoán trúng Đọc vị tiếp theo. Đoán trật thì mất lá mà không được gì.",
-        "requirement": "Chỉ người đoán · bật trước khi đoán",
-        "useNow": "Bật lá này",
-        "confirm": "Có hiệu lực tới lúc bạn đoán ở vòng này. Đoán trật thì mất lá mà không được gì."
+      "A_LITTLE_PRESENT": {
+        "alias": "Mèo tha quà về",
+        "title": "Khoảnh khắc thưởng",
+        "description": "Tặng người ấy thêm một thử thách trong độ nóng tối nay. Chỉ diễn ra khi cả hai cùng đồng ý, và không tính điểm.",
+        "requirement": "Ai cũng dùng được · sau khi xong một lá Đọc vị",
+        "useNow": "Tặng ngay",
+        "confirm": "Cả hai sẽ cùng xem thử thách rồi quyết định. Dù thế nào lá cũng được dùng; từ chối không mất gì."
       }
     },
     "reasons": {
-      "armed": "Đã bật. Sẽ có hiệu lực khi bạn chốt đáp án ở vòng này.",
+      "armed": "Đang chọn câu hỏi.",
       "phase": "Lá quyền năng dùng trong các lượt Đọc vị.",
       "notMindReader": "Để dành nhé. Lá quyền năng chỉ dùng được ở lá Đọc vị.",
-      "tooLateSecret": "Muộn rồi. Phải dùng trước khi đáp án bí mật bị chốt.",
-      "alreadySwapped": "Vòng này đã đổi vai rồi.",
-      "tooLateGuess": "Muộn rồi. Đáp án đoán đã được chốt.",
-      "guesserOnly": "Chỉ người đoán mới dùng được. Đợi tới lượt bạn đọc vị.",
-      "secondChanceLive": "Cơ hội thứ hai của bạn đang có hiệu lực.",
-      "oneArmed": "Đã có một lá loại này đang bật."
+      "tooLatePick": "Phải dùng trước khi có người trả lời lá Đọc vị này.",
+      "alreadyPicked": "Lá này đã được chọn câu hỏi rồi.",
+      "picking": "Đang có người chọn câu hỏi.",
+      "afterReveal": "Dùng sau khi lật bài.",
+      "afterComplete": "Tặng sau khi lá Đọc vị này hoàn tất.",
+      "forfeitFirst": "Giải quyết thử thách trước đã.",
+      "followUpOpen": "Đang có một câu hỏi thêm chờ trả lời.",
+      "alreadyAsked": "Bạn đã hỏi về lần lật bài này rồi.",
+      "presentGiven": "Lá này đã có một Khoảnh khắc thưởng."
     }
   },
   "onboarding": {
@@ -776,13 +873,13 @@
         "lines": [
           "Mỗi người có một Nhiệm vụ bí mật riêng. Chạm vào ổ khoá phía trên để xem.",
           "Khiến nó xảy ra thật tự nhiên, rồi báo hoàn thành. Người ấy sẽ thấy nhiệm vụ và xác nhận.",
-          "Nhiệm vụ được xác nhận mang về Lá quyền năng: Spark nhân đôi, Cơ hội thứ hai, Đảo vai. Tìm chúng ở mục “Quyền năng”."
+          "Nhiệm vụ được xác nhận mang về Lá quyền năng: Mèo kén mồi, Cào cửa đòi vào!, Mèo tha quà về. Tìm chúng ở mục “Quyền năng”."
         ]
       },
       {
         "title": "Bẻ lái & mong muốn.",
         "lines": [
-          "Bẻ lái thay đổi lá Đọc vị tiếp theo, ví dụ đổi vai hoặc nhân đôi Spark. Cả hai cùng kích hoạt.",
+          "Bẻ lái thay đổi lá Đọc vị tiếp theo: đổi vai, thử thách hai phần, đọc vị lẫn nhau, hoặc mỗi người thêm một câu hỏi. Cả hai cùng kích hoạt, và bẻ lái không bao giờ cộng Spark.",
           "Lá Mong muốn chung là lựa chọn riêng Có/Có thể/Không. Chỉ bật mí khi cả hai cùng chọn Có."
         ]
       },
@@ -810,8 +907,6 @@
     "sheetTitle": "Cách chơi"
   },
   "results": {
-    "headlineWin": "Bạn đọc vị giỏi hơn.",
-    "headlineLose": "{name} đọc vị bạn giỏi hơn.",
     "headlineZero": "Toàn bí ẩn, chẳng ai đọc vị được ai.",
     "headlineTie": "Hai con mèo, chung một ý.",
     "eyebrow": "Hết ván · {count} Spark giữa hai người",
@@ -824,6 +919,48 @@
     "hostAction": "Trở về phòng riêng",
     "returning": "Đang quay về…",
     "waiting": "Một chút nữa thôi… Chủ phòng sẽ đưa cả hai về phòng riêng.",
-    "exit": "Về màn hình chính"
+    "exit": "Về màn hình chính",
+    "together": "Hai người cùng đọc vị",
+    "reads": {
+      "scheduled": "Đọc vị theo lượt",
+      "extra": "Thử thách đôi, phần B",
+      "reciprocal": "Đọc vị ngược",
+      "hinted": "Đọc vị có gợi ý"
+    },
+    "ratio": "{right} trên {total}",
+    "sparkNote": "Spark là phần thưởng khi chơi, không phải điểm tương thích."
+  },
+  "outdated": {
+    "title": "Ván này thuộc phiên bản cũ.",
+    "body": "Luật của một số lá đã thay đổi từ khi ván được chia. Để không đổi lá của hai người giữa chừng, ván này được đóng lại. Hãy cùng bắt đầu ván mới.",
+    "hostAction": "Trở về phòng riêng",
+    "leaving": "Đang quay về…",
+    "waiting": "Chủ phòng sẽ đưa cả hai về để bắt đầu ván mới."
+  },
+  "draw": {
+    "pick": "Chọn một lá",
+    "shuffling": "Đang xáo bài…",
+    "turning": "Đang lật bài…",
+    "pickAria": "Chọn một trong {count} lá úp",
+    "cardAria": "Lá úp {number} trên {count}",
+    "mission": {
+      "eyebrow": "Mèo nằm vùng",
+      "title": "Rút nhiệm vụ bí mật",
+      "body": "Bộ bài của riêng bạn, đã xáo kỹ. Chạm một lá: chỉ mình bạn thấy nội dung.",
+      "revealed": "Nhiệm vụ của bạn · chỉ mình bạn xem",
+      "keep": "Giữ bí mật",
+      "later": "Để sau"
+    },
+    "power": {
+      "eyebrow": "Mèo nằm vùng lập công!",
+      "title": "Rút Lá quyền năng",
+      "body": "{name} đã xác nhận nhiệm vụ. Chạm một lá úp trong những quyền năng bạn chưa có.",
+      "keep": "Cất vào tay",
+      "view": "Xem Lá quyền năng"
+    },
+    "forfeit": {
+      "payer": "Bạn đoán trật. Rút một lá thử thách, hoặc bỏ qua. Chỉ thực hiện khi cả hai cùng đồng ý.",
+      "watching": "{name} đang rút một lá thử thách…"
+    }
   }
 }

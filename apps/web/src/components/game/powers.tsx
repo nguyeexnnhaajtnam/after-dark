@@ -1,19 +1,18 @@
 'use client';
 import {useState} from 'react';
-import {ArrowLeftRight,RotateCcw,Zap,type LucideIcon} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import type {GameStateView,PowerKind} from '@after-dark/contracts';
 import {powerReasonKey} from '@/i18n/server-messages';
 import {Button} from '../ui/button';
 import {Sheet} from './sheet';
+import {TypeEmblem,type EmblemSize} from './type-emblem';
 
-export const POWER_ICON:Record<PowerKind,LucideIcon>={SECOND_CHANCE:RotateCcw,ROLE_REVERSAL:ArrowLeftRight,DOUBLE_SPARK:Zap};
-
-/** Card copy comes from the viewer's catalog by kind; the server only decides what the card does. */
-export function PowerCardFace({kind,compact=false}:{kind:PowerKind;compact?:boolean}){
- const t=useTranslations(`powers.kinds.${kind}`);const Icon=POWER_ICON[kind];
- return <div className="flex gap-3"><span className={`grid shrink-0 place-items-center rounded-[10px] bg-crimson text-ivory ${compact?'h-11 w-11':'h-14 w-14'}`}><Icon size={compact?20:26}/></span>
-  <div className="min-w-0"><p className="mb-1.5 text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{t('alias')}</p><p className="display text-xl">{t('title')}</p><p className="mt-0.5 text-sm leading-5">{t('description')}</p><p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-obsidian/60">{t('requirement')}</p></div></div>;
+/** Card copy comes from the viewer's catalog by kind; the server only decides what the card does. Every kind wears the one Power Card emblem; its alias tells them apart. */
+export function PowerCardFace({kind,emblem='tray'}:{kind:PowerKind;emblem?:EmblemSize}){
+ const t=useTranslations(`powers.kinds.${kind}`);
+ return <div className="flex items-start gap-3">
+  <div className="min-w-0 flex-1"><p className="mb-1.5 text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{t('alias')}</p><p className="display text-xl">{t('title')}</p><p className="mt-0.5 text-sm leading-5">{t('description')}</p><p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-obsidian/60">{t('requirement')}</p></div>
+  <TypeEmblem type="POWER_CARD" size={emblem} className="-mr-1 -mt-1"/></div>;
 }
 
 export function PowerTray({g,onUse,onClose,using}:{g:GameStateView;onUse:(id:string)=>void;onClose:()=>void;using:boolean}){

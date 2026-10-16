@@ -30,7 +30,7 @@ for(const locale of RUN_LOCALES)for(const vp of VIEWPORTS){
   await expect(lockGuess).toBeVisible();await guesser.getByRole('radio').first().click();
   await assertLayout(guesser);await guesser.screenshot({path:test.info().outputPath(`mind-guess-${vp.name}-${locale}.png`)});
   await lockGuess.click();
-  await expect(guesser.getByRole('button',{name:oneOf(H.m.actions.next,H.m.actions.payUp)})).toBeVisible();await assertLayout(guesser);await guesser.screenshot({path:test.info().outputPath(`mind-reveal-${vp.name}-${locale}.png`)});
+  await expect(guesser.getByRole('button',{name:oneOf(H.m.actions.next,H.m.actions.payUp,H.m.actions.pass)})).toBeVisible();await assertLayout(guesser);await guesser.screenshot({path:test.info().outputPath(`mind-reveal-${vp.name}-${locale}.png`)});
   await close();
  });
 }

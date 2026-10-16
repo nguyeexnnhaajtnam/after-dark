@@ -1,4 +1,4 @@
-import type {Browser,BrowserContextOptions,Page} from '@playwright/test';
+import {expect,type Browser,type BrowserContextOptions,type Page} from '@playwright/test';
 import {IntlMessageFormat} from 'intl-messageformat';
 import en from '../messages/en.json';
 import vi from '../messages/vi.json';
@@ -45,8 +45,20 @@ export async function seatPlayers(browser:Browser,{host:hostLocale,guest:guestLo
 }
 
 /** Starts the game from the lobby and skips the briefing on both phones. */
+/**
+ * Draws from the sheet that opens on its own (a Secret Mission or a Power Card): tap a face-down card once the shuffle has
+ * spread them, wait for it to turn over, then keep it. Returns the revealed card's text.
+ */
+export async function drawFromSheet(p:Page,c:Copy,kind:'mission'|'power'){
+ const sheet=p.getByRole('dialog');await expect(sheet.getByText(c.m.draw[kind].title)).toBeVisible();
+ await sheet.locator('.draw-card').first().click();
+ const front=sheet.locator('.draw-reveal-front');await expect(front).toBeVisible();const text=(await front.innerText()).trim();
+ await sheet.getByRole('button',{name:c.m.draw[kind].keep}).click();await expect(sheet).toBeHidden();return text;
+}
 export async function dealIn({host,guest,H,G}:{host:Page;guest:Page;H:Copy;G:Copy}){
  await guest.getByRole('button',{name:G.m.lobby.imIn}).click();await host.getByRole('button',{name:H.m.lobby.start}).click();
  for(const [p,c] of [[host,H],[guest,G]] as const){await p.getByRole('button',{name:c.m.onboarding.skip}).click();await p.getByRole('button',{name:c.m.onboarding.deal}).click()}
  await host.locator('article[data-card-type]').waitFor();
+ // Each player draws their first Secret Mission from their own deck.
+ for(const [p,c] of [[host,H],[guest,G]] as const)await drawFromSheet(p,c,'mission');
 }

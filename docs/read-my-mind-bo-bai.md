@@ -451,11 +451,11 @@ Mỗi mục ghi bản tiếng Việt trước, bản tiếng Anh ở dòng dư�
 
 ## Bẻ lái · mọi mức (4)
 
-Mỗi ván có 2 lá Bẻ lái, và hai lá này luôn có hiệu ứng khác nhau. Sau mỗi lá Bẻ lái luôn có ít nhất một lá Đọc vị để hiệu ứng có chỗ áp dụng.
+Mỗi ván có 2 lá Bẻ lái, và hai lá này luôn có hiệu ứng khác nhau. Sau mỗi lá Bẻ lái luôn có một lá Đọc vị, trước lá Bẻ lái kế tiếp, để hiệu ứng có chỗ áp dụng.
 
 | Mã | Hiệu ứng | Tiếng Việt | English |
 |---|---|---|---|
 | twist-01 | `ROLE_REVERSAL` | Giấu vuốt đủ rồi! | Claws Out! |
-| twist-02 | `DOUBLE_SPARK` | Rắc rối nhân đôi! | Double Trouble! |
-| twist-04 | `ROLE_REVERSAL` | Chuột cũng biết cắn! | The Mouse Bites Back! |
-| twist-05 | `DOUBLE_SPARK` | Tò mò có thưởng! | Curiosity Pays! |
+| twist-02 | `DOUBLE_CHALLENGE` | Rắc rối nhân đôi! | Double Trouble! |
+| twist-04 | `COUNTER_MIND` | Chuột cũng biết cắn! | The Mouse Bites Back! |
+| twist-05 | `ONE_MORE_QUESTION` | Tò mò có thưởng! | Curiosity Pays! |
