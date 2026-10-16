@@ -6,7 +6,7 @@ import {playCue} from '@/lib/sound';
 import {ActionBar,WaitStatus,type ActionSpec} from '../ui/action-bar';
 import {Button} from '../ui/button';
 import {PlayCard,type Names} from './cards';
-import {DrawDeck} from './draw-deck';
+import {DeckIcon,DrawDeck} from './draw-deck';
 import {Hud} from './hud';
 import {Onboarding,RulesList} from './onboarding';
 import {EventFlash} from '../ui/event-fx';
@@ -29,29 +29,27 @@ export function PlayScreen({room,meId,connected,act,lobby}:{room:RoomView;meId:s
  const names=useMemo<Names>(()=>{const other=partner?.nickname||tc('yourPartner');return {me:tc('you'),partner:other,isMe:id=>id===meId,of:id=>id===meId?tc('you'):other}},[meId,partner?.nickname,tc]);
  const [selected,setSelected]=useState<number|null>(null),[desire,setDesire]=useState<DesireChoice|null>(null),[pending,setPending]=useState<Slot|null>(null);
  const [prediction,setPrediction]=useState<number|null>(null),[questionText,setQuestionText]=useState(''),[replyText,setReplyText]=useState('');
- const [sheet,setSheet]=useState<null|'powers'|'rules'|'verdict'|'reward'|'draw-mission'|'draw-power'>(null);const [verdictDeferred,setVerdictDeferred]=useState<string|null>(null);
+ const [sheet,setSheet]=useState<null|'powers'|'rules'|'verdict'|'reward'|'draw-mission'|'draw-power'>(null);
  const send:Send=async(type,extra={},slot='primary')=>{setPending(slot);playCue('press');try{return await act({actionId:newActionId(),expectedVersion:g.version,round:g.round,type,...extra})}finally{setPending(null)}};
  // Local picks reset whenever the authoritative round, phase, part or question moves on (never on a language switch).
  useEffect(()=>{setSelected(null);setDesire(null);setPrediction(null)},[g.round,g.phase,g.challengePart,g.card.id,!!g.pickyKitty]);
  useEffect(()=>{setQuestionText('');setReplyText('')},[g.round,g.challengePart]);
  useEffect(()=>{if(g.phase==='REVEAL'||g.phase==='MUTUAL_DESIRE_REVEAL')playCue('reveal')},[g.phase]);
- // A partner's mission claim interrupts once; it can be deferred to a HUD chip.
- const verdict=g.opponentMissionDeclared;const verdictKey=verdict?`${verdict.id}:${verdict.notYetCount}`:null;
- useEffect(()=>{if(verdictKey&&verdictDeferred!==verdictKey)setSheet(s=>s??'verdict');if(!verdictKey)setSheet(s=>s==='verdict'?null:s)},[verdictKey,verdictDeferred]);
+ // Optional moments never interrupt the card in play: a partner's mission claim and open draws wait on the HUD until opened.
+ const verdict=g.opponentMissionDeclared;
+ useEffect(()=>{if(!verdict)setSheet(s=>s==='verdict'?null:s)},[verdict]);
  // Reward reveal shows once per earned card (or once per full-inventory miss), surviving reloads.
  const rewardKey=g.lastReward?seenKey(g.id,g.lastReward.powerId||`full-${g.lastReward.round}`):null;
  // A drawn Power Card is revealed by the draw itself; only a full-hand miss still gets the reward sheet.
  useEffect(()=>{if(rewardKey&&!wasSeen(rewardKey)){if(sheet==='draw-power'||g.lastReward?.powerId){markSeen(rewardKey);return}setSheet(s=>s??'reward');playCue('reward')}},[rewardKey]);
- // Open draws come to the player once each (Power Card first); closing one leaves it on the HUD for later.
- const drawKey=g.draws?.POWER?`POWER:${g.inventory.length}:${g.missionsLeft}`:g.draws?.MISSION?`MISSION:${g.missionsLeft}`:null;
- const [drawDeferred,setDrawDeferred]=useState<string|null>(null);
- useEffect(()=>{if(drawKey&&drawDeferred!==drawKey&&g.phase!=='HOW_TO_PLAY')setSheet(s=>s??(drawKey.startsWith('POWER')?'draw-power':'draw-mission'))},[drawKey,drawDeferred,g.phase,sheet]);
+ // The next card is drawn in turns; while its drawer is offline the partner draws instead (the server allows the same).
+ const draw={mine:g.nextStep==='DRAW'&&(g.nextDrawerId===meId||!!partner&&!partner.connected),forPartner:g.nextStep==='DRAW'&&g.nextDrawerId!==meId};
 
  // A session dealt under older rules is closed rather than reinterpreted; the host takes you both back to start fresh.
  if(g.outdated)return <Outdated host={me.isHost} lobby={lobby}/>;
  if(g.phase==='GAME_COMPLETE')return <Results room={room} meId={meId} lobby={lobby}/>;
- if(g.phase==='HOW_TO_PLAY')return <Onboarding g={g} names={names} sending={pending==='ack'} onReady={()=>send('ACK_HOW_TO_PLAY',{},'ack')}/>;
- const bar=actionsFor(g,meId,names,{selected,desire,prediction,questionText},send,ta);
+ if(g.phase==='HOW_TO_PLAY')return <Onboarding g={g} names={names} canDraw={draw.mine} sending={pending==='ack'} onDraw={()=>send('NEXT_ROUND',{},'ack')}/>;
+ const bar=actionsFor(g,meId,names,{selected,desire,prediction,questionText},send,ta,draw);
  const barPending=pending==='primary'||pending==='secondary'?pending:pending?'primary':null;
  const verdictAnswer=async(completed:boolean)=>{const r=await send('CONFIRM_MISSION',{missionOwnerId:verdict!.ownerId,completed},completed?'verdict-yes':'verdict-no');if(r.ok)setSheet(null)};
  return <main className="gameplay-shell">
@@ -64,16 +62,16 @@ export function PlayScreen({room,meId,connected,act,lobby}:{room:RoomView;meId:s
   {sheet==='powers'&&<PowerTray g={g} using={pending==='power'} onClose={()=>setSheet(null)} onUse={async id=>{const r=await send('USE_POWER',{powerId:id},'power');if(r.ok)setSheet(null)}}/>}
   {(sheet==='draw-mission'||sheet==='draw-power')&&<DrawSheet key={sheet} kind={sheet==='draw-power'?'POWER':'MISSION'} g={g} names={names} pending={pending==='draw'}
    onDraw={i=>send('DRAW_CARD',{draw:sheet==='draw-power'?'POWER':'MISSION',choice:i},'draw')}
-   onClose={landed=>{if(!landed)setDrawDeferred(drawKey);setSheet(null)}} onViewPowers={()=>setSheet('powers')}/>}
+   onClose={()=>setSheet(null)} onViewPowers={()=>setSheet('powers')}/>}
   {sheet==='rules'&&<Sheet eyebrow={to('sheetEyebrow')} title={to('sheetTitle')} onClose={()=>setSheet(null)}><RulesList heat={g.heat} tone="ivory"/></Sheet>}
-  {sheet==='verdict'&&verdict&&<Sheet eyebrow={tv('eyebrow',{name:names.partner})} title={tv('title')} onClose={()=>{setVerdictDeferred(verdictKey);setSheet(null)}}>
+  {sheet==='verdict'&&verdict&&<Sheet eyebrow={tv('eyebrow',{name:names.partner})} title={tv('title')} onClose={()=>setSheet(null)}>
    <blockquote className="rounded-[14px] bg-obsidian p-4 text-[17px] font-medium leading-7 text-ivory">“{verdict.text}”</blockquote>
    <p className="mt-3 text-sm leading-6">{tv('body',{name:names.partner})}</p>
    <div className="mt-4 flex flex-col-reverse gap-2 min-[360px]:flex-row">
     <Button variant="secondary" surface="light" size="md" disabled={!!pending&&pending!=='verdict-no'} loading={pending==='verdict-no'} loadingLabel={tv('sending')} onClick={()=>verdictAnswer(false)}>{tv('notYet')}</Button>
     <Button variant="primary" size="lg" className="flex-1" disabled={!!pending&&pending!=='verdict-yes'} loading={pending==='verdict-yes'} loadingLabel={tv('confirming')} onClick={()=>verdictAnswer(true)}>{tv('yes')}</Button>
    </div>
-   <Button variant="ghost" surface="light" block className="mt-2" onClick={()=>{setVerdictDeferred(verdictKey);setSheet(null)}}>{tv('later')}</Button>
+   <Button variant="ghost" surface="light" block className="mt-2" onClick={()=>setSheet(null)}>{tv('later')}</Button>
   </Sheet>}
   {sheet==='reward'&&g.lastReward&&<Sheet reveal eyebrow={tr('eyebrow')} title={g.lastReward.inventoryFull?tr('titleFull'):tr('title')} onClose={()=>{markSeen(rewardKey!);setSheet(null)}}>
    <EventFlash tone={g.lastReward.inventoryFull?'plum':'ember'}/>
@@ -120,9 +118,20 @@ function Outdated({host,lobby}:{host:boolean;lobby:()=>void}){
  * each get their own wording, in every language.
  */
 type Picks={selected:number|null;desire:DesireChoice|null;prediction:number|null;questionText:string};
-function actionsFor(g:GameStateView,meId:string,names:Names,{selected,desire,prediction,questionText}:Picks,send:Send,t:T):Bar{
- const last=g.round>=g.totalRounds;const name=names.partner;
- const next:ActionSpec={label:last?t('results'):t('next'),loadingLabel:last?t('resultsLoading'):t('nextLoading'),run:()=>send('NEXT_ROUND')};
+function actionsFor(g:GameStateView,meId:string,names:Names,{selected,desire,prediction,questionText}:Picks,send:Send,t:T,draw:{mine:boolean;forPartner:boolean}):Bar{
+ const name=names.partner;
+ /**
+  * The way on from a settled card, as the server names it: the next card is a draw (its drawer taps the deck, the partner
+  * watches); part B, the next forfeit and the results are steps either of you can take.
+  */
+ const advance=(done=false):Bar=>{
+  const go=(label:string,loadingLabel:string,extra:Partial<ActionSpec>={}):Bar=>({primary:{label,loadingLabel,run:()=>send('NEXT_ROUND'),...extra}});
+  if(g.nextStep==='RESULTS')return go(done?t('doneResults'):t('results'),t('resultsLoading'));
+  if(g.nextStep==='PART_B')return go(t('partB'),t('partBLoading'));
+  if(g.nextStep==='FORFEIT')return go(t('nextForfeit'),t('nextForfeitLoading'));
+  if(g.nextStep==='DRAW')return draw.mine?{...go(done?t('drawDone'):t('drawNext'),t('drawing'),{icon:<DeckIcon/>,attention:true}),note:draw.forPartner?t('drawForPartner',{name}):undefined}:{waiting:t('waitDraw',{name})};
+  return {};
+ };
  const skip:ActionSpec={label:t('skip'),loadingLabel:t('skipping'),run:()=>send('SKIP',{},'secondary')};
  if(g.card.type==='MIND_READER'){
   const isSecret=g.secretPlayerId===meId,partnerId=isSecret?g.guessingPlayerId:g.secretPlayerId;
@@ -155,16 +164,16 @@ function actionsFor(g:GameStateView,meId:string,names:Names,{selected,desire,pre
     :{secondary:{label:t('letItSlide'),loadingLabel:t('passing'),run:()=>send('FORFEIT_VOTE',{accept:false},'secondary')},waiting:t('waitDrawForfeit',{name})};
    if(f.stage==='OFFERED')return {primary:{label:payer?t('payUp'):t('collect'),loadingLabel:t('sendingAnswer'),attention:true,run:()=>send('FORFEIT_VOTE',{accept:true})},secondary:{label:payer?t('pass'):t('letItSlide'),loadingLabel:t('passing'),run:()=>send('FORFEIT_VOTE',{accept:false},'secondary')}};
    if(f.stage==='WAITING')return {waiting:t('waitForfeit',{name})};
-   if(f.stage==='ACCEPTED')return {primary:{...next,label:last?t('doneResults'):t('doneNext')},note:payer?t('notePayer'):t('noteCollector',{name})};
+   if(f.stage==='ACCEPTED'){const a=advance(true);return {...a,note:a.note??(payer?t('notePayer'):t('noteCollector',{name}))}}
   }
-  // Double Challenge: part A's reveal leads into part B on the same card.
-  if(g.phase==='REVEAL')return {primary:g.challengePart===1?{label:t('partB'),loadingLabel:t('partBLoading'),run:()=>send('NEXT_ROUND')}:next};
+  // Double Challenge part A leads into part B on the same card; otherwise the reveal leads to the next draw.
+  if(g.phase==='REVEAL')return advance();
  }
  if(g.card.type==='CHEMISTRY'){
   const stage=g.chemistry?.stage;const stop:ActionSpec={label:t('stop'),loadingLabel:t('stopping'),run:()=>send('CHEMISTRY_STOP',{},'secondary')};
   if(stage==='INVITATION')return {primary:{label:t('into'),loadingLabel:t('sendingAnswer'),run:()=>send('CHEMISTRY_VOTE',{accept:true})},secondary:{label:t('notTonight'),loadingLabel:t('passing'),run:()=>send('CHEMISTRY_VOTE',{accept:false},'secondary')}};
   if(stage==='WAITING_FOR_CONSENT')return {secondary:{label:t('changedMind'),loadingLabel:t('withdrawing'),run:()=>send('CHEMISTRY_VOTE',{accept:false},'secondary')},waiting:t('waitConsent',{name})};
-  // Both press start; the server starts one clock when the second press lands.
+  // Agreeing to take part is the start; these two stages only remain for a game already waiting at the older start step.
   if(stage==='MUTUALLY_ACCEPTED')return {primary:{label:t('start'),loadingLabel:t('starting'),run:()=>send('CHEMISTRY_START')},secondary:stop};
   if(stage==='WAITING_TO_START')return {secondary:stop,waiting:t('waitStart',{name})};
   if(stage==='IN_PROGRESS')return {primary:{label:t('didIt'),loadingLabel:t('confirming'),run:()=>send('CHEMISTRY_DONE')},secondary:stop,note:t('noteDidIt')};
@@ -179,5 +188,5 @@ function actionsFor(g:GameStateView,meId:string,names:Names,{selected,desire,pre
   if(g.hasSubmittedChoice)return {secondary:skipTwist,waiting:t('waitTwist',{name})};
   return {primary:{label:t('activate'),loadingLabel:t('activating'),run:()=>send('PLOT_TWIST_ACK')},secondary:skipTwist};
  }
- return {primary:next};
+ return advance();
 }

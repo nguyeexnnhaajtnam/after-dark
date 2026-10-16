@@ -495,7 +495,7 @@
       "phase": {
         "CONSENT": {
           "title": "Waiting for both signals",
-          "description": "It only begins when you both agree."
+          "description": "It starts the moment you’re both in. Either of you can say not tonight."
         },
         "READY": {
           "title": "Time to make your move",
@@ -738,11 +738,11 @@
     "noteCollector": "{name} owes you. Collect, then move on.",
     "stop": "Stop",
     "stopping": "Stopping…",
-    "into": "I’m into this",
+    "into": "I’m in · start when we both are",
     "notTonight": "Not tonight",
     "changedMind": "Changed my mind",
     "withdrawing": "Withdrawing…",
-    "waitConsent": "You’re in. Now it’s {name}’s call.",
+    "waitConsent": "You’re in. It starts the moment {name} is in too.",
     "waitStart": "You’re ready. Waiting for {name} to press Start.",
     "start": "Let’s Start",
     "starting": "Starting…",
@@ -778,7 +778,16 @@
     "notePick": "Choose one. You’ll both answer it.",
     "waitPick": "{name} is choosing this card’s question…",
     "noteDrawForfeit": "Tap a face-down card to draw your forfeit.",
-    "waitDrawForfeit": "{name} is drawing a forfeit. You can still let it slide."
+    "waitDrawForfeit": "{name} is drawing a forfeit. You can still let it slide.",
+    "drawNext": "Draw the next card",
+    "drawFirst": "Draw the first card",
+    "drawing": "Drawing…",
+    "drawDone": "Done · draw the next card",
+    "waitDraw": "{name} is drawing the next card.",
+    "waitDrawFirst": "{name} draws the first card. Skim the rules while you wait.",
+    "drawForPartner": "{name} is offline, so you draw this one.",
+    "nextForfeit": "Next forfeit",
+    "nextForfeitLoading": "Bringing the next forfeit…"
   },
   "verdict": {
     "eyebrow": "{name} claims a secret mission",
@@ -904,7 +913,9 @@
     "dealing": "Dealing the cards…",
     "skip": "Skip the briefing",
     "sheetEyebrow": "Read My Mind",
-    "sheetTitle": "How to play"
+    "sheetTitle": "How to play",
+    "tipNext": "Next tip",
+    "drawer": "You draw the first card. Read on, or draw whenever you’re ready."
   },
   "results": {
     "headlineZero": "All Mystery, No Mind Reading.",

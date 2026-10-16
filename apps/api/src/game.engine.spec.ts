@@ -1,4 +1,4 @@
-import {chemistryDeadline,chemistryTiming,cleanText,GameEngine,isOutdated,localizeCard,normalize,POWER_KINDS,RULESET,toLocale,twistEffect,TWISTS,type InternalState} from './game.engine';
+import {chemistryDeadline,chemistryTiming,cleanText,drawerFor,GameEngine,isOutdated,localizeCard,normalize,POWER_KINDS,RULESET,toLocale,twistEffect,TWISTS,type InternalState} from './game.engine';
 
 const zero=()=>({correctReads:0,reads:0,extraReads:0,extraCorrectReads:0,reciprocalReads:0,reciprocalCorrectReads:0,assistedReads:0,assistedCorrectReads:0,chemistryCompleted:0,missionsCompleted:0});
 const state=(over:Partial<InternalState>={}):InternalState=>({ruleset:RULESET,phase:'WAITING_FOR_SECRET',round:1,version:1,seed:0,heat:3,players:['a','b'],cardIds:['mind'],forfeitIds:['f1','f2'],wrongGuesses:0,
@@ -21,6 +21,7 @@ const drawForfeit=(s:InternalState,choice=0)=>engine.drawCard(s,s.forfeit!.payer
 const ackTwist=(s:InternalState,effect:string)=>{engine.plotTwist(s,'a',action('PLOT_TWIST_ACK'),effect);engine.plotTwist(s,'b',action('PLOT_TWIST_ACK'),effect)};
 /** Heat-tagged candidates, as the database would return them for a Power Card draw. */
 const pool=(prefix:string,heats:number[])=>heats.map((intensity,i)=>({id:`${prefix}${i}`,intensity}));
+const projectionDb=(s:InternalState)=>({room:{findUniqueOrThrow:jest.fn().mockResolvedValue({id:'r',code:'ABC123',status:'PLAYING',selectedGame:'read-my-mind',expiresAt:new Date(),players:[{id:'a',nickname:'A',isHost:true,connected:true,ready:true,maxHeat:4},{id:'b',nickname:'B',isHost:false,connected:true,ready:true,maxHeat:3}],sessions:[{id:'session',state:JSON.parse(JSON.stringify(s))}]})},gameCard:{findUniqueOrThrow:jest.fn().mockResolvedValue({id:'mind',type:'MIND_READER',question:'Question?',choices:['One','Two','Three'],intensity:2,artworkPath:'/card.png',challenge:null}),findMany:jest.fn().mockResolvedValue([])}});
 const snapshot=(s:InternalState)=>JSON.parse(JSON.stringify({scores:s.scores,stats:s.stats,result:s.result,predictions:s.predictions}));
 
 describe('How to Play briefing',()=>{
@@ -37,26 +38,63 @@ describe('Mind Reader Sparks and forfeits',()=>{
  it('uses deterministic copy variants shared by both players',()=>{const s=state({seed:40,round:3});secret(s,0);guess(s,0);expect(s.result?.variant).toBe((40+3*31)%1000)});
 });
 
+describe('Drawing the next card',()=>{
+ /** An in-memory database driving engine.action end to end: version check, action ids, the drawer's connection. */
+ const db=(s:InternalState,deck:Record<string,string>,connected:Record<string,boolean>={a:true,b:true})=>{const seen=new Set<string>();let stored=JSON.parse(JSON.stringify(s));
+  const tx={gameSession:{findFirst:async()=>({id:'session',state:JSON.parse(JSON.stringify(stored))}),update:async({data}:any)=>{stored=JSON.parse(JSON.stringify(data.state))}},
+   sessionAction:{findUnique:async({where}:any)=>seen.has(where.sessionId_actionId.actionId)?{}:null,create:async({data}:any)=>{seen.add(data.actionId)}},
+   gameCard:{findUniqueOrThrow:async({where}:any)=>({id:where.id,type:deck[where.id]}),findMany:async()=>offDeck},roomPlayer:{findUnique:async({where}:any)=>({id:where.id,connected:connected[where.id]})}};
+  return {state:()=>stored as InternalState,engine:new GameEngine({$transaction:async(fn:any)=>fn(tx)} as any)}};
+ const send=(d:ReturnType<typeof db>,p:string,type:string,extra={})=>d.engine.action('r',p,{actionId:crypto.randomUUID(),expectedVersion:d.state().version,round:d.state().round,type,...extra} as any);
+ const deck={m1:'MIND_READER',c1:'CHEMISTRY',m2:'MIND_READER'};
+ it('takes turns: the host draws card 1, the partner card 2, and so on',()=>{const s=state({phase:'HOW_TO_PLAY'});expect(engine.nextDrawer(s)).toBe('a');expect(drawerFor(s,1)).toBe('a');expect(drawerFor(s,2)).toBe('b');expect(drawerFor(s,3)).toBe('a');
+  const r=state({phase:'ROUND_COMPLETE',round:3});expect(engine.nextDrawer(r)).toBe('b');expect(engine.nextDrawer(state({phase:'ROUND_COMPLETE',round:4}))).toBe('a')});
+ it('says what NEXT_ROUND does from each resolved state, and nothing while a card still needs an answer',()=>{expect(engine.nextStep(state({phase:'HOW_TO_PLAY'}),'MIND_READER')).toBe('DRAW');expect(engine.nextStep(state(),'MIND_READER')).toBeUndefined();
+  expect(engine.nextStep(state({phase:'ROUND_COMPLETE'}),'CHEMISTRY')).toBe('DRAW');expect(engine.nextStep(state({phase:'ROUND_COMPLETE',round:12}),'CHEMISTRY')).toBe('RESULTS');
+  expect(engine.nextStep(state({phase:'REVEAL',activeTwist:'DOUBLE_CHALLENGE',challengePart:1}),'MIND_READER')).toBe('PART_B');expect(engine.nextStep(state({phase:'REVEAL',forfeitQueue:['b']}),'MIND_READER')).toBe('FORFEIT');
+  expect(engine.nextStep(state({phase:'REVEAL',forfeit:{payerId:'b',votes:{},stage:'DRAWING'}}),'MIND_READER')).toBeUndefined();expect(engine.nextStep(state({phase:'REVEAL',forfeit:{payerId:'b',cardId:'f1',votes:{},stage:'OFFERED'}}),'MIND_READER')).toBeUndefined();
+  expect(engine.nextStep(state({phase:'REVEAL',forfeit:{payerId:'b',cardId:'f1',votes:{a:false},stage:'PASSED'}}),'MIND_READER')).toBe('DRAW')});
+ it('deals the first card straight from the briefing when its drawer draws; the partner never has to acknowledge',async()=>{const d=db(state({phase:'HOW_TO_PLAY',cardIds:['m1','c1','m2']}),deck);
+  await expect(send(d,'b','NEXT_ROUND')).rejects.toThrow("your partner's turn to draw");expect(d.state().phase).toBe('HOW_TO_PLAY');
+  await expect(send(d,'a','SUBMIT_SECRET',{choice:0})).rejects.toThrow('Finish the briefing');
+  await send(d,'a','NEXT_ROUND');expect(d.state().phase).toBe('WAITING_FOR_SECRET');expect(d.state().round).toBe(1);expect(d.state().secretPlayerId).toBe('a')});
+ it('still starts from two briefing acknowledgements, for clients that send them',()=>{const s=state({phase:'HOW_TO_PLAY'});engine.ackHowToPlay(s,'a','MIND_READER');engine.ackHowToPlay(s,'b','MIND_READER');expect(s.phase).toBe('WAITING_FOR_SECRET')});
+ it('lets only the drawer deal the next card, once, and the partner only while the drawer is offline',async()=>{const d=db(state({phase:'ROUND_COMPLETE',cardIds:['m1','c1','m2']}),deck);
+  await expect(send(d,'a','NEXT_ROUND')).rejects.toThrow("your partner's turn");const v=d.state().version;
+  const id=crypto.randomUUID();await d.engine.action('r','b',{actionId:id,expectedVersion:v,round:1,type:'NEXT_ROUND'} as any);expect(d.state().round).toBe(2);expect(d.state().phase).toBe('CHEMISTRY_CONSENT');
+  await expect(d.engine.action('r','b',{actionId:id,expectedVersion:v+1,round:2,type:'NEXT_ROUND'} as any)).rejects.toThrow('Duplicate');
+  await expect(d.engine.action('r','b',{actionId:crypto.randomUUID(),expectedVersion:v,round:2,type:'NEXT_ROUND'} as any)).rejects.toThrow('Stale');expect(d.state().round).toBe(2);
+  const away=db(state({phase:'ROUND_COMPLETE',cardIds:['m1','c1','m2']}),deck,{a:true,b:false});await send(away,'a','NEXT_ROUND');expect(away.state().round).toBe(2)});
+ it('keeps steps inside one card open to either player, and the results to either player',async()=>{const p=db(state({phase:'REVEAL',cardIds:['m1','c1'],activeTwist:'DOUBLE_CHALLENGE',challengePart:1,secondCardId:'x2'}),deck);await send(p,'a','NEXT_ROUND');expect(p.state().challengePart).toBe(2);
+  const end=db(state({phase:'ROUND_COMPLETE',round:12,cardIds:Array(12).fill('c1')}),deck);await send(end,'a','NEXT_ROUND');expect(end.state().phase).toBe('GAME_COMPLETE')});
+ it('never deals past an open forfeit, whoever draws',async()=>{const s=state({cardIds:['m1','c1']});secret(s,0);guess(s,2);const f=db(s,deck);await expect(send(f,'b','NEXT_ROUND')).rejects.toThrow('forfeit');await expect(send(f,'a','NEXT_ROUND')).rejects.toThrow('forfeit')});
+ it('projects the next step and who draws, to both phones alike',async()=>{const s=state({phase:'ROUND_COMPLETE'});const a=await new GameEngine(projectionDb(s) as any).project('r','a'),b=await new GameEngine(projectionDb(s) as any).project('r','b');
+  expect(a.game?.nextStep).toBe('DRAW');expect(a.game?.nextDrawerId).toBe('b');expect(b.game?.nextDrawerId).toBe('b');const open=await new GameEngine(projectionDb(state()) as any).project('r','a');expect(open.game?.nextStep).toBeUndefined();expect(open.game?.nextDrawerId).toBeUndefined()});
+});
+
 describe('Chemistry lifecycle',()=>{
- it('requires mutual consent, an explicit start, and completion from both, then pays one Spark each',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));expect(s.phase).toBe('CHEMISTRY_CONSENT');engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:true}));expect(s.phase).toBe('CHEMISTRY_ACCEPTED');expect(s.scores).toEqual({a:0,b:0});
-  engine.chemistry(s,'a',action('CHEMISTRY_START'));expect(s.phase).toBe('CHEMISTRY_ACCEPTED');engine.chemistry(s,'b',action('CHEMISTRY_START'));expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');engine.chemistry(s,'a',action('CHEMISTRY_DONE'));expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.scores.a).toBe(0);
+ it('starts once both choose to take part, needs completion from both, then pays one Spark each',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));expect(s.phase).toBe('CHEMISTRY_CONSENT');engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:true}));expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer?.startedAt).toBeTruthy();expect(s.scores).toEqual({a:0,b:0});
+  expect(()=>engine.chemistry(s,'a',action('CHEMISTRY_START'))).toThrow('not ready to start');engine.chemistry(s,'a',action('CHEMISTRY_DONE'));expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.scores.a).toBe(0);
   engine.chemistry(s,'b',action('CHEMISTRY_DONE'));expect(s.result?.chemistry).toBe('COMPLETED');expect(s.scores).toEqual({a:1,b:1});expect(s.stats.a.chemistryCompleted).toBe(1)});
  it('ends without penalty when one player declines',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:false}));expect(s.phase).toBe('ROUND_COMPLETE');expect(s.result?.chemistry).toBe('DECLINED');expect(s.scores).toEqual({a:0,b:0})});
- it('never treats consent as completion, and can be stopped after acceptance',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:true}));expect(()=>engine.chemistry(s,'a',action('CHEMISTRY_DONE'))).toThrow('not in progress');engine.chemistry(s,'b',action('CHEMISTRY_STOP'));expect(s.result?.chemistry).toBe('SKIPPED');expect(s.scores).toEqual({a:0,b:0})});
+ it('never treats consent as completion, and can be stopped once running',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));expect(()=>engine.chemistry(s,'a',action('CHEMISTRY_DONE'))).toThrow('not in progress');engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:true}));expect(s.scores).toEqual({a:0,b:0});engine.chemistry(s,'b',action('CHEMISTRY_STOP'));expect(s.result?.chemistry).toBe('SKIPPED');expect(s.scores).toEqual({a:0,b:0})});
  it('rejects a repeated yes but always allows withdrawing consent',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));expect(()=>engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}))).toThrow('already answered');engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:false}));expect(s.result?.chemistry).toBe('DECLINED')});
  it('predicts the normal next chooser for Plot Twist copy',()=>{const s=state({phase:'PLOT_TWIST',lastMindSecretId:'a'});expect(engine.nextMindSecret(s,'PLOT_TWIST')).toBe('b');const r=state({phase:'REVEAL'});expect(engine.nextMindSecret(r,'MIND_READER')).toBe('b')});
 });
 
 describe('Chemistry countdown',()=>{
  const T0=new Date('2026-10-13T20:00:00.000Z'),at=(ms:number)=>new Date(T0.getTime()+ms);
- const agreed=()=>{const s=state({phase:'CHEMISTRY_CONSENT'});engine.chemistry(s,'a',action('CHEMISTRY_VOTE',{accept:true}));engine.chemistry(s,'b',action('CHEMISTRY_VOTE',{accept:true}));return s};
+ const vote=(s:InternalState,p:string,now=T0,seconds:number|null=60)=>engine.chemistry(s,p,action('CHEMISTRY_VOTE',{accept:true}),seconds,now);
+ /** A session still parked at the older "both press start" step. */
+ const legacy=()=>state({phase:'CHEMISTRY_ACCEPTED',votes:{a:true,b:true}});
  const start=(s:InternalState,p:string,now=T0,seconds:number|null=60)=>engine.chemistry(s,p,action('CHEMISTRY_START'),seconds,now);
  const done=(s:InternalState,p:string,now:Date)=>engine.chemistry(s,p,action('CHEMISTRY_DONE'),60,now);
- const running=()=>{const s=agreed();start(s,'a');start(s,'b',at(1500));return s};
- it('needs mutual consent before anyone can press start, and consent alone starts no clock',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});expect(()=>start(s,'a')).toThrow('not ready to start');const t=agreed();expect(t.phase).toBe('CHEMISTRY_ACCEPTED');expect(t.chemTimer).toBeUndefined();expect(chemistryTiming(t,'a',60,T0)).toEqual(expect.objectContaining({iReady:false,durationSeconds:60,timerExpired:false}));expect(chemistryTiming(t,'a',60,T0).endsAt).toBeUndefined()});
- it('waits with one player ready and the other not',()=>{const s=agreed();start(s,'a');expect(s.phase).toBe('CHEMISTRY_ACCEPTED');expect(s.chemTimer).toBeUndefined();expect(chemistryTiming(s,'a',60,T0).iReady).toBe(true);expect(chemistryTiming(s,'b',60,T0).iReady).toBe(false)});
- it('starts exactly one server-stamped countdown once both are ready, with the deadline fixed from the second press',()=>{const s=running();expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer).toEqual({startedAt:at(1500).toISOString(),durationSeconds:60,endsAt:at(61500).toISOString()})});
- it('rejects a repeated start and never restarts or extends the clock',()=>{const s=agreed();start(s,'a');expect(()=>start(s,'a',at(800))).toThrow('already pressed start');start(s,'b',at(1500));const timer={...s.chemTimer};expect(()=>start(s,'b',at(30000))).toThrow('not ready to start');expect(()=>start(s,'a',at(30000))).toThrow('not ready to start');expect(s.chemTimer).toEqual(timer)});
+ const running=()=>{const s=state({phase:'CHEMISTRY_CONSENT'});vote(s,'a');vote(s,'b',at(1500));return s};
+ it('starts no clock on one yes, and offers no separate start step',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});expect(()=>start(s,'a')).toThrow('not ready to start');vote(s,'a');expect(s.phase).toBe('CHEMISTRY_CONSENT');expect(s.chemTimer).toBeUndefined();expect(chemistryTiming(s,'a',60,T0)).toEqual(expect.objectContaining({durationSeconds:60,timerExpired:false}));expect(chemistryTiming(s,'a',60,T0).endsAt).toBeUndefined()});
+ it('lets a session parked at the older start step still start once both press start',()=>{const s=legacy();start(s,'a');expect(s.phase).toBe('CHEMISTRY_ACCEPTED');expect(s.chemTimer).toBeUndefined();expect(chemistryTiming(s,'a',60,T0).iReady).toBe(true);expect(chemistryTiming(s,'b',60,T0).iReady).toBe(false);expect(()=>start(s,'a',at(800))).toThrow('already pressed start');
+  start(s,'b',at(1500));expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer).toEqual({startedAt:at(1500).toISOString(),durationSeconds:60,endsAt:at(61500).toISOString()})});
+ it('starts exactly one server-stamped countdown once both agree, with the deadline fixed from the second yes',()=>{const s=running();expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer).toEqual({startedAt:at(1500).toISOString(),durationSeconds:60,endsAt:at(61500).toISOString()})});
+ it('never restarts or extends the clock: a late yes or start is rejected',()=>{const s=running();const timer={...s.chemTimer};expect(()=>vote(s,'a',at(30000))).toThrow('Consent is closed');expect(()=>vote(s,'b',at(30000))).toThrow('Consent is closed');expect(()=>start(s,'a',at(30000))).toThrow('not ready to start');expect(s.chemTimer).toEqual(timer);expect(chemistryTiming(s,'a',60,at(2000)).iReady).toBe(true)});
  it('gives both players the same deadline and a server clock reference, whenever they look',()=>{const s=running();const a=chemistryTiming(s,'a',60,at(20000)),b=chemistryTiming(s,'b',60,at(20000));expect(a.endsAt).toBe(b.endsAt);expect(a.startedAt).toBe(b.startedAt);expect(a.serverNow).toBe(at(20000).toISOString());
   // A client derives remaining = endsAt - (its clock + (serverNow - its clock at receipt)); any local clock skew cancels out.
   const remaining=(view:typeof a,clientNow:number,skew:number)=>Date.parse(view.endsAt!)-(clientNow+(Date.parse(view.serverNow)-(Date.parse(view.serverNow)+skew)));
@@ -65,10 +103,10 @@ describe('Chemistry countdown',()=>{
   expect(()=>done(s,'a',at(11000))).toThrow('already confirmed');done(s,'b',at(12000));expect(s.result?.chemistry).toBe('COMPLETED');expect(s.scores).toEqual({a:1,b:1});expect(s.stats.a.chemistryCompleted).toBe(1);expect(()=>done(s,'b',at(13000))).toThrow('not in progress');expect(s.scores).toEqual({a:1,b:1})});
  it('stops for both, without penalty, before the deadline or after one confirmation',()=>{const s=running();engine.chemistry(s,'b',action('CHEMISTRY_STOP'),60,at(5000));expect(s.phase).toBe('ROUND_COMPLETE');expect(s.result?.chemistry).toBe('SKIPPED');expect(s.scores).toEqual({a:0,b:0});
   const t=running();done(t,'a',at(5000));engine.chemistry(t,'a',action('CHEMISTRY_STOP'),60,at(6000));expect(t.result?.chemistry).toBe('SKIPPED');expect(t.scores).toEqual({a:0,b:0});expect(()=>done(t,'b',at(7000))).toThrow('not in progress');
-  const w=agreed();start(w,'a');engine.chemistry(w,'b',action('CHEMISTRY_STOP'));expect(w.result?.chemistry).toBe('SKIPPED')});
+  const w=legacy();start(w,'a');engine.chemistry(w,'b',action('CHEMISTRY_STOP'));expect(w.result?.chemistry).toBe('SKIPPED')});
  it('expires on the deadline without paying or failing anything, and still accepts honest confirmations afterwards',()=>{const s=running();done(s,'a',at(30000));expect(chemistryTiming(s,'a',60,at(61499)).timerExpired).toBe(false);const late=chemistryTiming(s,'b',60,at(61500));expect(late.timerExpired).toBe(true);expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.scores).toEqual({a:0,b:0});expect(s.chemDone.a).toBe(true);
   done(s,'b',at(90000));expect(s.result?.chemistry).toBe('COMPLETED');expect(s.scores).toEqual({a:1,b:1})});
- it('keeps an untimed challenge on the same ready-then-confirm flow, with no deadline',()=>{const s=agreed();start(s,'a',T0,null);start(s,'b',at(1000),null);expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer).toEqual({startedAt:at(1000).toISOString()});const v=chemistryTiming(s,'a',null,at(999999));expect(v.timerExpired).toBe(false);expect(v.endsAt).toBeUndefined();expect(chemistryDeadline(s)).toBeUndefined()});
+ it('keeps an untimed challenge on the same agree-then-confirm flow, with no deadline',()=>{const s=state({phase:'CHEMISTRY_CONSENT'});vote(s,'a',T0,null);vote(s,'b',at(1000),null);expect(s.phase).toBe('CHEMISTRY_IN_PROGRESS');expect(s.chemTimer).toEqual({startedAt:at(1000).toISOString()});const v=chemistryTiming(s,'a',null,at(999999));expect(v.timerExpired).toBe(false);expect(v.endsAt).toBeUndefined();expect(chemistryDeadline(s)).toBeUndefined()});
  it('restores the same deadline from persisted state after a restart, and never re-arms a resolved challenge',()=>{const s=running();const restored=normalize(JSON.parse(JSON.stringify(s)));expect(restored.chemTimer).toEqual(s.chemTimer);expect(chemistryDeadline(restored)).toBe(at(61500).getTime());expect(chemistryTiming(restored,'b',60,at(70000)).timerExpired).toBe(true);
   const {chemReady:_r,chemDoneAt:_d,...stored}=JSON.parse(JSON.stringify(state({phase:'CHEMISTRY_ACCEPTED'})));const legacy=normalize(stored);expect(legacy.chemReady).toEqual({});expect(legacy.chemDoneAt).toEqual({});
   engine.chemistry(s,'a',action('CHEMISTRY_STOP'));expect(chemistryDeadline(s)).toBeUndefined()});

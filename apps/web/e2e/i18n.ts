@@ -50,15 +50,17 @@ export async function seatPlayers(browser:Browser,{host:hostLocale,guest:guestLo
  * spread them, wait for it to turn over, then keep it. Returns the revealed card's text.
  */
 export async function drawFromSheet(p:Page,c:Copy,kind:'mission'|'power'){
- const sheet=p.getByRole('dialog');await expect(sheet.getByText(c.m.draw[kind].title)).toBeVisible();
+ // Draws never open over the card in play: the HUD's draw button opens the sheet.
+ const sheet=p.getByRole('dialog');await p.getByRole('button',{name:kind==='mission'?c.m.hud.missionDraw:c.m.hud.powerDraw}).click();await expect(sheet.getByText(c.m.draw[kind].title)).toBeVisible();
  await sheet.locator('.draw-card').first().click();
  const front=sheet.locator('.draw-reveal-front');await expect(front).toBeVisible();const text=(await front.innerText()).trim();
  await sheet.getByRole('button',{name:c.m.draw[kind].keep}).click();await expect(sheet).toBeHidden();return text;
 }
 export async function dealIn({host,guest,H,G}:{host:Page;guest:Page;H:Copy;G:Copy}){
  await guest.getByRole('button',{name:G.m.lobby.imIn}).click();await host.getByRole('button',{name:H.m.lobby.start}).click();
- for(const [p,c] of [[host,H],[guest,G]] as const){await p.getByRole('button',{name:c.m.onboarding.skip}).click();await p.getByRole('button',{name:c.m.onboarding.deal}).click()}
- await host.locator('article[data-card-type]').waitFor();
+ // The host draws the first card straight from the briefing; the partner never has to acknowledge it.
+ await host.getByRole('button',{name:H.m.actions.drawFirst}).click();
+ await host.locator('article[data-card-type]').waitFor();await guest.locator('article[data-card-type]').waitFor();
  // Each player draws their first Secret Mission from their own deck.
  for(const [p,c] of [[host,H],[guest,G]] as const)await drawFromSheet(p,c,'mission');
 }

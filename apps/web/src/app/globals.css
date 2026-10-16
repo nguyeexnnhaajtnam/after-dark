@@ -158,7 +158,15 @@ button,input{font:inherit}button{touch-action:manipulation;cursor:pointer}button
    the approved art is 656x984 (2:3) with a 30px corner radius, so the card keeps at least that shape and only grows taller. */
 .card-stage{container-type:inline-size;width:100%;max-width:32rem;margin-inline:auto;perspective:1400px}
 .card-back,.card-face{border-radius:calc(30 / 656 * 100cqi);box-shadow:0 22px 40px rgba(0,0,0,.55),0 6px 0 rgba(0,0,0,.35)}
-.card-back{position:relative;aspect-ratio:2/3;overflow:hidden;cursor:pointer;animation:card-deal .42s var(--ease-snap) both,card-turn-out .2s ease-in .95s both}
+.card-back{position:relative;aspect-ratio:2/3;overflow:hidden;cursor:pointer;animation:card-deal .38s var(--ease-snap) both,card-turn-out .2s ease-in .6s both}
+/* "Draw the next card": a small face-down stack whose top card lifts when pressed. It never shows the next card's type. */
+.deck-icon{position:relative;display:inline-block;width:16px;height:21px;flex:none;margin-left:3px}
+.deck-icon span{position:absolute;inset:0;border:1.5px solid currentColor;border-radius:3px;background:var(--crimson);transition:transform .15s var(--ease-snap)}
+.deck-icon span:nth-child(1){opacity:.5;transform:translate(-4px,2px) rotate(-10deg)}
+.deck-icon span:nth-child(2){opacity:.75;transform:translate(-2px,1px) rotate(-4deg)}
+.deck-icon span:nth-child(3){transform:rotate(5deg)}
+button:hover .deck-icon span:nth-child(3){transform:translateY(-2px) rotate(8deg)}
+button:active .deck-icon span:nth-child(3){transform:translateY(-5px) rotate(12deg)}
 .card-back-turning{animation:card-turn-out .2s ease-in both}
 .card-turn-in{animation:card-turn-in .26s var(--ease-reveal) both}
 @keyframes card-deal{from{opacity:0;transform:translateY(-18px) rotate(-3deg) scale(.92)}to{opacity:1;transform:none}}

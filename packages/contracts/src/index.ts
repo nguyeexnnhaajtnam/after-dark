@@ -78,6 +78,12 @@ export type GameStateView={id:string;gameSlug:GameSlug;phase:GamePhase;round:num
  outdated?:boolean;
  counterMind?:CounterMindView;questions?:Record<string,QuestionView>;pickyKitty?:PickyKittyView;followUp?:FollowUpView;bonusMoment?:BonusMomentView;
  mission?:MissionView;opponentMissionDeclared?:MissionView;missionsLeft:number;
+ /**
+  * What NEXT_ROUND does from here, when it is the way on: DRAW deals the next card (only `nextDrawerId` may draw it, or the
+  * partner while that player is offline), PART_B opens Double Challenge part B, FORFEIT offers the next forfeit on this
+  * card, RESULTS ends the game. Absent while the card still needs an answer.
+  */
+ nextStep?:'DRAW'|'PART_B'|'FORFEIT'|'RESULTS';nextDrawerId?:string;
  /** Draws open to this viewer now, as the number of face-down cards in each spread. Their contents stay on the server until drawn. */
  draws?:Partial<Record<'MISSION'|'POWER',number>>;
  inventory:PowerCardView[];inventoryCounts:Record<string,number>;inventoryLimit:number;lastReward?:RewardView};

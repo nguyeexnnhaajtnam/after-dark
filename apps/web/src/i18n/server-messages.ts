@@ -16,7 +16,7 @@ const ACTION_ERRORS:Array<[RegExp,ActionErrorKey]>=[
  [/partner is not in yet|both players must be ready/i,'partnerNotIn'],
  [/coming soon|unknown game/i,'comingSoon'],
  [/heat is locked|finish the current game/i,'heatLocked'],
- [/not your turn|you are not seated|only the picky kitty owner|only your partner can answer/i,'notYourTurn'],
+ [/not your turn|partner's turn to draw|you are not seated|only the picky kitty owner|only your partner can answer/i,'notYourTurn'],
  [/finish the briefing/i,'briefing'],
  [/already answered|already pressed start|already confirmed|already used your question/i,'alreadyAnswered'],
  [/already sealed/i,'alreadySealed'],

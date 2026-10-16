@@ -6,7 +6,8 @@ const category=async(page:Page)=>(await page.locator('article[data-card-type]').
 // Event animations run up to ~1.2s; E2E_SETTLE_MS lets a review run capture their settled state instead of a mid-reveal frame.
 const SETTLE=Number(process.env.E2E_SETTLE_MS||0);
 const shot=async(page:Page,name:string)=>{if(SETTLE)await page.waitForTimeout(SETTLE);await page.screenshot({path:test.info().outputPath(`${name}.png`)})};
-const nextButton=(page:Page,c:Copy)=>page.getByRole('button',{name:oneOf(c.m.actions.next,c.m.actions.results,c.m.actions.doneNext,c.m.actions.doneResults)});
+/** The way on from a settled card: a draw for its drawer, or the results after the last card. */
+const advanceButton=(page:Page,c:Copy)=>page.getByRole('button',{name:oneOf(c.m.actions.drawNext,c.m.actions.drawDone,c.m.actions.results,c.m.actions.doneResults)});
 const lockGuess=(page:Page,c:Copy)=>page.getByRole('button',{name:new RegExp(`^${escape(c.prefix(c.m.actions.lockGuess))}`)});
 const lockIt=(page:Page,c:Copy)=>page.getByRole('button',{name:c.m.actions.lockIt,exact:true});
 const revealIndex=(page:Page,attr:'secret'|'guess')=>page.locator('article li').evaluateAll((items,a)=>items.findIndex(li=>li.hasAttribute(`data-${a}`)),attr);
@@ -53,12 +54,13 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
  await shot(guest,'lobby-guest-ready');await expect(host.getByRole('button',{name:H.m.lobby.start})).toBeEnabled();
  await host.getByRole('button',{name:H.m.lobby.start}).click();
 
- // Briefing gates the first card until both are in.
- await expect(host.getByText(H.m.onboarding.label)).toBeVisible();await shot(host,'onboarding');
- await host.getByRole('button',{name:H.m.onboarding.skip}).click();await host.getByRole('button',{name:H.m.onboarding.deal}).click();
- await expect(host.getByText(H.f(H.m.onboarding.doneBody,{name:'Midnight'}))).toBeVisible();
- await guest.getByRole('button',{name:G.m.onboarding.skip}).click();await guest.getByRole('button',{name:G.m.onboarding.deal}).click();
- await expect(host.locator('article[data-card-type]')).toBeVisible();
+ // The briefing is reading, not a gate: the host draws the first card from it in one tap; the guest only reads and waits.
+ await expect(host.getByText(H.m.onboarding.label)).toBeVisible();await expect(guest.getByText(G.m.onboarding.label)).toBeVisible();await shot(host,'onboarding');await shot(guest,'onboarding-guest');
+ await expect(guest.getByText(G.f(G.m.actions.waitDrawFirst,{name:'Scarlet'}))).toBeVisible();await expect(guest.getByRole('button',{name:G.m.actions.drawFirst})).toHaveCount(0);
+ await host.getByRole('button',{name:H.m.actions.drawFirst}).click();
+ // Both phones see the same card turn over, and the first answer is open at once: no Continue, Ready or Start in between.
+ await expect(host.locator('article[data-card-type]')).toBeVisible();await expect(guest.locator('article[data-card-type]')).toBeVisible();
+ expect(await category(host)).toBe('MIND_READER');await expect(lockIt(host,H)).toBeVisible();
  // Each player draws their own mission face down; neither phone ever shows the other's.
  const hostMission=await drawFromSheet(host,H,'mission');const guestMission=await drawFromSheet(guest,G,'mission');await shot(host,'mission-drawn');
  await expect(guest.getByText(hostMission.split('\n').at(-1)!)).toHaveCount(0);await expect(host.getByText(guestMission.split('\n').at(-1)!)).toHaveCount(0);
@@ -67,6 +69,8 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
  const missionChip=(p:Page)=>p.getByRole('button',{name:new RegExp(`^${escape(c(p).m.hud.mission)}`)});
  await missionChip(host).click();await host.getByRole('button',{name:H.m.hud.reveal}).click();await shot(host,'mission-open');
  await host.getByRole('button',{name:H.m.hud.ask}).click();
+ // The claim waits on the partner's HUD instead of covering their card.
+ await expect(guest.getByRole('dialog')).toHaveCount(0);await guest.getByRole('button',{name:G.f(G.m.hud.verdictChip,{name:'Scarlet'})}).click();
  const verdict=guest.getByRole('dialog');await expect(verdict.getByText(G.m.verdict.title)).toBeVisible();await shot(guest,'mission-verdict');
  await verdict.getByRole('button',{name:G.m.verdict.yes}).click();
  // The confirmed mission earns a Power Card draw, then the next mission is drawn the same way.
@@ -75,10 +79,26 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
  await drawFromSheet(host,H,'mission');
  await missionChip(host).click();
 
- const seen=new Set<string>();let chemistryRounds=0,timerChecked=false,usedPower=false,forfeitSeen=false,forfeitDrawn=false,switched=false,askedQuestion=false;
+ /** Who draws next takes turns (host draws odd cards); the partner sees who is drawing. Returns the clicks it took: one. */
+ const nick=(p:Page)=>p===host?'Scarlet':'Midnight';const clicksPerTransition:number[]=[];
+ const advance=async(round:number)=>{
+  if(round===3){// A reload while a draw is pending: both phones come back to the same drawer and the same waiting partner.
+   await host.reload();await expect(host.getByText(H.f(H.m.hud.round,{round}),{exact:false}).first()).toBeVisible()}
+  let drawer:Page|null=null;await expect.poll(async()=>{drawer=await advanceButton(host,H).isVisible()?host:await advanceButton(guest,G).isVisible()?guest:null;return !!drawer},{timeout:10000}).toBe(true);
+  const d=drawer!,w=d===host?guest:host;
+  // Results are open to either phone; a draw only to its drawer, while the partner watches.
+  if(round<12){await expect(advanceButton(w,c(w))).toHaveCount(0);expect(d).toBe((round+1)%2===1?host:guest);await expect(w.getByText(c(w).f(c(w).m.actions.waitDraw,{name:nick(d)}))).toBeVisible()}
+  await advanceButton(d,c(d)).click();clicksPerTransition.push(1);
+  if(round<12)for(const p of [host,guest])await expect(p.getByText(c(p).f(c(p).m.hud.round,{round:round+1}),{exact:false}).first()).toBeVisible();
+ };
+ /** The first real decision of a freshly drawn card is open without any further tap. */
+ const firstMove=(kind:string)=>kind==='MIND_READER'?host.getByRole('button',{name:oneOf(H.m.actions.lockIt,H.m.actions.sealBoth)}).or(guest.getByRole('button',{name:oneOf(G.m.actions.lockIt,G.m.actions.sealBoth)}))
+  :kind==='CHEMISTRY'?host.getByRole('button',{name:H.m.actions.into}):kind==='MUTUAL_DESIRE'?host.getByRole('button',{name:H.m.actions.seal}):host.getByRole('button',{name:H.m.actions.activate});
+ const seen=new Set<string>();let chemistryRounds=0,stopChecked=false,timerChecked=false,usedPower=false,forfeitSeen=false,forfeitDrawn=false,switched=false,askedQuestion=false;
  for(let round=1;round<=12;round++){
   for(const p of [host,guest])await expect(p.getByText(c(p).f(c(p).m.hud.round,{round}),{exact:false}).first()).toBeVisible();
   const kind=await category(host);seen.add(kind);expect(await category(guest)).toBe(kind);
+  await expect(firstMove(kind).first()).toBeVisible();await expect(advanceButton(host,H)).toHaveCount(0);await expect(advanceButton(guest,G)).toHaveCount(0);
   if(kind==='MIND_READER'){
    // Same card, same answers, in two languages.
    expect(await host.locator('[role=radiogroup] [role=radio]').count()).toBe(await guest.locator('[role=radiogroup] [role=radio]').count());
@@ -153,19 +173,16 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
     else{await expect(host.locator('article li[data-prediction]')).toHaveCount(2);await expect(guest.locator('article li[data-prediction]')).toHaveCount(2)}
     break;
    }
-   await expect(nextButton(host,H)).toBeVisible();
   }else if(kind==='CHEMISTRY'){
    chemistryRounds++;
    // The first Chemistry card, and the first timed one, are played through; any others are declined.
    const timed=await host.getByText(new RegExp(`^${escape(H.prefix(H.m.card.chem.timer.chip))}`)).count()>0;
    if(chemistryRounds===1||(timed&&!timerChecked)){
+    // Taking part is the start: one yes waits with no clock, the second yes begins the challenge on both phones at once.
     await shot(host,'chemistry-invitation');await host.getByRole('button',{name:H.m.actions.into}).click();await expect(host.getByText(H.f(H.m.actions.waitConsent,{name:'Midnight'})).first()).toBeVisible();
-    await guest.getByRole('button',{name:G.m.actions.into}).click();await expect(host.getByText(H.m.card.chem.phase.READY.title)).toBeVisible();
-    // Start needs both: the first press waits, and no clock runs yet.
-    await host.getByRole('button',{name:H.m.actions.start}).click();await expect(host.getByText(H.f(H.m.actions.waitStart,{name:'Midnight'})).first()).toBeVisible();
-    await expect(host.getByRole('timer')).toHaveCount(0);await expect(guest.getByRole('button',{name:G.m.actions.start})).toBeVisible();
-    await guest.getByRole('button',{name:G.m.actions.start}).click();
-    await expect(host.getByRole('button',{name:H.m.actions.didIt})).toBeVisible();await expect(host.getByRole('button',{name:H.m.actions.stop})).toBeVisible();
+    await expect(host.getByRole('timer')).toHaveCount(0);await expect(host.getByRole('button',{name:H.m.actions.start})).toHaveCount(0);
+    await guest.getByRole('button',{name:G.m.actions.into}).click();
+    await expect(host.getByRole('button',{name:H.m.actions.didIt})).toBeVisible();await expect(guest.getByRole('button',{name:G.m.actions.didIt})).toBeVisible();await expect(guest.getByRole('button',{name:G.m.actions.start})).toHaveCount(0);await expect(host.getByRole('button',{name:H.m.actions.stop})).toBeVisible();
     if(timed){
      // One server deadline: both phones show the same time, and a reload picks the clock up where it was instead of restarting it.
      const read=async(p:Page)=>{const tm=p.getByRole('timer');await expect(tm).toBeVisible();const [m,s]=(await tm.textContent())!.trim().split(':').map(Number);return m*60+s};
@@ -178,6 +195,10 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
     await shot(host,'chemistry-in-progress');await shot(guest,'chemistry-in-progress-guest');
     await host.getByRole('button',{name:H.m.actions.didIt}).click();await expect(host.getByText(H.f(H.m.actions.waitCompletion,{name:'Midnight'})).first()).toBeVisible();
     await guest.getByRole('button',{name:G.m.actions.didIt}).click();await expect(host.getByText(H.f(H.m.card.chem.phase.COMPLETED.description,{count:1}))).toBeVisible();await expect(host.getByRole('timer')).toHaveCount(0);await shot(host,'chemistry-complete');
+   }else if(!stopChecked){
+    // Either of you can stop a running challenge: nothing is paid, nothing is lost.
+    await host.getByRole('button',{name:H.m.actions.into}).click();await guest.getByRole('button',{name:G.m.actions.into}).click();await expect(guest.getByRole('button',{name:G.m.actions.stop})).toBeVisible();
+    await guest.getByRole('button',{name:G.m.actions.stop}).click();await expect(host.getByText(H.m.card.chem.stoppedNote)).toBeVisible();stopChecked=true;
    }else{await guest.getByRole('button',{name:G.m.actions.notTonight}).click();await expect(host.getByText(H.m.card.chem.declinedNote)).toBeVisible()}
   }else if(kind==='MUTUAL_DESIRE'){
    for(const p of [host,guest]){await p.getByRole('radio',{name:c(p).m.card.desire.YES,exact:true}).click();await p.getByRole('button',{name:c(p).m.actions.seal}).click()}
@@ -189,8 +210,10 @@ test(`full Read My Mind session · host ${hostLocale}, guest ${guestLocale}`,asy
   await noHorizontalOverflow(host);await noHorizontalOverflow(guest);
   // Reconnect keeps the guest's language.
   if(round===2){await guest.reload();await expect(guest.getByText(G.f(G.m.hud.round,{round}),{exact:false}).first()).toBeVisible()}
-  await nextButton(host,H).click();
+  await advance(round);
  }
+ // From a settled card to the next card's first real decision: exactly one tap, the draw, every time.
+ expect(clicksPerTransition).toHaveLength(12);expect(clicksPerTransition.every(n=>n===1)).toBe(true);test.info().annotations.push({type:'clicks',description:`one draw per transition (${clicksPerTransition.length} transitions)`});
  expect([...seen]).toEqual(expect.arrayContaining(['MIND_READER','CHEMISTRY','MUTUAL_DESIRE','PLOT_TWIST']));
  expect(forfeitSeen).toBe(true);expect(forfeitDrawn).toBe(true);
  await expect(host.getByText(H.prefix(H.m.results.eyebrow),{exact:false})).toBeVisible();await shot(host,'results');await shot(guest,'results-guest');

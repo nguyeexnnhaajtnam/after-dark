@@ -238,6 +238,10 @@ const INDEPENDENT_ACTIONS = new Set<GameAction["type"]>([
   "BONUS_VOTE",
   "DRAW_CARD",
 ]);
+/** Who draws the card dealt for `round`: the two players take turns, the first-seated player (the host) first. */
+export const drawerFor = (s: { players: [string, string] }, round: number) =>
+  s.players[(round - 1) % 2];
+export type NextStep = "DRAW" | "PART_B" | "FORFEIT" | "RESULTS";
 export const TWISTS: TwistKind[] = [
   "ROLE_REVERSAL",
   "DOUBLE_CHALLENGE",
@@ -580,8 +584,23 @@ export class GameEngine {
     });
     if (s.phase === "GAME_COMPLETE")
       throw new BadRequestException("The game is over");
-    if (s.phase === "HOW_TO_PLAY" && a.type !== "ACK_HOW_TO_PLAY")
+    if (
+      s.phase === "HOW_TO_PLAY" &&
+      a.type !== "ACK_HOW_TO_PLAY" &&
+      a.type !== "NEXT_ROUND"
+    )
       throw new BadRequestException("Finish the briefing first");
+    // Dealing a new card is a draw, taken in turns. A drawer who is offline never blocks it: the partner draws instead.
+    if (
+      a.type === "NEXT_ROUND" &&
+      this.nextStep(s, card.type) === "DRAW" &&
+      playerId !== this.nextDrawer(s)
+    ) {
+      const drawer = await tx.roomPlayer.findUnique({
+        where: { id: this.nextDrawer(s) },
+      });
+      this.assertCanDraw(s, playerId, !!drawer?.connected);
+    }
     if (a.type === "ACK_HOW_TO_PLAY") this.ackHowToPlay(s, playerId, card.type);
     else if (a.type === "DECLARE_MISSION") this.declareMission(s, playerId);
     else if (a.type === "CONFIRM_MISSION")
@@ -1331,30 +1350,18 @@ export class GameEngine {
         s.result = { variant: this.variant(s), chemistry: "DECLINED" };
         s.phase = "ROUND_COMPLETE";
       } else if (s.players.every((p) => s.votes[p]))
-        s.phase = "CHEMISTRY_ACCEPTED";
+        // Agreeing to take part is the start: the second yes stamps the one shared countdown.
+        this.startChemistry(s, durationSeconds, now);
     } else if (a.type === "CHEMISTRY_START") {
+      // Only sessions that reached the older "both agreed, now both press start" step still pass through here.
       if (s.phase !== "CHEMISTRY_ACCEPTED")
         throw new BadRequestException("The challenge is not ready to start");
       // A repeated press can never restart or extend the clock.
       if (s.chemReady[playerId])
         throw new BadRequestException("You already pressed start");
       s.chemReady[playerId] = true;
-      if (s.players.every((p) => s.chemReady[p])) {
-        const seconds =
-          Number.isInteger(durationSeconds) && durationSeconds! > 0
-            ? durationSeconds!
-            : undefined;
-        s.chemTimer = {
-          startedAt: now.toISOString(),
-          ...(seconds
-            ? {
-                durationSeconds: seconds,
-                endsAt: new Date(now.getTime() + seconds * 1000).toISOString(),
-              }
-            : {}),
-        };
-        s.phase = "CHEMISTRY_IN_PROGRESS";
-      }
+      if (s.players.every((p) => s.chemReady[p]))
+        this.startChemistry(s, durationSeconds, now);
     } else if (a.type === "CHEMISTRY_DONE") {
       if (s.phase !== "CHEMISTRY_IN_PROGRESS")
         throw new BadRequestException("The challenge is not in progress");
@@ -1377,6 +1384,28 @@ export class GameEngine {
       s.result = { variant: this.variant(s), chemistry: "SKIPPED" };
       s.phase = "ROUND_COMPLETE";
     } else throw new BadRequestException("Invalid Chemistry action");
+  }
+  /** One authoritative countdown, stamped once by the server; nothing ever restarts or extends it. */
+  private startChemistry(
+    s: InternalState,
+    durationSeconds: number | null | undefined,
+    now: Date,
+  ) {
+    const seconds =
+      Number.isInteger(durationSeconds) && durationSeconds! > 0
+        ? durationSeconds!
+        : undefined;
+    s.chemTimer = {
+      startedAt: now.toISOString(),
+      ...(seconds
+        ? {
+            durationSeconds: seconds,
+            endsAt: new Date(now.getTime() + seconds * 1000).toISOString(),
+          }
+        : {}),
+    };
+    for (const p of s.players) s.chemReady[p] = true;
+    s.phase = "CHEMISTRY_IN_PROGRESS";
   }
   mutualDesire(s: InternalState, playerId: string, a: GameAction) {
     if (a.type !== "MUTUAL_DESIRE_CHOICE")
@@ -1419,7 +1448,31 @@ export class GameEngine {
     };
     s.phase = "ROUND_COMPLETE";
   }
+  /** The player whose turn it is to draw the next card (the first card while the briefing is open). */
+  nextDrawer(s: InternalState) {
+    return drawerFor(s, s.phase === "HOW_TO_PLAY" ? 1 : s.round + 1);
+  }
+  /** Only the player whose turn it is draws, unless they are offline; then the partner may, so the game never stalls. */
+  assertCanDraw(s: InternalState, playerId: string, drawerConnected: boolean) {
+    if (playerId !== this.nextDrawer(s) && drawerConnected)
+      throw new ForbiddenException("It is your partner's turn to draw");
+  }
+  /** What NEXT_ROUND would do now; undefined while the card still waits for an answer (a forfeit included). */
+  nextStep(s: InternalState, cardType: string): NextStep | undefined {
+    if (s.phase === "HOW_TO_PLAY") return "DRAW";
+    if (!RESOLVED_PHASES.includes(s.phase)) return undefined;
+    if (s.forfeit?.stage === "OFFERED" || s.forfeit?.stage === "DRAWING")
+      return undefined;
+    if (cardType === "MIND_READER" && s.phase === "REVEAL") {
+      if (s.forfeitQueue.length && s.forfeitIds.length) return "FORFEIT";
+      if (s.activeTwist === "DOUBLE_CHALLENGE" && s.challengePart === 1)
+        return "PART_B";
+    }
+    return s.round >= TOTAL_ROUNDS ? "RESULTS" : "DRAW";
+  }
   private async nextRound(tx: any, s: InternalState, currentType: string) {
+    // The first card is drawn straight from the briefing; it is always the schedule's first card (a Mind Reader card).
+    if (s.phase === "HOW_TO_PLAY") return this.beginRound(s, currentType);
     if (!RESOLVED_PHASES.includes(s.phase))
       throw new BadRequestException("Round is not complete");
     if (s.forfeit?.stage === "OFFERED" || s.forfeit?.stage === "DRAWING")
@@ -1596,6 +1649,7 @@ export class GameEngine {
               : viewerId in s.counter;
       const bonusCard = localized(s.bonus?.cardId);
       const draws = this.drawable(s, viewerId);
+      const step = outdated ? undefined : this.nextStep(s, card.type);
       game = {
         id: session.id,
         gameSlug: "read-my-mind",
@@ -1736,6 +1790,12 @@ export class GameEngine {
             ),
           ),
         ...(Object.keys(draws).length ? { draws } : {}),
+        ...(step
+          ? {
+              nextStep: step,
+              ...(step === "DRAW" ? { nextDrawerId: this.nextDrawer(s) } : {}),
+            }
+          : {}),
         inventory,
         inventoryCounts: Object.fromEntries(
           Object.entries(s.inventory).map(([id, list]) => [id, list.length]),

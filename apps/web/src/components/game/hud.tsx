@@ -34,7 +34,8 @@ export function Hud({g,me,partner,connected,onPowers,onRules,onClaimMission,onDr
    </div>
 
    <div className="mt-2 flex gap-2">
-    {drawOpen?<button onClick={onDrawMission} data-active className={ctaClass({variant:'utility',size:'sm',className:'!min-h-10 min-w-0 flex-1 !justify-start text-left'})}>
+    {/* An open draw waits here, never over the card in play; it draws the eye once when it opens. */}
+    {drawOpen?<button key={g.draws?.POWER?'power':'mission'} onClick={onDrawMission} data-active className={ctaClass({variant:'utility',size:'sm',className:'fx-cta-attention !min-h-10 min-w-0 flex-1 !justify-start text-left'})}>
      <Layers size={14} className="shrink-0 text-pink"/><span className="truncate">{g.draws?.POWER?t('powerDraw'):missionLabel}</span>
     </button>:<button onClick={()=>setMissionOpen(o=>!o)} aria-expanded={missionOpen} aria-controls="mission-panel" className={ctaClass({variant:'utility',size:'sm',className:'!min-h-10 min-w-0 flex-1 !justify-start text-left'})}>
      <Lock size={14} className="shrink-0 text-pink"/><span className="truncate">{missionLabel}</span><ChevronDown size={14} className={`ml-auto shrink-0 transition ${missionOpen?'rotate-180':''}`}/>
@@ -44,7 +45,7 @@ export function Hud({g,me,partner,connected,onPowers,onRules,onClaimMission,onDr
     </button>
    </div>
    {missionOpen&&!drawOpen&&<MissionPanel key={g.mission?.id||'done'} g={g} partnerName={partnerName} onClaim={onClaimMission} claiming={claiming}/>}
-   {verdictPending&&<Button variant="secondary" size="sm" block className="mt-2" onClick={onVerdict}>{t('verdictChip',{name:partnerName})}</Button>}
+   {verdictPending&&<Button key={g.opponentMissionDeclared?.id} variant="secondary" size="sm" block className="fx-cta-attention mt-2" onClick={onVerdict}>{t('verdictChip',{name:partnerName})}</Button>}
    {g.pendingTwist&&<p className="mt-2 flex items-center gap-1.5 rounded-[10px] bg-plum px-3 py-1.5 text-[11px] font-bold"><Zap size={13} className="shrink-0 text-pink"/><span className="truncate">{t('twistPending',{twists:tw(`${g.pendingTwist}.title`)})}</span></p>}
    {partner&&!partner.connected&&<p className="mt-2 rounded-[10px] border-2 border-pink/50 px-3 py-1.5 text-center text-[11px]">{t('partnerAway',{name:partner.nickname})}</p>}
   </div>

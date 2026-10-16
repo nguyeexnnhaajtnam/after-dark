@@ -39,6 +39,9 @@ export function DrawDeck({art,cards,canDraw,pending,onDraw,result,dark,watching}
  </div>;
 }
 
+/** A small face-down stack for "draw the next card". It shows no card type: what comes next stays hidden until drawn. */
+export function DeckIcon(){return <span aria-hidden className="deck-icon"><span/><span/><span/></span>}
+
 /** The drawn card turning over: its back, then the type's front template with what was drawn printed on it. */
 function DrawReveal({art,back,dark,children}:{art:DrawArt;back:string;dark?:boolean;children:ReactNode}){
  const [face,setFace]=useState<'back'|'front'>(()=>calm()?'front':'back');const stage=useRef<HTMLDivElement>(null);

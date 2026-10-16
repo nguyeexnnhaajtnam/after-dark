@@ -27,9 +27,14 @@ describe('two-player persisted game integration',()=>{
   expect(viView.card.question).not.toBe(enView.card.question);expect(viView.card.choices).toHaveLength(enView.card.choices.length);
   expect(viView.draws).toBeUndefined();expect(viView.mission).toBeUndefined();
   await expect(engine.action(roomId,a,{actionId:'early',expectedVersion:view.game!.version,round:1,type:'SUBMIT_SECRET',choice:0})).rejects.toThrow('Finish the briefing');
-  view=await engine.project(roomId,a);const v=view.game!.version;
-  await Promise.all([engine.action(roomId,a,{actionId:'ack-a',expectedVersion:v,round:1,type:'ACK_HOW_TO_PLAY'}),engine.action(roomId,b,{actionId:'ack-b',expectedVersion:v,round:1,type:'ACK_HOW_TO_PLAY'})]);
-  view=await engine.project(roomId,a);expect(view.game?.phase).toBe('WAITING_FOR_SECRET');
+  // The briefing needs no acknowledgement: the host draws the first card from it, the partner may not.
+  view=await engine.project(roomId,a);expect(view.game?.nextStep).toBe('DRAW');expect(view.game?.nextDrawerId).toBe(a);expect((await engine.project(roomId,b)).game?.nextDrawerId).toBe(a);
+  await expect(send(b,'NEXT_ROUND')).rejects.toThrow("partner's turn to draw");
+  const v=(await engine.project(roomId,a)).game!.version;
+  // Two taps of the same draw, at the same version, deal exactly one card.
+  const taps=await Promise.allSettled([engine.action(roomId,a,{actionId:'draw-1a',expectedVersion:v,round:1,type:'NEXT_ROUND'}),engine.action(roomId,a,{actionId:'draw-1b',expectedVersion:v,round:1,type:'NEXT_ROUND'})]);
+  expect(taps.filter(t=>t.status==='fulfilled')).toHaveLength(1);
+  view=await engine.project(roomId,a);expect(view.game?.phase).toBe('WAITING_FOR_SECRET');expect(view.game?.round).toBe(1);expect(view.game?.nextStep).toBeUndefined();
   // Each player draws their own mission from a face-down spread; only the spread size was ever sent.
   expect(view.game?.draws?.MISSION).toBe(Math.min(4,initial.missionDeck[a].length));
   await send(a,'DRAW_CARD',{draw:'MISSION',choice:view.game!.draws!.MISSION!-1});await send(b,'DRAW_CARD',{draw:'MISSION',choice:0});
@@ -41,7 +46,7 @@ describe('two-player persisted game integration',()=>{
 
   // Stale and duplicate actions are rejected.
   await expect(engine.action(roomId,a,{actionId:'stale',expectedVersion:view.game!.version-1,type:'NEXT_ROUND'})).rejects.toThrow('Stale');
-  await expect(engine.action(roomId,a,{actionId:'ack-a',expectedVersion:view.game!.version,type:'NEXT_ROUND'})).rejects.toThrow('Duplicate');
+  await expect(engine.action(roomId,a,{actionId:'draw-1a',expectedVersion:view.game!.version,type:'NEXT_ROUND'})).rejects.toThrow('Duplicate');
 
   // A confirmed mission earns a Power Card draw; the drawn card is the visible reward, then the next mission is drawn.
   await send(a,'DECLARE_MISSION');const declared=await engine.project(roomId,b);expect(declared.game?.opponentMissionDeclared?.text).toBeTruthy();
@@ -51,6 +56,8 @@ describe('two-player persisted game integration',()=>{
   const rewarded=await engine.project(roomId,a);expect(rewarded.game?.inventory).toHaveLength(1);expect(rewarded.game?.lastReward?.powerId).toBe(rewarded.game?.inventory[0].id);
   await send(a,'DRAW_CARD',{draw:'MISSION',choice:0});expect((await engine.project(roomId,a)).game?.mission?.number).toBe(2);
 
+  /** Whatever NEXT_ROUND does next, sent by whoever may: the card's drawer for a new card, anyone for steps inside a card. */
+  const advance=async()=>{const g=(await engine.project(roomId,a)).game!;if(g.nextStep==='DRAW'){const other=g.nextDrawerId===a?b:a;await expect(send(other,'NEXT_ROUND')).rejects.toThrow("partner's turn");return send(g.nextDrawerId!,'NEXT_ROUND')}return send(a,'NEXT_ROUND')};
   let correct=0,chemistryDone=0,doubleCards=0,counterCards=0;const questionsByRound:Record<number,Set<string>>={};const sparks=()=>engine.project(roomId,a).then(r=>r.game!.scores);const twistsSeen:string[]=[];
   for(let round=1;round<=12;round++){
    view=await engine.project(roomId,a);const g=view.game!;expect(g.round).toBe(round);
@@ -69,17 +76,14 @@ describe('two-player persisted game integration',()=>{
       if(m.forfeit?.stage==='DRAWING'){await expect(send(a,'NEXT_ROUND')).rejects.toThrow('forfeit');expect(m.forfeit.text).toBe('');expect(m.forfeit.cards).toBeGreaterThan(0);
        await send(m.forfeit.payerId,'DRAW_CARD',{draw:'FORFEIT',choice:m.forfeit.cards!-1});const drawn=(await engine.project(roomId,b)).game!.forfeit!;expect(drawn.stage).toBe('OFFERED');expect(drawn.text).toBeTruthy()}
       else if(m.forfeit?.stage==='OFFERED'){await expect(send(a,'NEXT_ROUND')).rejects.toThrow('forfeit');await send(m.forfeit.payerId,'FORFEIT_VOTE',{accept:false})}
-      else await send(a,'NEXT_ROUND')}
+      else await advance()}
     }
     continue;
    }else if(g.card.type==='CHEMISTRY'){
     if(chemistryDone===0){
      const before=await sparks();const cv=g.version;
+     // Both choose to take part at the same version, as two phones would: the challenge starts at once, with exactly one clock.
      await Promise.all([engine.action(roomId,a,{actionId:`chem-a-${round}`,expectedVersion:cv,round,type:'CHEMISTRY_VOTE',accept:true}),engine.action(roomId,b,{actionId:`chem-b-${round}`,expectedVersion:cv,round,type:'CHEMISTRY_VOTE',accept:true})]);
-     expect((await engine.project(roomId,b)).game?.chemistry?.stage).toBe('MUTUALLY_ACCEPTED');
-     // Both press start at the same version, as two phones would: exactly one clock starts.
-     const sv=(await engine.project(roomId,a)).game!.version;
-     await Promise.all([engine.action(roomId,a,{actionId:`start-a-${round}`,expectedVersion:sv,round,type:'CHEMISTRY_START'}),engine.action(roomId,b,{actionId:`start-b-${round}`,expectedVersion:sv,round,type:'CHEMISTRY_START'})]);
      const ra=(await engine.project(roomId,a)).game!.chemistry!,rb=(await engine.project(roomId,b)).game!.chemistry!;expect(ra.stage).toBe('IN_PROGRESS');expect(ra.startedAt).toBeTruthy();expect(ra.startedAt).toBe(rb.startedAt);expect(ra.endsAt).toBe(rb.endsAt);
      await send(a,'CHEMISTRY_DONE');
      const waiting=await engine.project(roomId,a);expect(waiting.game?.chemistry?.stage).toBe('WAITING_FOR_COMPLETION');expect((await engine.project(roomId,b)).game?.chemistry?.partnerFinished).toBe(true);
@@ -90,7 +94,9 @@ describe('two-player persisted game integration',()=>{
     for(const p of [a,b])expect((await engine.project(roomId,p)).game?.pendingTwist).toBe(g.card.effect);
     // A restarted server reads the same pending twist; activating it paid nobody.
     expect((await new GameEngine(db).project(roomId,b)).game?.pendingTwist).toBe(g.card.effect);expect(await sparks()).toEqual(before)}
-   await send(a,'NEXT_ROUND');
+   // A reconnecting phone reads the same next step and drawer as its partner.
+   const [na,nb]=[(await new GameEngine(db).project(roomId,a)).game!,(await engine.project(roomId,b)).game!];expect(na.nextStep).toBe(nb.nextStep);expect(na.nextDrawerId).toBe(nb.nextDrawerId);
+   await advance();
   }
   const finished=(await engine.project(roomId,a)).game!;expect(finished.phase).toBe('GAME_COMPLETE');expect(finished.round).toBe(12);
   expect(new Set(twistsSeen).size).toBe(2);expect(finished.pendingTwist).toBeUndefined();
@@ -120,22 +126,22 @@ describe('timed Chemistry countdown against the database',()=>{
   await patch(s=>{s.cardIds[0]='chem-h4-2';s.phase='CHEMISTRY_CONSENT'});
   let g=await view(engine,a);expect(g.card.durationSeconds).toBe(60);expect(g.chemistry?.stage).toBe('INVITATION');
   await expect(act(engine,a,'CHEMISTRY_START')).rejects.toThrow('not ready to start');
-  const v=g.version;await Promise.all([engine.action(roomId,a,{actionId:'vote-a',expectedVersion:v,round:1,type:'CHEMISTRY_VOTE',accept:true}),engine.action(roomId,b,{actionId:'vote-b',expectedVersion:v,round:1,type:'CHEMISTRY_VOTE',accept:true})]);
-  // One ready, one not: no clock yet.
-  await act(engine,a,'CHEMISTRY_START');
-  expect((await view(engine,a)).chemistry).toEqual(expect.objectContaining({stage:'WAITING_TO_START',iReady:true,durationSeconds:60}));
-  expect((await view(engine,b)).chemistry).toEqual(expect.objectContaining({stage:'MUTUALLY_ACCEPTED',iReady:false}));expect((await view(engine,a)).chemistry?.endsAt).toBeUndefined();
-  await expect(act(engine,a,'CHEMISTRY_START')).rejects.toThrow('already pressed start');
+  // One yes, one undecided: no clock yet, and there is no separate start step.
+  await act(engine,a,'CHEMISTRY_VOTE',{accept:true});
+  expect((await view(engine,a)).chemistry).toEqual(expect.objectContaining({stage:'WAITING_FOR_CONSENT',durationSeconds:60}));
+  expect((await view(engine,b)).chemistry).toEqual(expect.objectContaining({stage:'INVITATION'}));expect((await view(engine,a)).chemistry?.endsAt).toBeUndefined();
+  await expect(act(engine,a,'CHEMISTRY_VOTE',{accept:true})).rejects.toThrow('already answered');await expect(act(engine,a,'CHEMISTRY_START')).rejects.toThrow('not ready to start');
   // Unauthorized and stale actions are refused.
-  await expect(engine.action(roomId,'not-a-player',{actionId:'intruder',expectedVersion:(await view(engine,a)).version,round:1,type:'CHEMISTRY_START'})).rejects.toThrow('not seated');
+  await expect(engine.action(roomId,'not-a-player',{actionId:'intruder',expectedVersion:(await view(engine,a)).version,round:1,type:'CHEMISTRY_VOTE',accept:true})).rejects.toThrow('not seated');
   await expect(engine.action(roomId,b,{actionId:'stale-next',expectedVersion:(await view(engine,a)).version-1,round:1,type:'NEXT_ROUND'})).rejects.toThrow('Stale');
-  const before=Date.now();await act(engine,b,'CHEMISTRY_START');const after=Date.now();
+  // The second yes is the start: one server-stamped clock, seen identically by both.
+  const before=Date.now();await act(engine,b,'CHEMISTRY_VOTE',{accept:true});const after=Date.now();
   const ca=(await view(engine,a)).chemistry!,cb=(await view(engine,b)).chemistry!;
   expect(ca.stage).toBe('IN_PROGRESS');expect(ca.endsAt).toBe(cb.endsAt);expect(ca.startedAt).toBe(cb.startedAt);
   const started=Date.parse(ca.startedAt!);expect(started).toBeGreaterThanOrEqual(before-5);expect(started).toBeLessThanOrEqual(after+5);expect(Date.parse(ca.endsAt!)-started).toBe(60000);
   expect(Math.abs(Date.parse(ca.serverNow)-Date.now())).toBeLessThan(5000);expect(ca.timerExpired).toBe(false);
-  // Pressing start again, from either side, cannot move the clock.
-  await expect(act(engine,b,'CHEMISTRY_START')).rejects.toThrow('not ready to start');expect((await view(engine,a)).chemistry?.endsAt).toBe(ca.endsAt);
+  // A late yes or start, from either side, cannot move the clock.
+  await expect(act(engine,b,'CHEMISTRY_START')).rejects.toThrow('not ready to start');await expect(act(engine,a,'CHEMISTRY_VOTE',{accept:true})).rejects.toThrow('Consent is closed');expect((await view(engine,a)).chemistry?.endsAt).toBe(ca.endsAt);
   // A fresh engine (a restarted server) reads the same deadline from the database.
   const restarted=new GameEngine(db);expect((await view(restarted,b)).chemistry?.endsAt).toBe(ca.endsAt);expect(await restarted.chemistryDeadline(roomId)).toBe(Date.parse(ca.endsAt!));
   // One confirms; the other still decides.
@@ -189,7 +195,7 @@ describe('Plot Twists and Power Cards against the database',()=>{
   expect(bonus.type).toBe('CHEMISTRY');expect(bonus.intensity).toBeLessThanOrEqual(2);expect(deck).not.toContain(bonusId);expect((await view(a)).bonusMoment).toEqual(expect.objectContaining({giverId:b,receiverId:a,stage:'OFFERED',iAnswered:false}));
   await act(a,'BONUS_VOTE',{accept:false});const after=await view(b);expect(after.bonusMoment?.stage).toBe('DECLINED');expect(after.scores).toEqual(scores);expect(after.stats).toEqual(stats);
   expect(after.inventory).toEqual([]);expect((await view(a)).inventory).toEqual([]);
-  await act(a,'NEXT_ROUND');const moved=await view(b);expect(moved.round).toBe(2);expect(moved.followUp).toBeUndefined();expect(moved.bonusMoment).toBeUndefined();
+  await expect(act(a,'NEXT_ROUND')).rejects.toThrow("partner's turn");await act(b,'NEXT_ROUND');const moved=await view(b);expect(moved.round).toBe(2);expect(moved.followUp).toBeUndefined();expect(moved.bonusMoment).toBeUndefined();
  },30000);
 
  it('runs a Counter Mind twist end to end with simultaneous, sealed submissions',async()=>{
@@ -226,7 +232,7 @@ describe('state machine, concurrency and older sessions against the database',()
   await engine.start(roomId,a);await twistFirst('twist-02','DOUBLE_CHALLENGE');const deck=[...(await stored()).cardIds];expect(deck).toHaveLength(12);
   // Both activate at the same version, as two phones would.
   const g=await view(a);await Promise.all([engine.action(roomId,a,{actionId:'dc-ack-a',expectedVersion:g.version,round:1,type:'PLOT_TWIST_ACK'}),engine.action(roomId,b,{actionId:'dc-ack-b',expectedVersion:g.version,round:1,type:'PLOT_TWIST_ACK'})]);
-  await act(a,'NEXT_ROUND');const partA=await view(a);expect(partA.challengePart).toBe(1);expect(partA.card.id).toBe(deck[1]);
+  await act(b,'NEXT_ROUND');const partA=await view(a);expect(partA.challengePart).toBe(1);expect(partA.card.id).toBe(deck[1]);
   const second=(await stored()).secondCardId;const row=await db.gameCard.findUniqueOrThrow({where:{id:second}});expect(row.type).toBe('MIND_READER');expect(row.intensity).toBeLessThanOrEqual(2);expect(deck).not.toContain(second);
   expect(JSON.stringify(await engine.project(roomId,b))).not.toContain(second);
   await act(partA.secretPlayerId,'SUBMIT_SECRET',{choice:0});await act(partA.guessingPlayerId,'SUBMIT_GUESS',{choice:0});await act(b,'NEXT_ROUND');
@@ -266,7 +272,7 @@ describe('state machine, concurrency and older sessions against the database',()
   const g=await view(a);await act(g.secretPlayerId,'SUBMIT_SECRET',{choice:0});await act(g.guessingPlayerId,'SUBMIT_GUESS',{choice:0});
   await act(a,'USE_POWER',{powerId:'lm'});await act(a,'USE_POWER',{powerId:'gift'});
   const open=await view(b);expect(open.followUp?.stage).toBe('ASKED');expect(open.bonusMoment?.stage).toBe('OFFERED');
-  await act(a,'NEXT_ROUND');expect((await view(b)).round).toBe(2);
+  await act(b,'NEXT_ROUND');expect((await view(b)).round).toBe(2);
   // Answers aimed at the closed card, sent with its round number, are refused; so are answers to a follow-up that no longer exists.
   await expect(engine.action(roomId,b,{actionId:'sm-late-reply',expectedVersion:open.version,round:1,type:'FOLLOW_UP_REPLY',accept:true,text:'late'})).rejects.toThrow('Stale');
   await expect(engine.action(roomId,b,{actionId:'sm-late-bonus',expectedVersion:open.version,round:1,type:'BONUS_VOTE',accept:true})).rejects.toThrow('Stale');

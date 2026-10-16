@@ -1,12 +1,13 @@
 'use client';
 import {useState} from 'react';
-import {LoaderCircle} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import type {Ack,CardCategory,GameStateView,RoomView} from '@after-dark/contracts';
 import {useHeat} from '@/lib/games';
+import {WaitStatus} from '../ui/action-bar';
 import {Button} from '../ui/button';
 import {LanguageSwitcher} from '../ui/language-switcher';
 import type {Names} from './cards';
+import {DeckIcon} from './draw-deck';
 import {TypeEmblem} from './type-emblem';
 
 /** The card type each briefing step teaches, in step order; the closing safety step covers every card, so it carries none. */
@@ -20,10 +21,13 @@ export function RulesList({heat,tone='dark'}:{heat:number;tone?:'dark'|'ivory'})
   <li className={`rounded-[12px] px-3 py-2 text-xs font-bold uppercase tracking-wider ${tone==='ivory'?'bg-obsidian/10':'bg-ivory/10'}`}>{t('rulesHeat',{heat:h.label(heat)})}</li></ul>;
 }
 
-export function Onboarding({g,names,onReady,sending}:{g:GameStateView;names:Names;onReady:()=>Promise<Ack<RoomView>>;sending:boolean}){
- const t=useTranslations('onboarding'),tt=useTranslations('cardType'),h=useHeat();const steps=useSteps();
+/**
+ * The briefing is reading, not a gate: you both already said you're in, at this heat, in the lobby. The first card's drawer
+ * can draw from any step; the partner reads on and joins the moment the card is dealt.
+ */
+export function Onboarding({g,names,canDraw,onDraw,sending}:{g:GameStateView;names:Names;canDraw:boolean;onDraw:()=>Promise<Ack<RoomView>>;sending:boolean}){
+ const t=useTranslations('onboarding'),ta=useTranslations('actions'),tt=useTranslations('cardType'),h=useHeat();const steps=useSteps();
  const [step,setStep]=useState(0);const s=steps[step],last=step===steps.length-1;
- if(g.howToPlay.iAcknowledged)return <main className="grid h-[100dvh] place-items-center px-5 text-center"><div className="max-w-sm"><LoaderCircle className="mx-auto animate-spin text-pink" size={34}/><h1 className="display mt-4 text-4xl">{t('doneTitle')}</h1><p className="mt-2 text-ivory/80">{t('doneBody',{name:names.partner})}</p></div></main>;
  return <main className="flex h-[100dvh] flex-col px-4 pb-[max(.75rem,var(--safe-bottom))] pt-[max(.75rem,var(--safe-top))]">
   <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
    <div className="flex items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[.2em]"><span className="text-pink">{t('label')}</span><span className="flex items-center gap-2"><span className="text-ivory/70">{t('step',{current:step+1,total:steps.length})}</span><LanguageSwitcher variant="compact"/></span></div>
@@ -35,14 +39,14 @@ export function Onboarding({g,names,onReady,sending}:{g:GameStateView;names:Name
      <ul className="mt-3 space-y-2.5 text-[15px] leading-6">{s.lines.map(l=><li key={l} className="flex gap-2"><span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson"/>{l}</li>)}</ul>
      {last&&<p className="mt-4 rounded-[10px] bg-obsidian px-3 py-2 text-xs font-bold uppercase tracking-wider text-ivory">{t('heat',{heat:h.label(g.heat)})}</p>}
     </div></section>
-    {g.howToPlay.partnerAcknowledged&&<p className="mt-3 text-center text-xs text-ivory/75">{t('partnerIn',{name:names.partner})}</p>}
    </div>
+   {canDraw?<p className="mb-2 text-center text-[13px] leading-5 text-ivory/80">{t('drawer')}</p>:<WaitStatus>{ta('waitDrawFirst',{name:names.partner})}</WaitStatus>}
    <div className="flex items-center gap-2.5">
     {step>0&&<Button variant="ghost" disabled={sending} onClick={()=>setStep(step-1)}>{t('back')}</Button>}
-    {last?<Button variant="primary" size="lg" className="flex-1" loading={sending} loadingLabel={t('dealing')} onClick={()=>onReady()}>{t('deal')}</Button>
-     :<Button variant="primary" size="lg" className="flex-1" onClick={()=>setStep(step+1)}>{t('next')}</Button>}
+    {canDraw?<Button variant="primary" size="lg" className="flex-1" icon={<DeckIcon/>} loading={sending} loadingLabel={ta('drawing')} onClick={()=>onDraw()}>{ta('drawFirst')}</Button>
+     :!last&&<Button variant="primary" size="lg" className="flex-1" onClick={()=>setStep(step+1)}>{t('next')}</Button>}
    </div>
-   {!last&&<Button variant="ghost" block className="mt-1" onClick={()=>setStep(steps.length-1)}>{t('skip')}</Button>}
+   {canDraw&&!last&&<Button variant="ghost" block className="mt-1" onClick={()=>setStep(step+1)}>{t('tipNext')}</Button>}
   </div>
  </main>;
 }

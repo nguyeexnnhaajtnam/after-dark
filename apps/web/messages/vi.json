@@ -495,7 +495,7 @@
       "phase": {
         "CONSENT": {
           "title": "Chờ tín hiệu từ cả hai",
-          "description": "Chỉ bắt đầu khi cả hai cùng đồng ý."
+          "description": "Bắt đầu ngay khi cả hai cùng tham gia. Ai cũng có thể chọn để lúc khác."
         },
         "READY": {
           "title": "Đến lúc ra chiêu",
@@ -738,11 +738,11 @@
     "noteCollector": "{name} nợ bạn một thử thách. Đòi xong thì đi tiếp.",
     "stop": "Dừng lại",
     "stopping": "Đang dừng…",
-    "into": "Tôi đồng ý",
+    "into": "Tham gia · bắt đầu khi cả hai cùng vào",
     "notTonight": "Để lúc khác nhé",
     "changedMind": "Tôi đổi ý",
     "withdrawing": "Đang rút lại…",
-    "waitConsent": "Bạn đã đồng ý. Giờ tới lượt {name} quyết định.",
+    "waitConsent": "Bạn đã tham gia. Thử thách bắt đầu ngay khi {name} cũng tham gia.",
     "waitStart": "Bạn đã sẵn sàng. Đang chờ {name} bấm Bắt đầu.",
     "start": "Bắt đầu",
     "starting": "Đang bắt đầu…",
@@ -778,7 +778,16 @@
     "notePick": "Chọn một câu. Cả hai sẽ cùng trả lời.",
     "waitPick": "{name} đang chọn câu hỏi cho lá này…",
     "noteDrawForfeit": "Chạm một lá úp để rút thử thách.",
-    "waitDrawForfeit": "{name} đang rút thử thách. Bạn vẫn có thể cho qua."
+    "waitDrawForfeit": "{name} đang rút thử thách. Bạn vẫn có thể cho qua.",
+    "drawNext": "Rút lá tiếp theo",
+    "drawFirst": "Rút lá đầu tiên",
+    "drawing": "Đang rút bài…",
+    "drawDone": "Xong · rút lá tiếp theo",
+    "waitDraw": "{name} đang rút lá tiếp theo.",
+    "waitDrawFirst": "{name} sẽ rút lá đầu tiên. Đọc lướt luật trong lúc chờ nhé.",
+    "drawForPartner": "{name} đang mất kết nối, bạn rút lá này thay nhé.",
+    "nextForfeit": "Thử thách tiếp theo",
+    "nextForfeitLoading": "Đang mở thử thách tiếp theo…"
   },
   "verdict": {
     "eyebrow": "{name} báo đã xong nhiệm vụ bí mật",
@@ -904,7 +913,9 @@
     "dealing": "Đang chia bài…",
     "skip": "Bỏ qua phần hướng dẫn",
     "sheetEyebrow": "Read My Mind",
-    "sheetTitle": "Cách chơi"
+    "sheetTitle": "Cách chơi",
+    "tipNext": "Mẹo tiếp",
+    "drawer": "Bạn rút lá đầu tiên. Đọc tiếp, hoặc rút ngay khi sẵn sàng."
   },
   "results": {
     "headlineZero": "Toàn bí ẩn, chẳng ai đọc vị được ai.",

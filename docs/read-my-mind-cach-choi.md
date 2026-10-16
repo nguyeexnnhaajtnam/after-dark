@@ -26,11 +26,14 @@ Năm mức nóng:
 - Bài không bao giờ vượt quá mức host chọn. Khoảng 60% số bài ở đúng mức đó, phần còn lại thấp hơn một bậc.
 - Nếu host đổi mức nóng, partner bị đưa về trạng thái *warming up* và phải bấm lại để đồng ý với mức mới.
 
-## 2. Hướng dẫn đầu ván
+## 2. Hướng dẫn đầu ván và rút bài
 
-- Trước lá đầu tiên, cả hai cùng đọc phần giới thiệu luật.
-- Có thể bấm *Skip the briefing* để bỏ qua.
-- Bài chỉ được chia khi **cả hai** đã bấm *I'm in, deal*.
+- Trước lá đầu tiên, phần giới thiệu luật hiện trên cả hai máy để đọc. Không ai phải bấm xác nhận: cả hai đã sẵn sàng ở phòng chờ, với độ nóng đã chọn.
+- Host rút lá đầu tiên ngay từ phần hướng dẫn (nút *Rút lá đầu tiên* có ở mọi bước). Người kia đọc tiếp và vào ván ngay khi lá được chia.
+- **Mỗi lá mới đều được rút.** Hai người luân phiên: host rút lá 1, 3, 5…, người kia rút lá 2, 4, 6…. Người rút chạm *Rút lá tiếp theo*; người kia thấy "… đang rút lá tiếp theo". Lá lật lên trên cả hai máy và vào thẳng phần chơi, không có nút Tiếp, Sẵn sàng hay Bắt đầu nào khác.
+- Lá rút ra luôn là lá kế tiếp trong bộ 12 lá server đã xếp (lá đầu luôn là Đọc vị, mỗi Bẻ lái luôn có một lá Đọc vị theo sau), nên việc ai rút không đổi thứ tự bài.
+- Người tới lượt rút đang mất kết nối thì người kia rút thay, để ván không bị kẹt.
+- Bước nằm trong cùng một lá (Phần B của Double Challenge, thử thách thứ hai của Counter Mind) và *Xem kết quả* sau lá 12 thì ai bấm cũng được.
 
 ## 3. Bộ bài 12 lá
 
@@ -59,7 +62,7 @@ Lá đầu tiên luôn là Mind Reader. Mỗi Plot Twist luôn có một lá Min
 1. Một thử thách thân mật hiện ra. Mỗi người tự chọn *I'm into this* hoặc *Not tonight*.
 2. Lựa chọn của người kia được giấu cho tới khi mình trả lời.
 3. Chỉ cần **một người** từ chối là bỏ qua, không bị phạt. Người đã đồng ý vẫn có thể *Changed my mind*.
-4. Khi cả hai đồng ý, bấm *Let's start* để làm. Xong thì **cả hai** bấm *We did it*, mỗi người được **+1 Spark**.
+4. Nút tham gia ghi rõ: thử thách **bắt đầu ngay khi cả hai cùng tham gia**. Lần đồng ý thứ hai là lúc bắt đầu: server đóng dấu một đồng hồ chung (nếu lá có giờ), không có bước bấm Bắt đầu riêng. Xong thì **cả hai** bấm *We did it*, mỗi người được **+1 Spark**. Hết giờ không tự cộng Spark hay tự tính là xong.
 5. Bấm *Stop* bất cứ lúc nào để dừng.
 
 ### Mutual Desire
@@ -92,6 +95,8 @@ Mỗi người có **2 nhiệm vụ bí mật**, làm lần lượt từng cái.
 5. Được xác nhận thì được **rút 1 Power Card**: trải úp các loại mình chưa có (tối đa 3), chạm một lá để lật. Tay đã đủ 2 lá thì không có lượt rút.
 
 Nhiệm vụ của người kia chỉ hiện ra khi họ đã tiết lộ.
+
+Rút nhiệm vụ, rút Power Card và lời nhờ xác nhận của người kia không bao giờ tự bật lên che lá đang chơi: chúng chờ trên HUD (nút sáng lên một lần khi mở) cho tới khi bạn chạm vào.
 
 ## 5. Power Card
 
