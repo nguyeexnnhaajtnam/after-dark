@@ -52,10 +52,10 @@ function DealtCard(props:CardProps){
  </div>;
 }
 
-/** The front: the type's approved template (public/images/card-front) behind the card's own content. */
+/** The front: a plain face in the type's tint with the card's own content. */
 function CardFront(props:CardProps&{turned:boolean}){
  const {g,turned}=props;const meta=CATEGORY[g.card.type]||CATEGORY.MIND_READER;const t=useTranslations('card'),tt=useTranslations('cardType');
- return <article className={`play-card card-face relative text-obsidian ${turned?'card-turn-in':'pop-in'}`} aria-label={t('aria',{type:tt(g.card.type)})} data-card-type={g.card.type}>
+ return <article className={`play-card card-face naughty-card-surface relative text-obsidian ${turned?'card-turn-in':'pop-in'}`} aria-label={t('aria',{type:tt(g.card.type)})} data-card-type={g.card.type}>
   <header className="play-card-header">
    <div className="card-masthead" data-tone={meta.tone}>
     <span className="card-masthead-index" aria-hidden>{String(g.round).padStart(2,'0')}</span>

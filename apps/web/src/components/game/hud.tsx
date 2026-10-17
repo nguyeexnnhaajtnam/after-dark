@@ -1,6 +1,6 @@
 'use client';
 import {useState} from 'react';
-import {ChevronDown,CircleHelp,Eye,EyeOff,Gift,Layers,Lock,Sparkles,Zap} from 'lucide-react';
+import {ChevronDown,CircleHelp,Crown,Eye,EyeOff,Layers,Lock,Sparkles,Zap} from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import type {GameStateView,PlayerView} from '@after-dark/contracts';
 import {useHeat} from '@/lib/games';
@@ -41,7 +41,7 @@ export function Hud({g,me,partner,connected,onPowers,onRules,onClaimMission,onDr
      <Lock size={14} className="shrink-0 text-pink"/><span className="truncate">{missionLabel}</span><ChevronDown size={14} className={`ml-auto shrink-0 transition ${missionOpen?'rotate-180':''}`}/>
     </button>}
     <button onClick={onPowers} data-active={armed||ready>0} className={ctaClass({variant:'utility',size:'sm',className:'!min-h-10 shrink-0'})} aria-label={ready?t('powerAriaUsable',{count:g.inventory.length,limit:g.inventoryLimit,usable:ready}):t('powerAria',{count:g.inventory.length,limit:g.inventoryLimit})}>
-     <Gift size={14}/><span className="max-[399px]:sr-only">{t('power')}</span><span key={`p${powerTick}`} className={powerTick?'fx-spark-tick':''}>{g.inventory.length}/{g.inventoryLimit}</span>{ready>0&&!armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('use')}</span>}{armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('armed')}</span>}
+     <Crown size={15} strokeWidth={1.8}/><span className="max-[399px]:sr-only">{t('power')}</span><span key={`p${powerTick}`} className={powerTick?'fx-spark-tick':''}>{g.inventory.length}/{g.inventoryLimit}</span>{ready>0&&!armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('use')}</span>}{armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('armed')}</span>}
     </button>
    </div>
    {missionOpen&&!drawOpen&&<MissionPanel key={g.mission?.id||'done'} g={g} partnerName={partnerName} onClaim={onClaimMission} claiming={claiming}/>}

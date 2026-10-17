@@ -92,16 +92,17 @@ function DrawSheet({kind,g,names,pending,onDraw,onClose,onViewPowers}:{kind:'MIS
  const before=useRef(kind==='MISSION'?g.mission?.id:JSON.stringify(g.lastReward??null));const [drew,setDrew]=useState(false);
  const landed=drew&&(kind==='MISSION'?!!g.mission&&g.mission.id!==before.current:JSON.stringify(g.lastReward??null)!==before.current);
  const cards=g.draws?.[kind]??0,reward=g.lastReward;
- const result=!landed?undefined:kind==='MISSION'?<><p className="text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{t('revealed')}</p><p className="text-[15px] font-medium leading-6">{g.mission!.text}</p></>
+ const result=!landed?undefined:kind==='MISSION'?<><p className="text-[10px] font-bold uppercase tracking-[.2em] text-pink">{t('revealed')}</p><p className="text-[15px] font-medium leading-6">{g.mission!.text}</p></>
   :reward?.inventoryFull||!reward?.kind?<p className="text-sm leading-6">{tr('full',{limit:g.inventoryLimit})}</p>
   :<><p className="text-[10px] font-bold uppercase tracking-[.2em] text-pink">{tt('POWER_CARD')} · {tp(`kinds.${reward.kind}.alias`)}</p><p className="display text-2xl">{tp(`kinds.${reward.kind}.title`)}</p><p className="text-[13px] leading-5 text-ivory/85">{tp(`kinds.${reward.kind}.description`)}</p></>;
- return <Sheet reveal={kind==='POWER'} eyebrow={t('eyebrow')} title={t('title')} onClose={()=>onClose(landed)}>
+ // Drawing happens on the dark table, like the deck itself. Save for later / Keep it are the ways out, so no X.
+ return <Sheet tone="dark" reveal={kind==='POWER'} eyebrow={t('eyebrow')} title={t('title')} onClose={()=>onClose(landed)}>
   {!landed&&<p className="mb-3 text-sm leading-6">{t('body',{name:names.partner})}</p>}
-  {(cards>0||drew)&&<DrawDeck art={kind==='MISSION'?'secret-mission':'power-card'} dark={kind==='POWER'&&!!reward?.kind} cards={cards} canDraw={cards>0&&!landed} pending={pending} result={result} onDraw={i=>{setDrew(true);onDraw(i)}}/>}
+  {(cards>0||drew)&&<DrawDeck art={kind==='MISSION'?'secret-mission':'power-card'} cards={cards} canDraw={cards>0&&!landed} pending={pending} result={result} onDraw={i=>{setDrew(true);onDraw(i)}}/>}
   {landed&&<div className="mt-4 flex flex-col-reverse gap-2 min-[360px]:flex-row">
-   {kind==='POWER'&&<Button variant="ghost" surface="light" onClick={onViewPowers}>{t('view')}</Button>}
+   {kind==='POWER'&&<Button variant="ghost" onClick={onViewPowers}>{t('view')}</Button>}
    <Button variant="primary" size="md" className="flex-1" onClick={()=>onClose(true)}>{t('keep')}</Button></div>}
-  {!landed&&<Button variant="ghost" surface="light" block className="mt-3" onClick={()=>onClose(false)}>{tp('saveForLater')}</Button>}
+  {!landed&&<button type="button" className="draw-later" onClick={()=>onClose(false)}>{tp('saveForLater')}</button>}
  </Sheet>;
 }
 
