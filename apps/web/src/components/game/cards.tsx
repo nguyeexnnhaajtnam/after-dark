@@ -78,7 +78,7 @@ const letter=(i:number)=>String.fromCharCode(65+i);
 const Label=({children}:{children:ReactNode})=><p className="text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{children}</p>;
 /** Inline answer pair on the ivory card: a quiet decline beside the main answer. */
 function AnswerPair({no,yes,onNo,onYes,pending}:{no:string;yes:string;onNo:()=>void;onYes:()=>void;pending:boolean}){
- return <div className="mt-2 flex flex-col-reverse gap-2 min-[360px]:flex-row"><Button variant="ghost" surface="light" size="md" disabled={pending} onClick={onNo}>{no}</Button><Button variant="primary" size="md" className="flex-1" disabled={pending} onClick={onYes}>{yes}</Button></div>;
+ return <div className="mt-2 flex flex-col-reverse gap-2 min-[360px]:flex-row"><Button variant="ghost" size="md" disabled={pending} onClick={onNo}>{no}</Button><Button variant="primary" size="md" className="flex-1" disabled={pending} onClick={onYes}>{yes}</Button></div>;
 }
 
 function MindReader(p:CardProps){
@@ -204,7 +204,7 @@ function QuestionTime({g,meId,names,questionText,setQuestionText,send,pending}:C
    :<p className="mt-2 text-sm leading-5">{status(meId,mine)}</p>}
   {theirs?.status==='ASKED'?<div className="mt-3 rounded-[12px] bg-obsidian/5 p-3"><p className="text-xs font-bold uppercase tracking-wider text-plum">{t('incoming',{name:names.partner})}</p><p className="mt-1 text-[15px] font-medium leading-6">“{theirs.text}”</p>
     <div className="mt-2 flex gap-2">{(['YES','NO'] as const).map(a=><Button key={a} variant="primary" size="md" className="flex-1" disabled={pending} onClick={()=>send('ANSWER_QUESTION',{answer:a})}>{a==='YES'?t('yes'):t('no')}</Button>)}
-     <Button variant="ghost" surface="light" size="md" disabled={pending} onClick={()=>send('ANSWER_QUESTION',{answer:'DECLINE'})}>{t('pass')}</Button></div></div>
+     <Button variant="ghost" size="md" disabled={pending} onClick={()=>send('ANSWER_QUESTION',{answer:'DECLINE'})}>{t('pass')}</Button></div></div>
    :<p className="mt-2 text-sm leading-5 text-obsidian/80">{status(partnerId,theirs)}</p>}
  </section>;
 }
@@ -252,13 +252,14 @@ function Forfeit({g,meId,names,send,pending}:{g:GameStateView;meId:string;names:
  // The forfeit lands below the answers: bring it into view once, gently (instantly under reduced motion).
  const panel=useRef<HTMLDivElement>(null);
  useEffect(()=>{const el=panel.current;if(!el)return;const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const id=setTimeout(()=>el.scrollIntoView({block:'nearest',behavior:calm?'auto':'smooth'}),calm?0:350);return()=>clearTimeout(id)},[]);
- return <div ref={panel} className="fx-card-lift relative overflow-hidden rounded-[14px] border-2 border-dashed border-plum p-3 mt-3" style={{['--fx-delay' as string]:'.35s'}}>{f.stage==='OFFERED'&&<EventFlash tone="ember"/>}
-  <div className="flex items-start gap-3"><div className="min-w-0 flex-1">{offered&&<p className="display fx-headline mb-1 text-[clamp(1.3rem,7cqi,1.8rem)] text-crimson">{t('headline')}</p>}<p className="text-[10px] font-bold uppercase tracking-[.2em] text-plum">{t('label')}</p></div><TypeEmblem type="FORFEIT" size="tray" className="-mr-1 -mt-1"/></div>
-  {deck?<div className="mt-2"><DrawDeck art="forfeit" cards={f.cards??1} canDraw={payer&&f.stage==='DRAWING'} pending={pending} watching={td('watching',{name:names.of(f.payerId)})}
+ return <div ref={panel} className="forfeit-arena fx-card-lift relative mt-4 overflow-hidden" style={{['--fx-delay' as string]:'.35s'}}>{f.stage==='OFFERED'&&<EventFlash tone="ember"/>}
+  <div className="forfeit-header"><span className="forfeit-rule"/><div className="min-w-0 text-center">{offered&&<p className="display fx-headline mb-1 text-[clamp(1.3rem,7cqi,1.8rem)] text-crimson">{t('headline')}</p>}<p className="text-[10px] font-bold uppercase tracking-[.24em] text-pink">{t('label')}</p></div><span className="forfeit-rule"/></div>
+  <TypeEmblem type="FORFEIT" size="tray" className="forfeit-emblem"/>
+  {deck?<div className="forfeit-deck"><DrawDeck art="forfeit" cards={f.cards??1} canDraw={payer&&f.stage==='DRAWING'} pending={pending} watching={td('watching',{name:names.of(f.payerId)})}
     onDraw={i=>send('DRAW_CARD',{draw:'FORFEIT',choice:i})}
     result={f.text?<><p className="text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{tt('FORFEIT')}</p><p className="text-[15px] font-bold leading-snug">{f.text}</p></>:undefined}/></div>
    :f.text&&<p className="mt-1 text-[15px] font-bold leading-snug">{f.text}</p>}
-  <p className="mt-1.5 text-xs leading-5 text-obsidian/75">{status}</p></div>;
+  <p className="forfeit-status">{status}</p></div>;
 }
 
 function Chemistry({g}:CardProps){

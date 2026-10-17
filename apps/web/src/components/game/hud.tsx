@@ -19,7 +19,8 @@ export function Hud({g,me,partner,connected,onPowers,onRules,onClaimMission,onDr
  const mine=g.scores[me.id]||0,theirs=partner?g.scores[partner.id]||0:0;const mineTick=useRiseTick(mine),theirsTick=useRiseTick(theirs),powerTick=useRiseTick(g.inventory.length);
  // An open draw (a mission, or the Power Card a confirmed one earned) takes the mission button until it is drawn.
  const drawOpen=!!(g.draws?.POWER||(!g.mission&&g.draws?.MISSION));
- const missionLabel=drawOpen?t('missionDraw'):!g.mission?(g.missionsLeft===0?t('missionsDone'):t('mission')):g.mission.status==='DECLARED'?t('missionDeclared'):t('missionProgress',{number:g.mission.number,total:g.mission.total});
+ const missionProgress=g.mission?.status==='ACTIVE'?`${g.mission.number}/${g.mission.total}`:null;
+ const missionLabel=drawOpen?t('missionDraw'):!g.mission?(g.missionsLeft===0?t('missionsDone'):t('mission')):g.mission.status==='DECLARED'?t('missionDeclared'):t('mission');
  return <header className="flex-none px-3 pt-[max(.6rem,var(--safe-top))]">
   <div className="mx-auto max-w-lg">
    <div className="flex items-center gap-2">
@@ -35,13 +36,13 @@ export function Hud({g,me,partner,connected,onPowers,onRules,onClaimMission,onDr
 
    <div className="mt-2 flex gap-2">
     {/* An open draw waits here, never over the card in play; it draws the eye once when it opens. */}
-    {drawOpen?<button key={g.draws?.POWER?'power':'mission'} onClick={onDrawMission} data-active className={ctaClass({variant:'utility',size:'sm',className:'fx-cta-attention !min-h-10 min-w-0 flex-1 !justify-start text-left'})}>
-     <Layers size={14} className="shrink-0 text-pink"/><span className="truncate">{g.draws?.POWER?t('powerDraw'):missionLabel}</span>
-    </button>:<button onClick={()=>setMissionOpen(o=>!o)} aria-expanded={missionOpen} aria-controls="mission-panel" className={ctaClass({variant:'utility',size:'sm',className:'!min-h-10 min-w-0 flex-1 !justify-start text-left'})}>
-     <Lock size={14} className="shrink-0 text-pink"/><span className="truncate">{missionLabel}</span><ChevronDown size={14} className={`ml-auto shrink-0 transition ${missionOpen?'rotate-180':''}`}/>
+    {drawOpen?<button key={g.draws?.POWER?'power':'mission'} onClick={onDrawMission} data-active className={ctaClass({variant:'utility',size:'sm',className:'hud-game-slot hud-mission-slot fx-cta-attention !min-h-11 min-w-0 flex-1 !justify-start text-left'})}>
+     <span className="hud-deck-sigil"><Layers size={14}/></span><span className="hud-mission-name truncate">{g.draws?.POWER?t('powerDraw'):missionLabel}</span>
+    </button>:<button onClick={()=>setMissionOpen(o=>!o)} aria-expanded={missionOpen} aria-controls="mission-panel" className={ctaClass({variant:'utility',size:'sm',className:'hud-game-slot hud-mission-slot !min-h-11 min-w-0 flex-1 !justify-start text-left'})}>
+     <span className="hud-deck-sigil"><Lock size={14}/></span><span className="hud-mission-name truncate">{missionLabel}</span>{missionProgress&&<span className="hud-mission-progress" aria-label={t('missionProgress',{number:g.mission!.number,total:g.mission!.total})}>{missionProgress}</span>}<ChevronDown size={14} className={`ml-auto shrink-0 transition ${missionOpen?'rotate-180':''}`}/>
     </button>}
-    <button onClick={onPowers} data-active={armed||ready>0} className={ctaClass({variant:'utility',size:'sm',className:'!min-h-10 shrink-0'})} aria-label={ready?t('powerAriaUsable',{count:g.inventory.length,limit:g.inventoryLimit,usable:ready}):t('powerAria',{count:g.inventory.length,limit:g.inventoryLimit})}>
-     <Crown size={15} strokeWidth={1.8}/><span className="max-[399px]:sr-only">{t('power')}</span><span key={`p${powerTick}`} className={powerTick?'fx-spark-tick':''}>{g.inventory.length}/{g.inventoryLimit}</span>{ready>0&&!armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('use')}</span>}{armed&&<span className="rounded-[6px] bg-crimson px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ivory">{t('armed')}</span>}
+    <button onClick={onPowers} data-active={armed||ready>0} className={ctaClass({variant:'utility',size:'sm',className:'hud-game-slot hud-power-slot !min-h-11 shrink-0'})} aria-label={ready?t('powerAriaUsable',{count:g.inventory.length,limit:g.inventoryLimit,usable:ready}):t('powerAria',{count:g.inventory.length,limit:g.inventoryLimit})}>
+     <span className="hud-crown-sigil"><Crown size={16} strokeWidth={1.7}/></span><span className="max-[399px]:sr-only">{t('power')}</span><span key={`p${powerTick}`} className={`hud-power-count ${powerTick?'fx-spark-tick':''}`}>{g.inventory.length}<span aria-hidden>/{g.inventoryLimit}</span></span><span aria-hidden className="hud-power-pips">{Array.from({length:g.inventoryLimit},(_,i)=><i key={i} data-filled={i<g.inventory.length||undefined}/>)}</span>{ready>0&&!armed&&<span className="hud-slot-state">{t('use')}</span>}{armed&&<span className="hud-slot-state">{t('armed')}</span>}
     </button>
    </div>
    {missionOpen&&!drawOpen&&<MissionPanel key={g.mission?.id||'done'} g={g} partnerName={partnerName} onClaim={onClaimMission} claiming={claiming}/>}
