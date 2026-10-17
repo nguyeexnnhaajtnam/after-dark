@@ -21,7 +21,7 @@ export type Names={me:string;partner:string;of:(id:string)=>string;isMe:(id:stri
 export type CardProps={g:GameStateView;meId:string;names:Names;selected:number|null;setSelected:(n:number)=>void;desire:DesireChoice|null;setDesire:(d:DesireChoice)=>void;
  prediction:number|null;setPrediction:(n:number)=>void;questionText:string;setQuestionText:(s:string)=>void;replyText:string;setReplyText:(s:string)=>void;
  send:(type:GameAction['type'],extra?:Partial<GameAction>)=>void;pending:boolean};
-const CATEGORY:Record<string,{tone:string}>={MIND_READER:{tone:'crimson'},CHEMISTRY:{tone:'pink'},MUTUAL_DESIRE:{tone:'plum'},PLOT_TWIST:{tone:'ink'}};
+const CATEGORY:Record<string,{tone:string}>={MIND_READER:{tone:'crimson'},CHEMISTRY:{tone:'pink'},MUTUAL_DESIRE:{tone:'plum'},PLOT_TWIST:{tone:'ink'},FORFEIT:{tone:'pink'}};
 const bold=(chunks:ReactNode)=><strong>{chunks}</strong>;
 const self=(yes:boolean)=>yes?'yes':'no';
 
@@ -54,13 +54,13 @@ function DealtCard(props:CardProps){
 
 /** The front: a plain face in the type's tint with the card's own content. */
 function CardFront(props:CardProps&{turned:boolean}){
- const {g,turned}=props;const meta=CATEGORY[g.card.type]||CATEGORY.MIND_READER;const t=useTranslations('card'),tt=useTranslations('cardType');
- return <article className={`play-card card-face naughty-card-surface relative text-obsidian ${turned?'card-turn-in':'pop-in'}`} aria-label={t('aria',{type:tt(g.card.type)})} data-card-type={g.card.type}>
+ const {g,turned}=props;const displayType=g.phase==='REVEAL'&&g.forfeit?'FORFEIT':g.card.type;const meta=CATEGORY[displayType]||CATEGORY.MIND_READER;const t=useTranslations('card'),tt=useTranslations('cardType');
+ return <article className={`play-card card-face naughty-card-surface relative text-obsidian ${turned?'card-turn-in':'pop-in'}`} aria-label={t('aria',{type:tt(displayType)})} data-card-type={displayType}>
   <header className="play-card-header">
    <div className="card-masthead" data-tone={meta.tone}>
     <span className="card-masthead-index" aria-hidden>{String(g.round).padStart(2,'0')}</span>
-    <span className="card-masthead-category"><span>{tt(g.card.type)}</span></span>
-    <TypeEmblem type={g.card.type} size="header" className="card-masthead-emblem"/>
+    <span className="card-masthead-category"><span>{tt(displayType)}</span></span>
+    <TypeEmblem type={displayType} size="header" className="card-masthead-emblem"/>
    </div>
   </header>
   <div className="pt-2">{body(props)}</div>
@@ -90,6 +90,9 @@ function MindReader(p:CardProps){
  if(g.phase==='COUNTER_MIND_SUBMIT')return <CounterMind {...p}/>;
  const r=g.result;
  if(g.phase==='REVEAL'&&r&&r.secretChoice===undefined)return <><CounterReveal {...p}/><AfterReveal {...p}/></>;
+ // Once a miss opens a forfeit, the card becomes the draw table. The resolved choices stay in state but no longer compete
+ // with the next playable moment on screen.
+ if(g.phase==='REVEAL'&&r&&g.forfeit)return <Forfeit key={g.forfeit.payerId} g={g} meId={meId} names={names} send={p.send} pending={p.pending}/>;
  if(g.phase==='REVEAL'&&r){
   const correct=!!r.correct;const pool=correct?(isSecret?'correctHolder':'correctGuesser'):(isSecret?'wrongHolder':'wrongGuesser');
   const partA=r.part===2?r.predictions?.[0]:undefined,last=r.predictions?.at(-1);
@@ -254,7 +257,6 @@ function Forfeit({g,meId,names,send,pending}:{g:GameStateView;meId:string;names:
  useEffect(()=>{const el=panel.current;if(!el)return;const calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const id=setTimeout(()=>el.scrollIntoView({block:'nearest',behavior:calm?'auto':'smooth'}),calm?0:350);return()=>clearTimeout(id)},[]);
  return <div ref={panel} className="forfeit-arena fx-card-lift relative mt-4 overflow-hidden" style={{['--fx-delay' as string]:'.35s'}}>{f.stage==='OFFERED'&&<EventFlash tone="ember"/>}
   <div className="forfeit-header"><span className="forfeit-rule"/><div className="min-w-0 text-center">{offered&&<p className="display fx-headline mb-1 text-[clamp(1.3rem,7cqi,1.8rem)] text-crimson">{t('headline')}</p>}<p className="text-[10px] font-bold uppercase tracking-[.24em] text-pink">{t('label')}</p></div><span className="forfeit-rule"/></div>
-  <TypeEmblem type="FORFEIT" size="tray" className="forfeit-emblem"/>
   {deck?<div className="forfeit-deck"><DrawDeck art="forfeit" cards={f.cards??1} canDraw={payer&&f.stage==='DRAWING'} pending={pending} watching={td('watching',{name:names.of(f.payerId)})}
     onDraw={i=>send('DRAW_CARD',{draw:'FORFEIT',choice:i})}
     result={f.text?<><p className="text-[10px] font-bold uppercase tracking-[.2em] text-crimson">{tt('FORFEIT')}</p><p className="text-[15px] font-bold leading-snug">{f.text}</p></>:undefined}/></div>

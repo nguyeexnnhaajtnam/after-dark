@@ -287,7 +287,6 @@ button:active .deck-icon span:nth-child(3){transform:translateY(-5px) rotate(12d
 .forfeit-header{display:grid;grid-template-columns:minmax(18px,1fr) auto minmax(18px,1fr);align-items:center;gap:.65rem;padding-inline:1.5rem}
 .forfeit-rule{height:1px;background:linear-gradient(90deg,transparent,rgba(240,98,146,.7))}
 .forfeit-rule:last-child{transform:scaleX(-1)}
-.forfeit-emblem{position:absolute;right:.65rem;top:.55rem;opacity:.8;filter:drop-shadow(0 0 8px rgba(200,25,50,.35))}
 .forfeit-deck{margin-top:.15rem}
 .forfeit-arena .draw-table{filter:drop-shadow(0 16px 18px rgba(0,0,0,.42))}
 .forfeit-arena .draw-card{transition:transform .45s var(--ease-snap),opacity .3s var(--ease-silk),box-shadow .3s var(--ease-silk),filter .2s var(--ease-silk)}
